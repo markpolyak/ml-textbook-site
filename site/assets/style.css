@@ -331,6 +331,7 @@ div.sourceCode:hover .copy-btn, .copy-btn:focus { opacity: 1; }
 
 /* ── Сообщить об ошибке, служебные страницы ────────────────── */
 
+.chapter-code { font: 0.95rem/1.5 "PT Sans", system-ui, sans-serif; margin-top: 2.5rem; }
 .content > .report { max-width: var(--measure); margin: 2.5rem auto 0; font: 0.95rem/1.5 "PT Sans", system-ui, sans-serif; }
 .report-hint { color: var(--muted); }
 .cover-links { display: flex; gap: 1.25rem; flex-wrap: wrap; margin-top: 1.25rem; font-family: "PT Sans", system-ui, sans-serif; }
