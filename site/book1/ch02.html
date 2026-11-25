@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Данные и признаки">
+  <title>Данные и признаки — Машинное обучение: линейные и вероятностные
+модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li class="current"><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+<ol>
+<li><a href="ch02.html#tablitsa-dannykh"><span class="num">2.1</span><span>Таблица данных</span></a></li>
+<li><a href="ch02.html#razvedochnyy-analiz"><span class="num">2.2</span><span>Разведочный анализ</span></a></li>
+<li><a href="ch02.html#propuski"><span class="num">2.3</span><span>Пропуски</span></a></li>
+<li><a href="ch02.html#kategorialnye-priznaki"><span class="num">2.4</span><span>Категориальные признаки</span></a></li>
+<li><a href="ch02.html#masshtabirovanie"><span class="num">2.5</span><span>Масштабирование</span></a></li>
+<li><a href="ch02.html#konstruirovanie-priznakov"><span class="num">2.6</span><span>Конструирование признаков</span></a></li>
+<li><a href="ch02.html#utechki-dannykh"><span class="num">2.7</span><span>Утечки данных</span></a></li>
+<li><a href="ch02.html#voprosy-dlya-samokontrolya-2"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch02.html#zadachi-2"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="2" id="ch02"><span
+class="header-section-number">2</span> Данные и признаки</h1>
+<p>В гл. 1 обучающая выборка представлена готовой матрицей чисел <span
+class="math inline">\mathbf{F}</span>. На практике данные приходят в
+виде таблицы, где есть пропуски, текстовые значения и признаки в
+несопоставимых единицах. В этой главе показано, как превратить такую
+таблицу в матрицу объекты–признаки и не допустить при этом утечки данных
+— ошибки, из-за которой оценка качества модели оказывается завышенной, а
+на новых данных модель работает заметно хуже.</p>
+<h2 data-number="2.1" id="tablitsa-dannykh"><span
+class="header-section-number">2.1</span> Таблица данных</h2>
+<p>Сквозной пример главы — оценка стоимости квартир. Объект — квартира,
+ответ — цена в миллионах рублей, задача — регрессия. Фрагмент выборки
+приведён в табл. <a href="ch02.html#tbl:flats">2.1</a>; данные
+условные.</p>
+<table id="tbl:flats">
+<caption>Таблица 2.1. Фрагмент выборки: квартиры</caption>
+<thead>
+<tr>
+<th>№</th>
+<th>Площадь, м²</th>
+<th>Район</th>
+<th>Этаж</th>
+<th>Год постройки</th>
+<th>Цена, млн руб.</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>34</td>
+<td>А</td>
+<td>3</td>
+<td>1975</td>
+<td>6,1</td>
+</tr>
+<tr>
+<td>2</td>
+<td>52</td>
+<td>Б</td>
+<td>9</td>
+<td>2012</td>
+<td>9,0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>41</td>
+<td>В</td>
+<td>1</td>
+<td>1968</td>
+<td>5,2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>75</td>
+<td>А</td>
+<td>5</td>
+<td>нет данных</td>
+<td>14,8</td>
+</tr>
+<tr>
+<td>5</td>
+<td>63</td>
+<td>Б</td>
+<td>12</td>
+<td>2019</td>
+<td>11,3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>47</td>
+<td>В</td>
+<td>4</td>
+<td>2005</td>
+<td>6,9</td>
+</tr>
+</tbody>
+</table>
+<p>Строки таблицы — объекты, столбцы — признаки и ответ. Площадь, этаж и
+год — количественные признаки, район — номинальный, а для квартиры № 4
+год постройки неизвестен. Прежде чем строить модель, нужно заполнить
+пропуск, превратить районы в числа и привести признаки к сопоставимому
+масштабу. Но сначала данные нужно изучить.</p>
+<h2 data-number="2.2" id="razvedochnyy-analiz"><span
+class="header-section-number">2.2</span> Разведочный анализ</h2>
+<p><em>Разведочный анализ данных</em> — это знакомство с таблицей до
+построения модели. Обычно проверяют:</p>
+<ul>
+<li>типы и диапазоны признаков: нет ли отрицательной площади или этажа
+250;</li>
+<li>распределения: симметричны ли они, есть ли выбросы;</li>
+<li>долю пропусков в каждом столбце;</li>
+<li>связи признаков с ответом и между собой;</li>
+<li>в задачах классификации — соотношение классов: если положительных
+объектов 1 %, модель, которая всегда отвечает «отрицательный», будет
+права в 99 % случаев.</li>
+</ul>
+<p>Распределение цены квартир (рис. <a
+href="#fig:data-distribution">2.1</a>, а) несимметрично: большинство
+квартир стоит 5–10 млн руб., но есть длинный «хвост» дорогих. Так обычно
+распределены величины, которые получаются произведением многих
+множителей: цены, доходы, время выполнения задач. Если вместо цены
+предсказывать её логарифм, распределение становится почти симметричным
+(рис. <a href="#fig:data-distribution">2.1</a>, б), а модель меньше
+подстраивается под редкие дорогие квартиры. Прогноз цены получают
+обратным преобразованием <span class="math inline">e^{\hat
+y}</span>.</p>
+<figure id="fig:data-distribution">
+<img src="fig/data_distribution.svg" style="width: 88%"
+alt="Рис. 2.1. Распределение цены квартиры и её логарифма (синтетические данные)" />
+<figcaption aria-hidden="true">Рис. 2.1. Распределение цены квартиры и
+её логарифма (синтетические данные)</figcaption>
+</figure>
+<p>Силу линейной связи двух признаков (или признака и ответа) измеряет
+<em>коэффициент корреляции Пирсона</em>. Для значений <span
+class="math inline">u_i</span> и <span class="math inline">v_i</span> на
+<span class="math inline">\ell</span> объектах</p>
+<div class="equation">
+<p><span class="math display">r = \frac{\sum\limits_{i=1}^{\ell} (u_i -
+\bar u)(v_i - \bar v)}{\sqrt{\sum\limits_{i=1}^{\ell} (u_i - \bar u)^2
+\, \sum\limits_{i=1}^{\ell} (v_i - \bar v)^2}},</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\bar u</span> и <span
+class="math inline">\bar v</span> — средние значения.</p>
+</div>
+<p><strong>Читаем формулу.</strong> В числителе для каждого объекта
+перемножаются отклонения двух величин от их средних. Если обе величины
+одновременно выше среднего или одновременно ниже, произведение
+положительно; если одна выше, а другая ниже — отрицательно. Сумма
+показывает, какое поведение преобладает. Знаменатель нормирует результат
+так, что <span class="math inline">-1 \le r \le 1</span>: <span
+class="math inline">r = 1</span> — точная возрастающая линейная
+зависимость, <span class="math inline">r = -1</span> — убывающая, <span
+class="math inline">r \approx 0</span> — линейной связи нет (но
+нелинейная может быть). Сильно коррелированные между собой признаки —
+повод насторожиться: они несут почти одну и ту же информацию, модели
+трудно разделить между ними вклад в ответ, и её веса становятся
+неустойчивыми. И наконец, корреляция говорит о связи, а не о причине.
+Например, в задаче из гл. 1 число найденных в модуле ошибок связано с
+числом тестов для него: чем больше тестов, тем больше ошибок находят. Но
+если удалить тесты, ошибок в модуле не станет меньше — их просто
+перестанут находить.</p>
+<h2 data-number="2.3" id="propuski"><span
+class="header-section-number">2.3</span> Пропуски</h2>
+<p>Пропуски возникают, когда данные не собрали, потеряли или они не
+существуют (у нового дома нет истории ремонтов). Основные способы с ними
+справиться:</p>
+<ul>
+<li>удалить объекты с пропусками — допустимо, если их мало, но если
+пропуски не случайны (например, год постройки неизвестен в основном у
+старых домов), выборка станет смещённой;</li>
+<li>удалить признак, если пропусков в нём большинство;</li>
+<li>заполнить пропуск средним, медианой или (для номинальных признаков)
+самым частым значением. Медиана устойчивее к выбросам: в табл. <a
+href="ch02.html#tbl:flats">2.1</a> медиана известных годов равна 2005,
+ею и заполняется пропуск у квартиры № 4;</li>
+<li>добавить бинарный признак «значение было пропущено». Сам факт
+пропуска бывает информативен: если продавец не указал год постройки, это
+может что-то говорить о доме.</li>
+</ul>
+<p>Среднее и медиана для заполнения вычисляются по обучающей выборке;
+почему это важно, объяснено в разд. «Утечки данных».</p>
+<h2 data-number="2.4" id="kategorialnye-priznaki"><span
+class="header-section-number">2.4</span> Категориальные признаки</h2>
+<p>Линейная модель умеет только умножать признаки на веса и складывать,
+поэтому номинальный признак «район» нужно превратить в числа.
+Закодировать районы числами 1, 2, 3 нельзя: модель решит, что район В
+«вдвое дальше» от А, чем Б, и что влияние района на цену меняется
+равными шагами. Порядка и расстояний между районами нет, а кодирование
+их навязывает.</p>
+<p>Правильный способ — <em>прямое кодирование</em> (one-hot): каждому
+значению признака соответствует свой бинарный признак, равный 1, если
+объект имеет это значение, и 0 иначе:</p>
+<div class="equation">
+<p><span class="math display">f_{\text{А}}(x) = [\text{район}(x) =
+\text{А}], \quad f_{\text{Б}}(x) = [\text{район}(x) = \text{Б}], \quad
+f_{\text{В}}(x) = [\text{район}(x) = \text{В}].</span></p>
+</div>
+<div class="continuation">
+<p>У каждой квартиры ровно один из трёх признаков равен единице, поэтому
+их сумма всегда равна 1 — так же, как фиктивный признак <span
+class="math inline">f_0</span>. Значит, столбцы матрицы <span
+class="math inline">\mathbf{F}</span> линейно зависимы, и веса линейной
+модели определяются неоднозначно: если прибавить к <span
+class="math inline">\theta_0</span> любое число и вычесть его из весов
+всех трёх районов, прогнозы не изменятся. Поэтому один из столбцов,
+например <span class="math inline">f_{\text{А}}</span>, удаляют. Район А
+становится <em>базовым</em>: свободный член <span
+class="math inline">\theta_0</span> относится к нему, а веса <span
+class="math inline">\theta_{\text{Б}}</span> и <span
+class="math inline">\theta_{\text{В}}</span> показывают, на сколько цена
+в районах Б и В отличается от А при прочих равных.</p>
+</div>
+<p>Порядковые признаки (приоритет «низкий», «средний», «высокий») можно
+кодировать числами 1, 2, 3 — порядок у них есть. Но и здесь числа
+предполагают равные шаги между уровнями; если это сомнительно,
+используют прямое кодирование.</p>
+<p>Если значений у признака много (улица, автор коммита), прямое
+кодирование порождает тысячи столбцов. Тогда, например, заменяют
+значение средним ответом по объектам с этим значением: улицу — средней
+ценой квартиры на ней. Такое <em>кодирование средним</em> удобно, но
+опасно утечкой: если среднее посчитано с участием самого объекта, в
+признак попадает его собственный ответ.</p>
+<h2 data-number="2.5" id="masshtabirovanie"><span
+class="header-section-number">2.5</span> Масштабирование</h2>
+<p>Признаки измеряются в разных единицах и принимают значения разного
+порядка: площадь — десятки квадратных метров, расстояние до метро —
+километры, а этаж — просто номер (рис. <a href="#fig:scaling">2.2</a>,
+а). Для самой линейной модели это не проблема: веса подстроятся под
+единицы измерения. Но разный масштаб признаков замедляет итерационные
+методы поиска параметров, искажает действие штрафа за большие веса,
+одинакового для всех признаков (гл. 6), и делает расстояние между
+объектами зависящим в основном от признака с самыми большими числами.
+Расстояние используют методы, которые относят объект к тому же классу,
+что и наиболее похожие на него объекты выборки (например, метод
+ближайших соседей). Для них разница площадей в 20 м² вносит в расстояние
+вчетверо больший вклад, чем разница расстояний до метро в 4,5 км, хотя
+на цену второе может влиять сильнее. Поэтому признаки приводят к общему
+масштабу.</p>
+<figure id="fig:scaling">
+<img src="fig/scaling.svg" style="width: 88%"
+alt="Рис. 2.2. Значения признаков до и после стандартизации" />
+<figcaption aria-hidden="true">Рис. 2.2. Значения признаков до и после
+стандартизации</figcaption>
+</figure>
+<p><em>Стандартизация</em> вычитает из признака среднее и делит на
+стандартное отклонение:</p>
+<div class="equation">
+<p><span class="math display">x&#39;_{ij} = \frac{x_{ij} -
+m_j}{\sigma_j}, \quad m_j = \frac{1}{\ell} \sum_{i=1}^{\ell} x_{ij},
+\quad \sigma_j = \sqrt{\frac{1}{\ell} \sum_{i=1}^{\ell} (x_{ij} -
+m_j)^2}.</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Число <span
+class="math inline">m_j</span> — среднее значение <span
+class="math inline">j</span>-го признака по выборке, <span
+class="math inline">\sigma_j</span> — его типичное отклонение от
+среднего. Новое значение <span class="math inline">x&#39;_{ij}</span>
+говорит, на сколько «типичных отклонений» объект выше или ниже среднего.
+После стандартизации у каждого признака среднее 0 и стандартное
+отклонение 1 (рис. <a href="#fig:scaling">2.2</a>, б), а единицы
+измерения исчезают. Для площадей из табл. <a
+href="ch02.html#tbl:flats">2.1</a> <span class="math inline">m =
+52</span> м², <span class="math inline">\sigma \approx 13{,}7</span> м²,
+и квартира площадью 75 м² получает значение <span
+class="math inline">(75 - 52)/13{,}7 \approx 1{,}68</span>.</p>
+<p><em>Минимаксная нормализация</em> <span
+class="math inline">x&#39;_{ij} = (x_{ij} - \min_i x_{ij}) / (\max_i
+x_{ij} - \min_i x_{ij})</span> переводит значения в отрезок <span
+class="math inline">[0, 1]</span>. Она проще, но один выброс сжимает все
+остальные значения к краю отрезка.</p>
+<h2 data-number="2.6" id="konstruirovanie-priznakov"><span
+class="header-section-number">2.6</span> Конструирование признаков</h2>
+<p>Линейная модель линейна по параметрам, но не обязана быть линейной по
+исходным данным: признаки <span class="math inline">f_j(x)</span> могут
+быть любыми функциями объекта. Так линейной моделью описывают нелинейные
+зависимости:</p>
+<ul>
+<li>степени признака: <span class="math inline">f_1(x) = x</span>, <span
+class="math inline">f_2(x) = x^2</span>, … — так строится полиномиальная
+регрессия;</li>
+<li>логарифм для величин с длинным «хвостом» распределения;</li>
+<li>составляющие даты: день недели, месяц, праздник; для временных рядов
+— значения той же величины за прошлые периоды;</li>
+<li>агрегаты: средняя цена квартир в районе; в задаче из гл. 1 — число
+изменений модуля программы за последний месяц.</li>
+</ul>
+<p>Особый случай — <em>взаимодействие</em> признаков. Цена квартиры
+примерно пропорциональна площади, но цена квадратного метра в разных
+районах разная. Модель</p>
+<div class="equation">
+<p><span class="math display">g(x, \boldsymbol{\theta}) = \theta_0 +
+\theta_{\text{Б}} f_{\text{Б}}(x) + \theta_{\text{В}} f_{\text{В}}(x) +
+\theta_1 \cdot \text{площадь}(x)</span></p>
+</div>
+<div class="continuation">
+<p>допускает для района только сдвиг: прямые цены от площади в трёх
+районах параллельны (рис. <a href="#fig:interaction">2.3</a>, а). Чтобы
+наклон стал своим в каждом районе, добавляют произведения площади на
+индикаторы районов, <span class="math inline">\text{площадь}(x) \cdot
+f_k(x)</span> для <span class="math inline">k \in \{\text{А}, \text{Б},
+\text{В}\}</span> (а общий признак «площадь» убирают — он равен сумме
+этих произведений). Вес при таком признаке — цена квадратного метра в
+районе <span class="math inline">k</span> (рис. <a
+href="#fig:interaction">2.3</a>, б). Умножать площадь на номер района,
+закодированный числом, бессмысленно: получится признак, который растёт с
+«номером» района, а не отражает цену метра.</p>
+</div>
+<figure id="fig:interaction">
+<img src="fig/interaction.svg" style="width: 96%"
+alt="Рис. 2.3. Модель без взаимодействия «площадь × район» и с ним (синтетические данные)" />
+<figcaption aria-hidden="true">Рис. 2.3. Модель без взаимодействия
+«площадь × район» и с ним (синтетические данные)</figcaption>
+</figure>
+<p>Удачный новый признак нередко улучшает модель сильнее, чем смена
+метода обучения; придумать его помогает знание предметной области.</p>
+<h2 data-number="2.7" id="utechki-dannykh"><span
+class="header-section-number">2.7</span> Утечки данных</h2>
+<p>Чтобы узнать, как модель будет работать на новых объектах, часть
+выборки откладывают и при обучении не используют. Модель обучают на
+<em>обучающей выборке</em>, а качество оценивают на <em>тестовой</em> —
+объектах, которых модель не видела.</p>
+<p><em>Утечка данных</em> — попадание в обучение информации, которой не
+будет в момент применения модели. Из-за утечки качество на тестовой
+выборке оказывается высоким, а на действительно новых данных модель
+работает заметно хуже. Типичные источники утечки:</p>
+<ul>
+<li>признак вычислен по событиям, которые происходят позже прогноза. В
+задаче из гл. 1 модель до выхода новой версии программы предсказывает,
+найдут ли ошибки в модуле. Признак «число исправлений, внесённых в
+модуль за месяц после выхода версии» в момент прогноза ещё неизвестен и,
+по сути, содержит сам ответ;</li>
+<li>статистики предобработки посчитаны по всем данным. Если среднее и
+стандартное отклонение для стандартизации, медиана для пропусков или
+кодирование средним вычислены до разбиения выборки на обучающую и
+тестовую, в обучение проникает информация о тестовых объектах;</li>
+<li>один и тот же объект (дубликат) попал в обе части выборки;</li>
+<li>для данных, упорядоченных во времени, модель обучена на более
+поздних данных, чем тестовые, то есть «знает будущее».</li>
+</ul>
+<p>Чтобы статистики предобработки не несли информацию о тестовых
+объектах, всё, что вычисляется по данным (средние, медианы, список
+значений категорий, коды), вычисляют только по обучающей выборке. К
+тестовой выборке и к новым данным применяют уже вычисленные значения и
+не пересчитывают их. В библиотеке scikit-learn у преобразований два
+метода: <code>fit</code> вычисляет статистики, <code>transform</code>
+применяет их. Конвейер (<code>Pipeline</code>) объединяет преобразования
+и модель так, что <code>fit</code> вызывается только на обучающих данных
+(листинг 2.1) [2, 3]. Тот же принцип — одинаковые преобразования при
+обучении и применении — описан как шаблон проектирования систем
+машинного обучения [4, 5].</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 2.1. Конвейер предобработки и линейной регрессии</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.compose <span class="im">import</span> make_column_transformer</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.impute <span class="im">import</span> SimpleImputer</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> OneHotEncoder</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>num <span class="op">=</span> make_pipeline(SimpleImputer(strategy<span class="op">=</span><span class="st">&quot;median&quot;</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                    StandardScaler())</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>prep <span class="op">=</span> make_column_transformer(</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    (num, [<span class="st">&quot;площадь&quot;</span>, <span class="st">&quot;этаж&quot;</span>, <span class="st">&quot;год&quot;</span>]),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    (OneHotEncoder(drop<span class="op">=</span><span class="st">&quot;first&quot;</span>), [<span class="st">&quot;район&quot;</span>]))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> make_pipeline(prep, LinearRegression())</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="co"># статистики вычисляются только по обучающей части</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)</span></code></pre></div>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-2">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Почему номинальный признак нельзя кодировать числами 1, 2, 3?</li>
+<li>Зачем при прямом кодировании удаляют один из столбцов?</li>
+<li>Чем стандартизация отличается от минимаксной нормализации? Когда
+предпочтительнее каждая?</li>
+<li>Как с помощью признаков описать нелинейную зависимость линейной
+моделью?</li>
+<li>Назовите источники утечки данных. Как конвейер scikit-learn защищает
+от одного из них?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-2">Задачи</h2>
+<ol type="1">
+<li><p>Запишите матрицу <span class="math inline">\mathbf{F}</span> для
+табл. <a href="ch02.html#tbl:flats">2.1</a>: заполните пропуск медианой,
+закодируйте район прямым кодированием с базовым районом А, добавьте
+фиктивный признак.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>шесть строк вида <span class="math inline">(1, \text{площадь},
+f_{\text{Б}}, f_{\text{В}}, \text{этаж}, \text{год})</span>; у квартиры
+№ 4 год равен 2005.</p>
+</details></li>
+<li><p>Стандартизуйте площади из табл. <a
+href="ch02.html#tbl:flats">2.1</a>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">m = 52</span>, <span
+class="math inline">\sigma \approx 13{,}66</span>; стандартизованные
+площади квартир № 1–6: <span class="math inline">-1{,}32</span>; <span
+class="math inline">0</span>; <span class="math inline">-0{,}81</span>;
+<span class="math inline">1{,}68</span>; <span
+class="math inline">0{,}81</span>; <span
+class="math inline">-0{,}37</span>.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch01.html" rel="prev"><span class="dir">Назад</span><span class="t">Задача обучения по прецедентам</span></a>
+  <a class="next" href="ch03.html" rel="next"><span class="dir">Далее</span><span class="t">Линейная регрессия и метод наименьших квадратов</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

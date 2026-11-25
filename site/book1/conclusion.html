@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Заключение">
+  <title>Заключение — Машинное обучение: линейные и вероятностные
+модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li class="current"><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 class="unnumbered" id="conclusion">Заключение</h1>
+<p>Линейная и логистическая регрессия и наивный байесовский
+классификатор внешне не похожи друг на друга, но обучаются по общей
+схеме. Выбирают семейство моделей <span class="math inline">g(x,
+\boldsymbol{\theta})</span> и функцию потерь <span
+class="math inline">\mathcal{L}</span>, а параметры находят минимизацией
+эмпирического риска — явной формулой, как в методе наименьших квадратов,
+градиентным спуском, как в логистической регрессии, или подсчётом
+частот, как в наивном байесовском классификаторе. Малый риск на
+обучающей выборке ещё не означает хорошей модели: качество проверяют на
+объектах, не участвовавших в обучении, с помощью отложенной выборки или
+кросс-валидации, а переобучение сдерживают регуляризацией. Метрику
+качества выбирают исходя из задачи, и она не обязана совпадать с
+функцией потерь.</p>
+<p>Теория вероятностей объясняет, откуда берутся функции потерь и
+штрафы, которые в главах книги могли показаться выбранными произвольно.
+Квадратичная потеря соответствует нормальному шуму в ответах,
+логистическая — распределению Бернулли для меток класса; минимизация
+риска с такими потерями — это максимизация правдоподобия. Штрафы L2 и L1
+соответствуют априорным распределениям весов — нормальному и Лапласа.
+Дискриминативные модели оценивают вероятность класса напрямую,
+генеративные — через распределения объектов в классах и формулу
+Байеса.</p>
+<p>На практике решение задачи машинного обучения начинается не с модели,
+а с постановки: что прогнозируется, какие данные доступны в момент
+прогноза, как будет измеряться качество и с какой базовой моделью
+сравнивать. Затем данные исследуют и готовят, разбивают так, чтобы
+оценка качества не была завышенной, обучают простую модель и только
+после этого — более сложные. Линейная и логистическая регрессия, наивный
+байесовский классификатор остаются хорошими базовыми моделями и в
+задачах, где в итоге используют более мощные методы.</p>
+<p>Понятия книги переносятся на другие модели. Кусочно-линейная функция
+потерь от отступа приводит к методу опорных векторов, экспоненциальная —
+к бустингу; логистическая регрессия с функцией softmax — это нейронная
+сеть из одного слоя, а мини-пакетный градиентный спуск и регуляризация
+весов — основа обучения глубоких сетей. Для дальнейшего изучения
+рекомендуются книги [6, 7] — подробное и строгое изложение
+статистического обучения, [2, 3] — практическое руководство по
+scikit-learn и нейронным сетям, [4, 5] — инженерные приёмы построения
+систем машинного обучения.</p>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch09.html" rel="prev"><span class="dir">Назад</span><span class="t">Наивный байесовский классификатор</span></a>
+  <a class="next" href="references.html" rel="next"><span class="dir">Далее</span><span class="t">Список литературы</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

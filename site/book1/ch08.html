@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Метрики качества классификации">
+  <title>Метрики качества классификации — Машинное обучение: линейные и
+вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li class="current"><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+<ol>
+<li><a href="ch08.html#funktsiya-poter-i-metrika-kachestva"><span class="num">8.1</span><span>Функция потерь и метрика качества</span></a></li>
+<li><a href="ch08.html#matritsa-oshibok"><span class="num">8.2</span><span>Матрица ошибок</span></a></li>
+<li><a href="ch08.html#tochnost-i-polnota"><span class="num">8.3</span><span>Точность и полнота</span></a></li>
+<li><a href="ch08.html#porog-roc-krivaya-i-auc"><span class="num">8.4</span><span>Порог, ROC-кривая и AUC</span></a></li>
+<li><a href="ch08.html#krivaya-tochnost-polnota-i-logarifmicheskaya-poterya"><span class="num">8.5</span><span>Кривая точность–полнота и логарифмическая потеря</span></a></li>
+<li><a href="ch08.html#vybor-metriki"><span class="num">8.6</span><span>Выбор метрики</span></a></li>
+<li><a href="ch08.html#voprosy-dlya-samokontrolya-8"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch08.html#zadachi-8"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="8" id="ch08"><span
+class="header-section-number">8</span> Метрики качества
+классификации</h1>
+<!-- Источники: лекция 06-quality_metrics (с. 3–4, 7–16, 28–29). Ошибка слайда 06, с. 8 исправлена: порог применяется к разделяющей функции h, а не к g. IoU и mAP — в книгу 3. -->
+<p>Логистическая регрессия обучается минимизацией логистической потери,
+но о качестве классификатора судят по другим величинам. Какие именно
+величины выбрать, зависит от задачи: врача интересует, сколько больных
+пациентов модель пропустила, банк — сколько надёжных заёмщиков она
+отвергла, тестировщика — сколько модулей с ошибками она нашла (на
+примере модулей программы из гл. 1 построена и эта глава). В этой главе
+описаны метрики качества классификации, их связь с порогом, по которому
+вероятность превращается в класс, и правила выбора метрики под
+задачу.</p>
+<h2 data-number="8.1" id="funktsiya-poter-i-metrika-kachestva"><span
+class="header-section-number">8.1</span> Функция потерь и метрика
+качества</h2>
+<p>Функция потерь служит для обучения: она должна быть удобна для
+решения задачи оптимизации — быть гладкой, с вычислимым градиентом.
+<em>Метрика качества</em> служит для оценки: она должна отражать то, что
+важно в задаче, и быть понятной людям, которые принимают решения по
+модели. Функция, по которой модель обучают, и метрика, по которой её
+оценивают, не обязаны совпадать. Например, классификатор модулей из гл.
+1 можно обучить логистической регрессией, то есть минимизацией
+логистической потери, а оценивать по доле дефектных модулей, которые он
+нашёл; ту же логистическую регрессию в медицинской диагностике оценивают
+по доле пропущенных больных. Доля ошибок, наоборот, плохо подходит для
+обучения (гл. 7), но понятна как метрика. Для регрессии MSE часто служит
+и тем и другим.</p>
+<p>Метрики модели — не единственный способ оценить её пользу. Модель
+работает внутри системы — например, системы, которая подсказывает
+тестировщикам, какие модули проверить первыми, — и пользу от неё
+измеряют на нескольких уровнях, от цели всей системы до свойств самой
+модели. Такую лестницу называют <em>иерархией метрик</em>. На верхнем
+уровне — цель бизнеса: меньше ошибок, обнаруженных пользователями,
+меньше затрат на тестирование. Её измеряют месяцами, и на неё влияет
+многое помимо модели. Ниже — <em>онлайн-метрики</em>, которые собирают с
+работающей системы: доля модулей, проверенных по подсказке модели, в
+которых действительно нашли ошибку. Ещё ниже — <em>офлайн-метрики</em>,
+вычисляемые до внедрения на исторических данных или по оценкам
+экспертов; к ним относятся все метрики этой главы. Хорошая
+офлайн-метрика должна быть согласована с верхними уровнями: если она
+растёт, а онлайн-метрики нет, метрика выбрана неудачно.</p>
+<h2 data-number="8.2" id="matritsa-oshibok"><span
+class="header-section-number">8.2</span> Матрица ошибок</h2>
+<p>В бинарной классификации класс <span class="math inline">+1</span>
+называют <em>положительным</em> — обычно это то, что нужно найти (модуль
+с ошибкой, болезнь, мошенническая операция), класс <span
+class="math inline">-1</span> — <em>отрицательным</em>. На каждом
+объекте <span class="math inline">x_i</span> контрольной выборки
+сравниваются два значения: правильный ответ <span
+class="math inline">y_i</span> и прогноз модели <span
+class="math inline">\hat y_i = g(x_i, \boldsymbol{\theta})</span>.
+Каждое принимает два значения, поэтому возможны четыре исхода, и все
+объекты выборки распределяются по ним. Число объектов с каждым исходом
+записывают в таблицу 2 × 2 — <em>матрицу ошибок</em> (confusion matrix,
+табл. <a href="ch08.html#tbl:confusion">8.1</a>).</p>
+<table id="tbl:confusion">
+<caption>Таблица 8.1. Матрица ошибок: строка — правильный ответ, столбец
+— прогноз модели</caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th>Прогноз <span class="math inline">\hat y = +1</span></th>
+<th>Прогноз <span class="math inline">\hat y = -1</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ответ <span class="math inline">y = +1</span></strong></td>
+<td>TP — true positive, истинно положительный</td>
+<td>FN — false negative, ложноотрицательный (пропуск)</td>
+</tr>
+<tr>
+<td><strong>Ответ <span class="math inline">y = -1</span></strong></td>
+<td>FP — false positive, ложноположительный (ложная тревога)</td>
+<td>TN — true negative, истинно отрицательный</td>
+</tr>
+</tbody>
+</table>
+<p>Обозначения читаются так: вторая буква — прогноз модели (P —
+positive, модель ответила <span class="math inline">+1</span>; N —
+negative, ответила <span class="math inline">-1</span>), первая — верен
+ли прогноз (T — true, верен; F — false, ошибочен). Например, FN — модель
+ответила <span class="math inline">-1</span> и ошиблась: объект в
+действительности положительный, модель его пропустила. FP — модель
+ответила <span class="math inline">+1</span> и ошиблась: подняла ложную
+тревогу на отрицательном объекте. В клетке таблицы стоит число таких
+объектов, например</p>
+<div class="equation">
+<p><span class="math display">\mathrm{TP} = \sum_{i=1}^{\ell} [y_i =
++1]\,[\hat y_i = +1];</span></p>
+</div>
+<div class="continuation">
+<p>остальные три числа записываются так же. На диагонали таблицы (TP и
+TN) — верные ответы, вне диагонали (FN и FP) — ошибки двух видов. FP
+называют также ошибкой первого рода, FN — ошибкой второго рода. Каждый
+объект попадает ровно в одну клетку, поэтому <span
+class="math inline">\mathrm{TP} + \mathrm{TN} + \mathrm{FP} +
+\mathrm{FN} = \ell</span>.</p>
+</div>
+<p>Простейшая метрика — <em>доля правильных ответов</em> (accuracy):
+число верных прогнозов, делённое на число объектов. Её записывают так
+же, как эмпирический риск с индикаторной функцией потерь в гл. 1, только
+индикатор отмечает не ошибки, а верные ответы; через клетки матрицы
+ошибок она равна отношению суммы диагональных клеток к сумме всех:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{Accuracy} = \frac{1}{\ell}
+\sum_{i=1}^{\ell} [\hat y_i = y_i] = \frac{\mathrm{TP} +
+\mathrm{TN}}{\mathrm{TP} + \mathrm{TN} + \mathrm{FP} +
+\mathrm{FN}}.</span></p>
+</div>
+<div class="continuation">
+<p>Сумма индикаторов в числителе — число верных ответов, то есть сумма
+диагональных клеток <span class="math inline">\mathrm{TP} +
+\mathrm{TN}</span>; знаменатель — объём выборки <span
+class="math inline">\ell</span>. Доля ошибок — это и есть эмпирический
+риск <span class="math inline">Q</span>, который минимизировали в гл. 1,
+поэтому <span class="math inline">\mathrm{Accuracy} = 1 - Q</span>. Её
+недостаток проявляется при <em>несбалансированных классах</em>. Если
+модули с ошибками составляют 1 % всех модулей, классификатор, который
+всегда отвечает «ошибок нет», имеет долю правильных ответов 99 % и при
+этом бесполезен: он не находит ни одного дефектного модуля. Кроме того,
+доля правильных ответов считает все ошибки одинаковыми, хотя пропуск
+дефектного модуля и лишняя проверка исправного имеют разную цену: первый
+означает ошибку, которую найдут пользователи, вторая — потраченное время
+тестировщика.</p>
+</div>
+<p><strong>Пример.</strong> Пусть есть десять программных модулей, для
+которых модель (например, логистическая регрессия) вычислила вероятность
+наличия в каждом из них ошибки <span class="math inline">\hat p</span> —
+здесь, как и в гл. 7, «крышка» над буквой означает прогноз модели (табл.
+<a href="ch08.html#tbl:scores">8.2</a>). Модули упорядочены по убыванию
+<span class="math inline">\hat p</span>; ошибки действительно нашли в
+четырёх из них.</p>
+<table id="tbl:scores" style="width:100%;">
+<caption>Таблица 8.2. Оценки модели и истинные ответы для десяти
+модулей</caption>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr>
+<th>Модуль</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+<th>7</th>
+<th>8</th>
+<th>9</th>
+<th>10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\hat p</span></td>
+<td>0,95</td>
+<td>0,85</td>
+<td>0,70</td>
+<td>0,60</td>
+<td>0,45</td>
+<td>0,40</td>
+<td>0,30</td>
+<td>0,20</td>
+<td>0,15</td>
+<td>0,05</td>
+</tr>
+<tr>
+<td><span class="math inline">y</span></td>
+<td><span class="math inline">+1</span></td>
+<td><span class="math inline">+1</span></td>
+<td><span class="math inline">-1</span></td>
+<td><span class="math inline">+1</span></td>
+<td><span class="math inline">-1</span></td>
+<td><span class="math inline">+1</span></td>
+<td><span class="math inline">-1</span></td>
+<td><span class="math inline">-1</span></td>
+<td><span class="math inline">-1</span></td>
+<td><span class="math inline">-1</span></td>
+</tr>
+</tbody>
+</table>
+<p>При пороге 0,5 модель относит к классу <span
+class="math inline">+1</span> модули 1–4. Из них три действительно
+дефектные: TP = 3, FP = 1 (модуль 3). Дефектный модуль 6 пропущен: FN =
+1. Остальные пять модулей верно признаны исправными: TN = 5. Матрица
+ошибок для этого порога приведена в табл. <a
+href="ch08.html#tbl:confusion-example">8.3</a>.</p>
+<table id="tbl:confusion-example">
+<caption>Таблица 8.3. Матрица ошибок для примера при пороге
+0,5</caption>
+<thead>
+<tr>
+<th></th>
+<th>Прогноз <span class="math inline">\hat y = +1</span></th>
+<th>Прогноз <span class="math inline">\hat y = -1</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ответ <span class="math inline">y = +1</span></strong></td>
+<td>TP = 3 (модули 1, 2, 4)</td>
+<td>FN = 1 (модуль 6)</td>
+</tr>
+<tr>
+<td><strong>Ответ <span class="math inline">y = -1</span></strong></td>
+<td>FP = 1 (модуль 3)</td>
+<td>TN = 5 (модули 5, 7–10)</td>
+</tr>
+</tbody>
+</table>
+<p>Доля правильных ответов — <span class="math inline">(3 + 5)/10 =
+0{,}8</span>. Для сравнения: классификатор «всегда <span
+class="math inline">-1</span>» даёт <span class="math inline">6/10 =
+0{,}6</span>, хотя не находит ничего.</p>
+<h2 data-number="8.3" id="tochnost-i-polnota"><span
+class="header-section-number">8.3</span> Точность и полнота</h2>
+<p>Доля правильных ответов смешивает ошибки обоих видов, а точность и
+полнота рассматривают их по отдельности. <em>Точность</em> (precision) —
+доля действительно положительных объектов среди тех, которые модель
+назвала положительными: она показывает, насколько можно доверять ответу
+<span class="math inline">+1</span>. <em>Полнота</em> (recall) — доля
+положительных объектов, которые модель нашла:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{Precision} =
+\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FP}}, \qquad \mathrm{Recall} =
+\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FN}}.</span></p>
+</div>
+<div class="continuation">
+<p>В примере при пороге 0,5 точность равна <span class="math inline">3/4
+= 0{,}75</span>: из четырёх модулей, отправленных на проверку, ошибки
+есть в трёх. Полнота тоже <span class="math inline">3/4</span>: из
+четырёх дефектных модулей найдены три. Классификатор «всегда <span
+class="math inline">-1</span>» имеет нулевую полноту: доля правильных
+ответов у него 0,6, а полнота сразу показывает, что он ничего не
+находит.</p>
+</div>
+<p>Точность и полнота обычно конкурируют. Если отправлять на проверку
+больше модулей (снизить порог), полнота растёт, а точность, как правило,
+падает: в список попадает больше исправных модулей. Чтобы сравнивать
+классификаторы одним числом, используют <em>F-меру</em> — среднее
+гармоническое точности и полноты:</p>
+<div class="equation">
+<p><span class="math display">F_1 = \frac{2 \cdot \mathrm{Precision}
+\cdot \mathrm{Recall}}{\mathrm{Precision} + \mathrm{Recall}}, \qquad
+F_\beta = \frac{(1 + \beta^2) \cdot \mathrm{Precision} \cdot
+\mathrm{Recall}}{\beta^2 \cdot \mathrm{Precision} +
+\mathrm{Recall}}.</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Среднее гармоническое близко к
+меньшему из чисел: при точности 1 и полноте 0,1 среднее арифметическое
+равно 0,55, а <span class="math inline">F_1 \approx 0{,}18</span>.
+Поэтому высокая F-мера требует, чтобы и точность, и полнота были высоки.
+Параметр <span class="math inline">\beta</span> задаёт относительную
+важность: при <span class="math inline">\beta &gt; 1</span> важнее
+полнота (<span class="math inline">F_2</span> — когда пропуск дороже
+ложной тревоги), при <span class="math inline">\beta &lt; 1</span> —
+точность.</p>
+<p>В медицине и технической диагностике используют другие названия.
+<em>Чувствительность</em> — то же, что полнота: доля положительных
+объектов, которые модель отнесла к положительному классу.
+<em>Специфичность</em> — доля отрицательных объектов, которые модель
+отнесла к отрицательному классу, <span
+class="math inline">\mathrm{TN}/(\mathrm{TN} + \mathrm{FP})</span>; в
+примере <span class="math inline">5/6 \approx 0{,}83</span>.</p>
+<p><strong>Несколько классов.</strong> Если классов <span
+class="math inline">K &gt; 2</span>, точность и полноту вычисляют для
+каждого класса <span class="math inline">k</span>, считая его
+положительным, а остальные — отрицательными. Так для каждого класса
+<span class="math inline">k = 1, \ldots, K</span> получаются свои числа
+<span class="math inline">\mathrm{TP}_k</span>, <span
+class="math inline">\mathrm{FP}_k</span> и <span
+class="math inline">\mathrm{FN}_k</span>, которые затем сводят в одно
+значение метрики одним из двух способов. При <em>макроусреднении</em>
+метрику вычисляют для каждого класса и берут обычное среднее:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{Precision}_{\text{макро}} =
+\frac{1}{K} \sum_{k=1}^{K} \frac{\mathrm{TP}_k}{\mathrm{TP}_k +
+\mathrm{FP}_k}, \qquad \mathrm{Recall}_{\text{макро}} = \frac{1}{K}
+\sum_{k=1}^{K} \frac{\mathrm{TP}_k}{\mathrm{TP}_k +
+\mathrm{FN}_k}.</span></p>
+</div>
+<div class="continuation">
+<p>Все классы весят одинаково, поэтому плохое качество на редком классе
+существенно снижает итоговую метрику. При <em>микроусреднении</em>
+сначала суммируют числа по всем классам, а затем вычисляют метрику по
+суммам:</p>
+</div>
+<div class="equation">
+<p><span class="math display">\mathrm{Precision}_{\text{микро}} =
+\frac{\sum_{k=1}^{K} \mathrm{TP}_k}{\sum_{k=1}^{K} (\mathrm{TP}_k +
+\mathrm{FP}_k)}, \qquad \mathrm{Recall}_{\text{микро}} =
+\frac{\sum_{k=1}^{K} \mathrm{TP}_k}{\sum_{k=1}^{K} (\mathrm{TP}_k +
+\mathrm{FN}_k)}.</span></p>
+</div>
+<div class="continuation">
+<p>Здесь одинаково весит каждый объект, результат определяют частые
+классы, а ошибки на малочисленных классах на итоговую метрику почти не
+влияют. Если каждому объекту приписан ровно один класс, микроусреднённые
+точность и полнота совпадают с долей правильных ответов. Каждая ошибка —
+одновременно FP для класса, который назвала модель, и FN для правильного
+класса, поэтому <span class="math inline">\sum_k \mathrm{FP}_k = \sum_k
+\mathrm{FN}_k</span> равно числу ошибок, а <span
+class="math inline">\sum_k \mathrm{TP}_k</span> — числу верных
+ответов.</p>
+</div>
+<h2 data-number="8.4" id="porog-roc-krivaya-i-auc"><span
+class="header-section-number">8.4</span> Порог, ROC-кривая и AUC</h2>
+<p>Модель выдаёт вероятность, а не класс: чтобы получить класс, <span
+class="math inline">\hat p</span> сравнивают с порогом и относят объект
+к классу <span class="math inline">+1</span>, если <span
+class="math inline">\hat p</span> не меньше порога. Порог 0,5 выбирают
+по умолчанию, но он оптимален, только если ошибки первого и второго рода
+одинаково дороги. Пусть пропуск дефектного модуля стоит <span
+class="math inline">c_+</span>, а лишняя проверка исправного — <span
+class="math inline">c_-</span>. Если отнести модуль к классу <span
+class="math inline">+1</span>, ожидаемые потери равны <span
+class="math inline">(1 - \hat p)\, c_-</span> (модуль окажется исправным
+с вероятностью <span class="math inline">1 - \hat p</span>); если к
+классу <span class="math inline">-1</span>, они равны <span
+class="math inline">\hat p \, c_+</span> (модуль окажется дефектным с
+вероятностью <span class="math inline">\hat p</span>). Отвечать <span
+class="math inline">+1</span> не хуже, чем <span
+class="math inline">-1</span>, когда <span class="math inline">(1 - \hat
+p)\, c_- \le \hat p \, c_+</span>, то есть при</p>
+<div class="equation">
+<p><span class="math display">\hat p \ge \frac{c_-}{c_- +
+c_+}.</span></p>
+</div>
+<div class="continuation">
+<p>Если пропуск вчетверо дороже лишней проверки, порог равен <span
+class="math inline">1/(1 + 4) = 0{,}2</span>.</p>
+</div>
+<p>Вернёмся к десяти модулям из табл. <a
+href="ch08.html#tbl:scores">8.2</a> и снизим порог с 0,5 до 0,35.
+Значение 0,35 взято для примера: оценки модулей 6 и 7 равны 0,40 и 0,30,
+и любой порог больше 0,30 и не больше 0,40 даёт тот же результат. Теперь
+на проверку уходят модули 1–6: TP = 4, FP = 2, FN = 0, TN = 4. Полнота
+выросла до 1, точность упала до <span class="math inline">4/6 \approx
+0{,}67</span>, а <span class="math inline">F_1</span> выросла с 0,75 до
+0,8. Каждому порогу соответствует свой классификатор. Чтобы оценить
+модель независимо от порога, рассматривают все пороги сразу.</p>
+<p><strong>ROC-кривая</strong> (receiver operating characteristic) —
+кривая на плоскости с осями</p>
+<div class="equation">
+<p><span class="math display">\mathrm{FPR} =
+\frac{\mathrm{FP}}{\mathrm{FP} + \mathrm{TN}}, \qquad \mathrm{TPR} =
+\frac{\mathrm{TP}}{\mathrm{TP} + \mathrm{FN}}.</span></p>
+</div>
+<div class="continuation">
+<p>TPR — доля положительных объектов, которые модель нашла (полнота),
+FPR — доля отрицательных объектов, на которых модель подняла ложную
+тревогу (единица минус специфичность). Каждая точка кривой соответствует
+одному порогу. При пороге выше всех оценок классификатор ничего не
+называет положительным, это точка <span class="math inline">(0;\,
+0)</span>; при пороге ниже всех оценок он всё называет положительным —
+точка <span class="math inline">(1;\, 1)</span>.</p>
+</div>
+<p>Построим ROC-кривую для примера из табл. <a
+href="ch08.html#tbl:scores">8.2</a> (рис. <a href="#fig:roc-pr">8.1</a>,
+а). Будем снижать порог так, чтобы к классу <span
+class="math inline">+1</span> добавлялось по одному модулю в порядке
+убывания <span class="math inline">\hat p</span>. Каждый положительный
+модуль поднимает кривую на <span class="math inline">1/4</span> (всего
+положительных четыре), каждый отрицательный сдвигает её вправо на <span
+class="math inline">1/6</span>. Модули 1 и 2 положительные — два шага
+вверх; модуль 3 отрицательный — шаг вправо; модуль 4 — вверх; модуль 5 —
+вправо; модуль 6 — вверх, и полнота достигла единицы; оставшиеся четыре
+модуля — шаги вправо. Порогам 0,5 и 0,35 соответствуют точки <span
+class="math inline">(1/6;\, 0{,}75)</span> и <span
+class="math inline">(1/3;\, 1)</span>.</p>
+<figure id="fig:roc-pr">
+<img src="fig/roc_pr.svg" style="width: 98%"
+alt="Рис. 8.1. Кривые для примера из табл. 8.2: а — ROC-кривая; б — кривая точность–полнота" />
+<figcaption aria-hidden="true">Рис. 8.1. Кривые для примера из табл. <a
+href="ch08.html#tbl:scores">8.2</a>: а — ROC-кривая; б — кривая
+точность–полнота</figcaption>
+</figure>
+<p>Идеальная модель даёт всем положительным объектам оценки выше, чем
+отрицательным; её кривая сразу поднимается до TPR = 1, а затем идёт
+вправо. Модель, выдающая случайные оценки, в среднем даёт диагональ
+<span class="math inline">\mathrm{TPR} = \mathrm{FPR}</span>. Мерой
+качества служит <em>площадь под ROC-кривой</em> — AUC (area under
+curve): 1 у идеальной модели, около 0,5 у случайной. В примере AUC =
+0,875.</p>
+<p><strong>Вероятностный смысл AUC.</strong> AUC равна вероятности того,
+что случайно выбранный положительный объект получит от модели оценку
+выше, чем случайно выбранный отрицательный. Проверим на примере. Пар
+«положительный — отрицательный» <span class="math inline">4 \cdot 6 =
+24</span>. Модули 1 и 2 выше всех шести отрицательных — 12 верно
+упорядоченных пар; модуль 4 выше пяти отрицательных (всех, кроме модуля
+3) — ещё 5; модуль 6 выше четырёх (модулей 7–10) — ещё 4. Итого <span
+class="math inline">21/24 = 0{,}875</span> — та же площадь под кривой.
+Почему так получается, видно, если разрезать площадь под ROC-кривой на
+горизонтальные полосы — по одной на каждый шаг кривой вверх, то есть на
+каждый положительный объект. Высота полосы <span
+class="math inline">1/4</span>, а тянется она от кривой до правого края
+квадрата. Её ширина равна единице минус FPR в момент шага, то есть доле
+отрицательных объектов, которые ещё не добавлены, — получили оценку ниже
+этого положительного. Для модулей 1 и 2 ширина <span
+class="math inline">6/6</span>, для модуля 4 она равна <span
+class="math inline">5/6</span>, для модуля 6 — <span
+class="math inline">4/6</span>, и площадь равна <span
+class="math inline">\frac{1}{4}\bigl(1 + 1 + \frac{5}{6} +
+\frac{4}{6}\bigr) = \frac{21}{24}</span>. В общем случае каждая полоса —
+доля пар, в которых данный положительный объект стоит выше
+отрицательного, а сумма полос — доля всех верно упорядоченных пар.</p>
+<p>Из этого смысла следуют свойства AUC. Она зависит только от порядка
+оценок, а не от их величины: если все вероятности возвести в квадрат,
+AUC не изменится. Она не зависит от порога и от соотношения классов.
+Поэтому AUC удобна для сравнения моделей, но ничего не говорит о том,
+хорошо ли откалиброваны вероятности и какой порог выбрать.</p>
+<h2 data-number="8.5"
+id="krivaya-tochnost-polnota-i-logarifmicheskaya-poterya"><span
+class="header-section-number">8.5</span> Кривая точность–полнота и
+логарифмическая потеря</h2>
+<p>При сильном дисбалансе классов ROC-кривая бывает обманчиво хорошей.
+Если исправных модулей тысячи, а дефектных десятки, даже сотня ложных
+тревог даёт малую FPR, и кривая выглядит почти идеальной, хотя на каждый
+найденный дефектный модуль приходится несколько лишних проверок.
+<em>Кривая точность–полнота</em> (рис. <a href="#fig:roc-pr">8.1</a>, б)
+показывает, сколько лишних проверок приходится на найденные дефекты: по
+горизонтали полнота, по вертикали точность при каждом пороге. Случайной
+модели соответствует горизонталь на уровне доли положительного класса (в
+примере 0,4). При редком классе эта горизонталь проходит низко, а кривая
+хорошей модели лежит намного выше неё. Площадь под кривой
+точность–полнота на практике оценивают <em>средней точностью</em>
+(average precision, в scikit-learn —
+<code>average_precision_score</code>): точность вычисляют в тот момент,
+когда в список отобранных попадает очередной положительный объект, и
+усредняют по всем положительным объектам. В примере положительные модули
+1, 2, 4 и 6 попадают в список при точности 1; 1; <span
+class="math inline">3/4</span> и <span class="math inline">4/6</span>, и
+средняя точность равна <span class="math inline">(1 + 1 + 0{,}75 +
+0{,}67)/4 \approx 0{,}85</span>.</p>
+<p>Если важны сами вероятности — например, по ним рассчитывают ожидаемые
+затраты, — качество измеряют <em>логарифмической потерей</em>
+(log-loss), средней бинарной кросс-энтропией из гл. 7:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{LogLoss} = -\frac{1}{\ell}
+\sum_{i=1}^{\ell} \bigl[\tilde y_i \ln \hat p_i + (1 - \tilde y_i) \ln(1
+- \hat p_i)\bigr],</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\tilde y_i \in \{0, 1\}</span>. В
+отличие от AUC, она чувствительна к величине вероятностей: уверенная
+ошибка стоит дорого. В примере log-loss равна 0,42, причём наибольший
+вклад, 1,20, даёт модуль 3: модель уверенно (с вероятностью 0,7) сочла
+его дефектным, а ошибок в нём нет.</p>
+</div>
+<h2 data-number="8.6" id="vybor-metriki"><span
+class="header-section-number">8.6</span> Выбор метрики</h2>
+<p>Метрика выбирается до построения модели, исходя из задачи. Полезно
+ответить на вопросы:</p>
+<ul>
+<li>Что дороже: пропуск положительного объекта или ложная тревога? Если
+пропуск (дефект дойдёт до пользователей, болезнь не будет выявлена) —
+важна полнота, <span class="math inline">F_2</span> или порог, сдвинутый
+вниз. Если ложная тревога (рекомендация, которая раздражает
+пользователя) — важна точность.</li>
+<li>Сбалансированы ли классы? При дисбалансе доля правильных ответов
+неинформативна; используют точность, полноту, F-меру, кривую
+точность–полнота.</li>
+<li>Нужен ли порог сразу? Для сравнения моделей до выбора порога
+подходит AUC.</li>
+<li>Используются ли вероятности дальше? Тогда нужна log-loss.</li>
+</ul>
+<p>Значение метрики само по себе мало что говорит. Его сравнивают с
+<em>базовой моделью</em> (гл. 5): для классификации это предсказание
+самого частого класса, случайное предсказание с учётом долей классов или
+простое правило по одному признаку («модуль подозрителен, если в нём
+больше тысячи строк»). Модель, которая не превосходит такое правило, не
+стоит внедрения. Все метрики главы реализованы в модуле
+<code>sklearn.metrics</code> (листинг 8.1).</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 8.1. Метрики качества классификации в
+scikit-learn</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> confusion_matrix</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> log_loss, roc_auc_score</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> model.predict_proba(X_test)[:, <span class="dv">1</span>]  <span class="co"># P(класс 1)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> (p <span class="op">&gt;=</span> <span class="fl">0.35</span>).astype(<span class="bu">int</span>)       <span class="co"># свой порог</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(confusion_matrix(y_test, y_pred))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># точность, полнота и F1 по каждому классу</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(classification_report(y_test, y_pred))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(roc_auc_score(y_test, p), log_loss(y_test, p))</span></code></pre></div>
+<p>Метрики, не зависящие от порога (AUC, log-loss), вычисляют по
+вероятностям <code>p</code>, а метрики, зависящие от него, — по классам
+<code>y_pred</code>.</p>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-8">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Чем метрика качества отличается от функции потерь?</li>
+<li>Почему доля правильных ответов обманчива при несбалансированных
+классах?</li>
+<li>Что показывают точность и полнота? Почему они конкурируют?</li>
+<li>Почему F-мера использует среднее гармоническое, а не
+арифметическое?</li>
+<li>Как выбрать порог, если пропуск положительного объекта в 9 раз
+дороже ложной тревоги?</li>
+<li>Что откладывают по осям ROC-кривой? Какие точки соответствуют самому
+высокому и самому низкому порогу?</li>
+<li>Каков вероятностный смысл AUC? Изменится ли AUC, если все оценки
+модели умножить на 2?</li>
+<li>Когда кривая точность–полнота информативнее ROC-кривой?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-8">Задачи</h2>
+<ol type="1">
+<li><p>Классификатор на 1000 объектах дал TP = 40, FP = 60, FN = 10, TN
+= 890. Найдите долю правильных ответов, точность, полноту, <span
+class="math inline">F_1</span> и специфичность.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>доля правильных ответов 0,93; точность 0,4; полнота 0,8; <span
+class="math inline">F_1 \approx 0{,}53</span>; специфичность <span
+class="math inline">890/950 \approx 0{,}94</span>.</p>
+</details></li>
+<li><p>Для примера из табл. <a href="ch08.html#tbl:scores">8.2</a>
+найдите точность, полноту и <span class="math inline">F_1</span> при
+пороге 0,65.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>к классу <span class="math inline">+1</span> отнесены модули 1–3; TP
+= 2, FP = 1, FN = 2; точность <span class="math inline">2/3</span>,
+полнота 0,5, <span class="math inline">F_1 \approx 0{,}57</span>.</p>
+</details></li>
+<li><p>Модель выдала оценки 0,9; 0,8; 0,3 положительным объектам и 0,7;
+0,2 — отрицательным. Вычислите AUC подсчётом пар.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>из 6 пар неверно упорядочена одна (0,3 &lt; 0,7), AUC <span
+class="math inline">= 5/6 \approx 0{,}83</span>.</p>
+</details></li>
+<li><p>Ложная тревога стоит 1 ч работы тестировщика, пропуск дефекта —
+20 ч на исправление после выпуска. Какой порог вероятности выбрать?</p>
+<details class="answer"><summary>Ответ</summary>
+<p>порог <span class="math inline">c_-/(c_- + c_+) = 1/(1 + 20) \approx
+0{,}048</span>: проверять модуль, если вероятность ошибки в нём не
+меньше 4,8 %.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch07.html" rel="prev"><span class="dir">Назад</span><span class="t">Логистическая регрессия</span></a>
+  <a class="next" href="ch09.html" rel="next"><span class="dir">Далее</span><span class="t">Наивный байесовский классификатор</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Задача обучения по прецедентам">
+  <title>Задача обучения по прецедентам — Машинное обучение: линейные и
+вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li class="current"><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+<ol>
+<li><a href="ch01.html#chto-takoe-mashinnoe-obuchenie"><span class="num">1.1</span><span>Что такое машинное обучение</span></a></li>
+<li><a href="ch01.html#obekty-priznaki-i-otvety"><span class="num">1.2</span><span>Объекты, признаки и ответы</span></a></li>
+<li><a href="ch01.html#tipy-zadach"><span class="num">1.3</span><span>Типы задач</span></a></li>
+<li><a href="ch01.html#model-i-metod-obucheniya"><span class="num">1.4</span><span>Модель и метод обучения</span></a></li>
+<li><a href="ch01.html#funktsiya-poter-i-empiricheskiy-risk"><span class="num">1.5</span><span>Функция потерь и эмпирический риск</span></a></li>
+<li><a href="ch01.html#postanovka-zadachi-na-praktike"><span class="num">1.6</span><span>Постановка задачи на практике</span></a></li>
+<li><a href="ch01.html#voprosy-dlya-samokontrolya"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch01.html#zadachi"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="1" id="ch01"><span
+class="header-section-number">1</span> Задача обучения по
+прецедентам</h1>
+<p>В этой главе вводятся основные понятия: объект, признак, ответ,
+модель, функция потерь и эмпирический риск. Обучение модели сводится к
+задаче оптимизации — найти параметры, при которых средняя ошибка на
+известных примерах минимальна; остальные главы по-разному решают именно
+эту задачу.</p>
+<h2 data-number="1.1" id="chto-takoe-mashinnoe-obuchenie"><span
+class="header-section-number">1.1</span> Что такое машинное
+обучение</h2>
+<p>Перед выпуском новой версии программы тестировщики не успевают
+одинаково тщательно проверить все модули программы. Хочется заранее
+знать, в каких модулях ошибки наиболее вероятны. Обычно пишут правила,
+например: «модуль подозрителен, если в нём больше тысячи строк и за
+месяц его меняли больше десяти раз». Но пороги в таких правилах взяты на
+глаз, а когда проект изменится, правила устареют.</p>
+<p>Машинное обучение предлагает другой подход. В системе контроля версий
+и трекере задач хранится история: для каждого модуля прошлых версий
+известно, сколько в нём было строк, как часто его меняли и нашли ли в
+нём ошибки после выпуска новой версии программного продукта. Компьютер
+получает эти примеры и сам находит зависимость между характеристиками
+модуля и наличием ошибок. Результат обучения — программа (модель),
+которая выдаёт прогноз для нового модуля. Разница подходов показана на
+рис. <a href="#fig:ml-vs-prog">1.1</a>: в традиционном программировании
+человек пишет правила, а компьютер выдаёт ответы; в машинном обучении
+человек даёт примеры с ответами, а компьютер находит правила.</p>
+<figure id="fig:ml-vs-prog">
+<img src="fig/ml_vs_programming.svg" style="width: 88%"
+alt="Рис. 1.1. Традиционное программирование и машинное обучение" />
+<figcaption aria-hidden="true">Рис. 1.1. Традиционное программирование и
+машинное обучение</figcaption>
+</figure>
+<p>Для инженера удобно определение Т. Митчелла [1]: программа
+<em>обучается</em> на опыте <span class="math inline">E</span>
+относительно задачи <span class="math inline">T</span> и меры качества
+<span class="math inline">P</span>, если её качество в задаче <span
+class="math inline">T</span>, измеренное мерой <span
+class="math inline">P</span>, растёт с накоплением опыта <span
+class="math inline">E</span>.</p>
+<p>Чтобы воспользоваться этим определением, нужно явно указать все три
+составляющие. В примере с модулями программы задача <span
+class="math inline">T</span> — предсказать, будет ли в модуле найдена
+ошибка; опыт <span class="math inline">E</span> — модули прошлых версий
+программы, для которых уже известно, нашли ли в них ошибки после
+выпуска; мера качества <span class="math inline">P</span> — например,
+доля верных прогнозов. Пока не названы <span
+class="math inline">T</span>, <span class="math inline">E</span> и <span
+class="math inline">P</span>, задача обучения не поставлена.</p>
+<p>Машинное обучение — раздел искусственного интеллекта, но не синоним
+«разумной машины»: это математические методы восстановления зависимостей
+по примерам. Модель знает о предметной области только то, что содержится
+в данных.</p>
+<h2 data-number="1.2" id="obekty-priznaki-i-otvety"><span
+class="header-section-number">1.2</span> Объекты, признаки и ответы</h2>
+<p>Перейдём к формальной постановке. Обозначим через <span
+class="math inline">X</span> множество <em>объектов</em> — то, о чём мы
+делаем прогноз (модули программы, заявки на кредит, квартиры), а через
+<span class="math inline">Y</span> — множество <em>ответов</em> (есть ли
+ошибка, вернёт ли заёмщик кредит, сколько стоит квартира); объект <span
+class="math inline">x \in X</span>, ответ <span class="math inline">y
+\in Y</span>. Считается, что существует неизвестная зависимость <span
+class="math inline">\varphi \colon X \to Y</span>, и для каждого объекта
+<span class="math inline">x</span> его ответ <span class="math inline">y
+= \varphi(x)</span>.</p>
+<p>Сама зависимость неизвестна, зато известны ответы на конечном наборе
+объектов — <em>обучающей выборке</em></p>
+<div class="equation">
+<p><span class="math display">X^\ell = (x_i, y_i)_{i=1}^{\ell}, \quad
+y_i = \varphi(x_i),</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\ell</span> — число объектов в выборке.
+Пары <span class="math inline">(x_i, y_i)</span> называют прецедентами,
+отсюда название задачи и этой главы. Требуется построить функцию,
+которая приближает <span class="math inline">\varphi</span> не только на
+объектах выборки, но и на новых объектах: запомнить известные ответы
+легко, трудно не ошибаться на объектах, которых модель не видела.</p>
+</div>
+<p>Компьютер не умеет работать с модулем программы или квартирой
+напрямую. Объект описывают набором <em>признаков</em> — функций <span
+class="math inline">f_j \colon X \to D_j</span>, <span
+class="math inline">j = 1, \ldots, n</span>, каждая из которых
+сопоставляет объекту одно значение из множества <span
+class="math inline">D_j</span>. По множеству значений различают четыре
+типа признаков:</p>
+<ul>
+<li>бинарный, <span class="math inline">D_j = \{0, 1\}</span>: есть ли у
+модуля автоматические тесты;</li>
+<li>номинальный, <span class="math inline">D_j</span> конечно и не
+упорядочено: язык программирования, на котором написан модуль;</li>
+<li>порядковый, <span class="math inline">D_j</span> конечно и
+упорядочено: приоритет компонента программы (низкий, средний,
+высокий);</li>
+<li>количественный, <span class="math inline">D_j = \mathbb{R}</span>:
+число строк кода, цикломатическая сложность, число изменений за
+месяц.</li>
+</ul>
+<p>Тип признака определяет, какие действия с ним осмысленны: количества
+строк кода в разных модулях можно складывать, языки программирования —
+нет; приоритеты можно сравнивать, но не вычитать. Как перевести признаки
+всех типов в числа, описано в гл. 2.</p>
+<p>Набор значений всех признаков объекта <span
+class="math inline">x_i</span> называют его <em>признаковым
+описанием</em> и записывают вектором <span
+class="math inline">\mathbf{x}_i = (f_1(x_i), \ldots, f_n(x_i))</span>.
+Значение <span class="math inline">j</span>-го признака на <span
+class="math inline">i</span>-м объекте для краткости обозначают <span
+class="math inline">x_{ij} = f_j(x_i)</span>. Важно различать объект
+<span class="math inline">x_i</span> (модуль программы) и его
+признаковое описание <span class="math inline">\mathbf{x}_i</span>
+(вектор чисел): модель машинного обучения видит объект только через
+признаки.</p>
+<p>Описания всех объектов выборки складывают в <em>матрицу
+объекты–признаки</em></p>
+<div class="equation">
+<p><span class="math display">\mathbf{F} = \bigl(f_j(x_i)\bigr)_{\ell
+\times n} = \begin{pmatrix} f_1(x_1) &amp; \ldots &amp; f_n(x_1) \\
+\vdots &amp; \ddots &amp; \vdots \\ f_1(x_\ell) &amp; \ldots &amp;
+f_n(x_\ell) \end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Строка матрицы — один объект, столбец — один признак. Ответы образуют
+вектор <span class="math inline">\mathbf{y} = (y_1, \ldots,
+y_\ell)^{\mathrm{T}}</span>. В программах на Python матрицу
+объекты–признаки обычно называют <code>X</code>, а вектор ответов —
+<code>y</code>. Пример выборки из пяти модулей приведён в табл. <a
+href="ch01.html#tbl:modules">1.1</a>.</p>
+</div>
+<table id="tbl:modules">
+<caption>Таблица 1.1. Обучающая выборка: модули программы</caption>
+<colgroup>
+<col style="width: 12%" />
+<col style="width: 16%" />
+<col style="width: 24%" />
+<col style="width: 18%" />
+<col style="width: 14%" />
+<col style="width: 16%" />
+</colgroup>
+<thead>
+<tr>
+<th>Модуль</th>
+<th>Строк кода, <span class="math inline">f_1</span></th>
+<th>Цикломатическая сложность, <span class="math inline">f_2</span></th>
+<th>Изменений за месяц, <span class="math inline">f_3</span></th>
+<th>Есть тесты, <span class="math inline">f_4</span></th>
+<th>Ответ <span class="math inline">y</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">x_1</span></td>
+<td>120</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>−1</td>
+</tr>
+<tr>
+<td><span class="math inline">x_2</span></td>
+<td>850</td>
+<td>23</td>
+<td>15</td>
+<td>0</td>
+<td>+1</td>
+</tr>
+<tr>
+<td><span class="math inline">x_3</span></td>
+<td>400</td>
+<td>12</td>
+<td>3</td>
+<td>1</td>
+<td>−1</td>
+</tr>
+<tr>
+<td><span class="math inline">x_4</span></td>
+<td>1500</td>
+<td>31</td>
+<td>9</td>
+<td>1</td>
+<td>+1</td>
+</tr>
+<tr>
+<td><span class="math inline">x_5</span></td>
+<td>300</td>
+<td>9</td>
+<td>11</td>
+<td>0</td>
+<td>+1</td>
+</tr>
+</tbody>
+</table>
+<p>Здесь <span class="math inline">y = +1</span> означает, что после
+выпуска новой версии программы в модуле нашли ошибку, <span
+class="math inline">y = -1</span> — что не нашли. Матрица <span
+class="math inline">\mathbf{F}</span> для этой выборки имеет размер
+<span class="math inline">5 \times 4</span>, а, например, <span
+class="math inline">x_{22} = f_2(x_2) = 23</span>.</p>
+<h2 data-number="1.3" id="tipy-zadach"><span
+class="header-section-number">1.3</span> Типы задач</h2>
+<p>Тип задачи определяется множеством ответов <span
+class="math inline">Y</span>.</p>
+<p><em>Классификация</em> — множество ответов конечно, каждый ответ
+означает класс. При <span class="math inline">Y = \{-1, +1\}</span> это
+бинарная классификация (пример с модулями); при <span
+class="math inline">Y = \{1, \ldots, K\}</span> — классификация на <span
+class="math inline">K</span> непересекающихся классов (определить
+компонент, к которому относится сообщение об ошибке). Если объект может
+принадлежать сразу нескольким классам, ответ записывают вектором из
+нулей и единиц, <span class="math inline">Y = \{0, 1\}^K</span>:
+сообщение об ошибке может касаться одновременно интерфейса и базы
+данных.</p>
+<p><em>Регрессия</em> — ответ числовой, <span class="math inline">Y =
+\mathbb{R}</span>: сколько часов уйдёт на задачу, сколько стоит
+квартира. Если нужно предсказать сразу несколько чисел (например,
+координаты объекта), <span class="math inline">Y =
+\mathbb{R}^m</span>.</p>
+<p><em>Ранжирование</em> — важен порядок объектов: какие документы
+показать выше в поисковой выдаче. На рис. <a
+href="#fig:task-types">1.2</a> показаны две основные задачи: в
+классификации модель ищет границу между классами, в регрессии — кривую,
+проходящую ближе к точкам.</p>
+<figure id="fig:task-types">
+<img src="fig/task_types.svg" style="width: 88%"
+alt="Рис. 1.2. Классификация и регрессия" />
+<figcaption aria-hidden="true">Рис. 1.2. Классификация и
+регрессия</figcaption>
+</figure>
+<p>Во всех этих задачах ответы на обучающих объектах известны — это
+<em>обучение с учителем</em>. Если ответов нет и требуется найти
+структуру в самих объектах (разбить на группы похожих, описать меньшим
+числом признаков), говорят об <em>обучении без учителя</em>; здесь оно
+не рассматривается.</p>
+<h2 data-number="1.4" id="model-i-metod-obucheniya"><span
+class="header-section-number">1.4</span> Модель и метод обучения</h2>
+<p>Зависимость ищут в заранее выбранном семействе функций.
+<em>Модель</em> — это параметрическое семейство функций</p>
+<div class="equation">
+<p><span class="math display">A = \{ g(x, \boldsymbol{\theta}) \mid
+\boldsymbol{\theta} \in \Theta \},</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">g</span> — фиксированная функция, а
+<span class="math inline">\boldsymbol{\theta}</span> — вектор параметров
+из множества допустимых значений <span
+class="math inline">\Theta</span>. Выбрать модель — значит выбрать вид
+функции; обучить модель — значит найти конкретные значения
+параметров.</p>
+</div>
+<p>Рассмотрим <em>линейную</em> модель. Для задачи регрессии она имеет
+вид</p>
+<div id="eq:linear-model" class="equation">
+<p><span class="math display">g(x, \boldsymbol{\theta}) = \sum_{j=0}^{n}
+\theta_j f_j(x) = \theta_0 + \theta_1 f_1(x) + \ldots + \theta_n
+f_n(x).\tag{1.1}</span></p>
+</div>
+<div class="continuation">
+<p>Здесь добавлен фиктивный признак <span class="math inline">f_0(x) =
+1</span>, чтобы свободный член <span class="math inline">\theta_0</span>
+записывался той же суммой, что и остальные слагаемые.</p>
+</div>
+<p><strong>Читаем формулу.</strong> Каждый признак умножается на свой
+вес <span class="math inline">\theta_j</span>, и произведения
+складываются. Вес показывает, на сколько изменится прогноз, если признак
+увеличится на единицу, а остальные останутся прежними; знак веса говорит
+о направлении влияния. Свободный член <span
+class="math inline">\theta_0</span> — прогноз для объекта, у которого
+все признаки равны нулю. Пусть, например, трудоёмкость задачи в часах
+оценивается по двум признакам: <span class="math inline">f_1</span> —
+число файлов, которые придётся изменить, <span class="math inline">f_2 =
+1</span>, если задача добавляет в программу новую функциональность, и 0
+иначе. При параметрах <span class="math inline">\boldsymbol{\theta} =
+(2; 0{,}5; 3)</span> задача, затрагивающая 10 файлов и добавляющая новую
+функциональность, оценивается в <span class="math inline">2 + 0{,}5
+\cdot 10 + 3 \cdot 1 = 10</span> часов.</p>
+<p>Сумма в <a href="ch01.html#eq:linear-model">(1.1)</a> — скалярное
+произведение векторов параметров и признаков (включая <span
+class="math inline">f_0 = 1</span>), её коротко записывают как <span
+class="math inline">\langle \boldsymbol{\theta}, \mathbf{x}
+\rangle</span>.</p>
+<p>Для бинарной классификации с ответами <span class="math inline">\pm
+1</span> линейная модель получается из той же суммы взятием знака:</p>
+<div class="equation">
+<p><span class="math display">g(x, \boldsymbol{\theta}) =
+\operatorname{sign} \sum_{j=0}^{n} \theta_j f_j(x).</span></p>
+</div>
+<div class="continuation">
+<p>Функция <span class="math inline">\operatorname{sign}</span>
+возвращает <span class="math inline">+1</span> для положительного
+аргумента и <span class="math inline">-1</span> для отрицательного, то
+есть одну из двух меток класса. Поэтому классы удобно обозначать <span
+class="math inline">-1</span> и <span class="math inline">+1</span>.</p>
+</div>
+<p>Параметры находит <em>метод обучения</em> <span
+class="math inline">\mathcal{M}</span> — алгоритм, который по обучающей
+выборке вычисляет вектор параметров: <span
+class="math inline">\mathcal{M}(X^\ell) = \boldsymbol{\theta}</span>. На
+этапе <em>обучения</em> метод <span
+class="math inline">\mathcal{M}</span> подбирает параметры по выборке
+<span class="math inline">X^\ell</span>, на этапе <em>применения</em>
+модель вычисляет прогнозы <span class="math inline">g(x,
+\boldsymbol{\theta})</span> для новых объектов; в библиотеке
+scikit-learn этим этапам соответствуют методы <code>fit</code> и
+<code>predict</code>.</p>
+<p>Кроме параметров, есть <em>гиперпараметры</em> — величины, которые
+задают до обучения и которые метод обучения сам не подбирает. Например,
+набор признаков: в задаче о модулях программы какие характеристики
+модуля учитывать (число строк кода, сложность, частоту изменений),
+решает человек, а веса при них находит метод <span
+class="math inline">\mathcal{M}</span>. Другой пример — степень <span
+class="math inline">d</span>, если зависимость ищут в виде многочлена
+<span class="math inline">\theta_0 + \theta_1 x + \ldots + \theta_d
+x^d</span>: коэффициенты <span class="math inline">\theta_j</span> —
+параметры, а <span class="math inline">d</span> — гиперпараметр.
+Гиперпараметры подбирают, сравнивая качество моделей на данных, не
+участвовавших в обучении.</p>
+<h2 data-number="1.5" id="funktsiya-poter-i-empiricheskiy-risk"><span
+class="header-section-number">1.5</span> Функция потерь и эмпирический
+риск</h2>
+<p>Чтобы выбрать лучшие параметры, нужно уметь измерять, насколько
+модель ошибается. <em>Функция потерь</em> <span
+class="math inline">\mathcal{L}(g, x)</span> — это величина ошибки
+модели <span class="math inline">g</span> на одном объекте <span
+class="math inline">x</span>: она тем больше, чем сильнее прогноз <span
+class="math inline">g(x, \boldsymbol{\theta})</span> отличается от
+правильного ответа <span class="math inline">y = \varphi(x)</span>.
+Самые распространённые функции потерь:</p>
+<ul>
+<li>для классификации — индикатор ошибки <span
+class="math inline">\mathcal{L}(g, x) = [g(x, \boldsymbol{\theta}) \ne
+y]</span>;</li>
+<li>для регрессии — абсолютная ошибка <span
+class="math inline">\mathcal{L}(g, x) = |g(x, \boldsymbol{\theta}) -
+y|</span> и квадратичная ошибка <span class="math inline">\mathcal{L}(g,
+x) = (g(x, \boldsymbol{\theta}) - y)^2</span>.</li>
+</ul>
+<p>Квадратные скобки обозначают индикатор: <span class="math inline">[A]
+= 1</span>, если утверждение <span class="math inline">A</span> истинно,
+и 0, если ложно.</p>
+<p>Ошибку на одном объекте усредняют по всей выборке. Получается
+<em>эмпирический риск</em>:</p>
+<div id="eq:emp-risk" class="equation">
+<p><span class="math display">Q(\boldsymbol{\theta}, X^\ell) =
+\frac{1}{\ell} \sum_{i=1}^{\ell} \mathcal{L}(g,
+x_i).\tag{1.2}</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Знак суммы с индексом <span
+class="math inline">i</span> от 1 до <span
+class="math inline">\ell</span> означает: пройти по всем объектам
+выборки и сложить их потери; множитель <span
+class="math inline">1/\ell</span> превращает сумму в среднее. С
+индикатором ошибки <span class="math inline">Q</span> — доля неверных
+ответов, с квадратичной потерей — средний квадрат ошибки. Эмпирический
+риск зависит от параметров <span
+class="math inline">\boldsymbol{\theta}</span>: изменили параметры —
+изменились прогнозы, а с ними и потери.</p>
+<p>Теперь обучение можно записать как задачу оптимизации — найти
+параметры, при которых эмпирический риск минимален:</p>
+<div id="eq:erm" class="equation">
+<p><span class="math display">\mathcal{M}(X^\ell) =
+\arg\min_{\boldsymbol{\theta} \in \Theta} Q(\boldsymbol{\theta},
+X^\ell).\tag{1.3}</span></p>
+</div>
+<div class="continuation">
+<p>Этот принцип называют <em>минимизацией эмпирического риска</em>.
+Запись <span class="math inline">\arg\min</span> означает не само
+наименьшее значение <span class="math inline">Q</span>, а тот вектор
+<span class="math inline">\boldsymbol{\theta}</span>, при котором оно
+достигается. Если модель линейная, а потеря квадратичная, получается
+метод наименьших квадратов, которому посвящена гл. 3.</p>
+</div>
+<p><strong>Потеря и функционал качества.</strong> Величину, по которой
+при обучении выбирают параметры, называют <em>функционалом качества</em>
+и обозначают буквой <span class="math inline">Q</span> — от англ.
+quality. Она сопоставляет каждой модели одно число — насколько хорошо
+модель описывает всю выборку. Слово «функционал» означает, что аргумент
+<span class="math inline">Q</span> — сама модель, то есть функция <span
+class="math inline">g</span>. Когда вид модели выбран, модель задаётся
+параметрами, поэтому пишут <span
+class="math inline">Q(\boldsymbol{\theta}, X^\ell)</span>. Эмпирический
+риск — самый распространённый функционал качества, но не единственный: в
+вероятностных моделях, например, максимизируют вероятность получить
+наблюдаемые ответы.</p>
+<p>Функцию потерь и функционал качества часто путают, тем более что
+названия у них похожи и в разных книгах разные (табл. <a
+href="ch01.html#tbl:loss-vs-q">1.2</a>); в англоязычной литературе
+функционал качества часто называют функцией стоимости (cost function) и
+обозначают буквой <span class="math inline">J</span>. Различие простое:
+потеря — ошибка на <em>одном</em> объекте, функционал качества —
+<em>одно</em> число для всей выборки, обычно средняя потеря. Если ошибки
+модели на трёх объектах равны 1, −2 и 0, квадратичные потери — три
+числа, 1, 4 и 0, а эмпирический риск — одно число, <span
+class="math inline">(1 + 4 + 0)/3 = 5/3</span>. Обучение оптимизирует
+именно функционал качества: уменьшить потерю на одном объекте легко, но
+ценой роста потерь на других.</p>
+<table id="tbl:loss-vs-q">
+<caption>Таблица 1.2. Функция потерь и функционал качества</caption>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 32%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th>Характеристика</th>
+<th>Функция потерь</th>
+<th>Функционал качества</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Что измеряет</td>
+<td>ошибку на одном объекте</td>
+<td>качество модели на всей выборке</td>
+</tr>
+<tr>
+<td>Обозначение</td>
+<td><span class="math inline">\mathcal{L}(g, x_i)</span></td>
+<td><span class="math inline">Q(\boldsymbol{\theta}, X^\ell)</span>,
+<span class="math inline">J(\boldsymbol{\theta})</span></td>
+</tr>
+<tr>
+<td>Другие названия</td>
+<td>потеря, loss</td>
+<td>эмпирический риск, полная (средняя) потеря, функция стоимости; total
+loss, cost function, objective</td>
+</tr>
+<tr>
+<td>Пример</td>
+<td><span class="math inline">(g(x_i, \boldsymbol{\theta}) -
+y_i)^2</span></td>
+<td><span class="math inline">\frac{1}{\ell} \sum_{i=1}^{\ell} (g(x_i,
+\boldsymbol{\theta}) - y_i)^2</span> — среднеквадратичная ошибка</td>
+</tr>
+</tbody>
+</table>
+<p>Путаницу усиливают библиотеки: в программах словом loss часто
+называют уже усреднённое по выборке значение, то есть функционал
+качества. Встретив слово «потеря», полезно проверить, о чём речь — об
+одном объекте или обо всех сразу.</p>
+<p><strong>Пример.</strong> Выбор функции потерь — не формальность: от
+него зависит, какая модель окажется лучшей. Пусть выборка состоит из
+четырёх объектов с одним признаком (табл. <a
+href="ch01.html#tbl:loss-example">1.3</a>), причём последний объект
+выбивается из общей закономерности. Сравним две модели: A: <span
+class="math inline">g(x) = x</span> и Б: <span class="math inline">g(x)
+= 1{,}5x</span> (рис. <a href="#fig:loss-example">1.3</a>).</p>
+<table id="tbl:loss-example">
+<caption>Таблица 1.3. Прогнозы двух моделей на четырёх
+объектах</caption>
+<thead>
+<tr>
+<th><span class="math inline">x</span></th>
+<th><span class="math inline">y</span></th>
+<th>Прогноз A</th>
+<th>Ошибка A</th>
+<th>Прогноз Б</th>
+<th>Ошибка Б</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1,5</td>
+<td>0,5</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2</td>
+<td>2</td>
+<td>0</td>
+<td>3</td>
+<td>1</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td>4,5</td>
+<td>1,5</td>
+</tr>
+<tr>
+<td>4</td>
+<td>8</td>
+<td>4</td>
+<td>−4</td>
+<td>6</td>
+<td>−2</td>
+</tr>
+</tbody>
+</table>
+<figure id="fig:loss-example">
+<img src="fig/loss_example.svg" style="width: 61%"
+alt="Рис. 1.3. Две модели на выборке с выбросом" />
+<figcaption aria-hidden="true">Рис. 1.3. Две модели на выборке с
+выбросом</figcaption>
+</figure>
+<p>С абсолютной потерей эмпирический риск модели A равен <span
+class="math inline">(0 + 0 + 0 + 4)/4 = 1</span>, модели Б — <span
+class="math inline">(0{,}5 + 1 + 1{,}5 + 2)/4 = 1{,}25</span>; лучше
+модель A. С квадратичной потерей риск модели A равен <span
+class="math inline">(0 + 0 + 0 + 16)/4 = 4</span>, модели Б — <span
+class="math inline">(0{,}25 + 1 + 2{,}25 + 4)/4 = 1{,}875</span>; лучше
+модель Б. Квадрат сильно увеличивает большие ошибки, поэтому
+квадратичная потеря «тянет» модель к выбросу, а абсолютная почти не
+обращает на него внимания. Какая модель правильнее, зависит от задачи:
+если выброс — ошибка измерения, предпочтительна модель A; если такие
+значения действительно встречаются и занижать прогноз для них дорого —
+модель Б.</p>
+<p>Однако важна ошибка не на обучающей выборке, а на новых объектах.
+Среднюю потерю по всем возможным объектам называют <em>риском</em>; её
+нельзя вычислить, потому что неизвестны ни <span
+class="math inline">\varphi</span>, ни распределение объектов. Обычно
+предполагают, что объекты выборки и будущие объекты получены независимо
+из одного распределения. Тогда средняя потеря на <em>новых</em> данных —
+разумная оценка риска, а эмпирический риск на обучающей выборке её
+занижает: параметры подобраны именно под эти объекты. Как оценить ошибку
+на новых объектах, рассказано в гл. 5.</p>
+<h2 data-number="1.6" id="postanovka-zadachi-na-praktike"><span
+class="header-section-number">1.6</span> Постановка задачи на
+практике</h2>
+<p>Постановка начинается с четырёх вопросов. Что предсказываем и какое
+решение примут по прогнозу (какие модули программы проверить первыми)?
+Какой это тип задачи (предсказание дефекта — классификация, оценка
+трудоёмкости — регрессия)? Какие данные доступны в момент прогноза и
+откуда взять ответы (метрики кода, история изменений, сведения об
+ошибках из трекера)? Как измерять качество? Мера качества должна
+отражать реальную цель: если пропустить модуль с ошибкой дороже, чем
+лишний раз его проверить, доля верных ответов — плохая мера.</p>
+<p>Постановка неудачна, если признаки не связаны с ответом: по цвету
+подсветки синтаксиса в редакторе не предсказать ошибки в модуле, а по
+номеру квартиры не определить её цену. Никакой метод не извлечёт
+информацию, которой нет в данных, — «мусор на входе, мусор на
+выходе».</p>
+<p>Обучение модели — лишь один этап решения прикладной задачи машинного
+обучения. Обычно работа над такой задачей включает следующие стадии:
+постановка задачи; сбор и подготовка данных (гл. 2); построение простой
+базовой модели для сравнения (baseline); выбор основной модели, её
+обучение и подбор гиперпараметров; проверка качества на данных, не
+участвовавших в обучении (гл. 5 и 8); внедрение; наблюдение за качеством
+в работе. Данные со временем меняются, модель устаревает, и цикл
+повторяется.</p>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Назовите задачу <span class="math inline">T</span>, опыт <span
+class="math inline">E</span> и меру качества <span
+class="math inline">P</span> для задачи оценки трудоёмкости.</li>
+<li>Чем объект отличается от его признакового описания?</li>
+<li>Чем параметры модели отличаются от гиперпараметров? Приведите по два
+примера.</li>
+<li>Почему эмпирический риск на обучающей выборке занижает ошибку модели
+на новых объектах?</li>
+<li>Что меняется при замене абсолютной функции потерь на
+квадратичную?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi">Задачи</h2>
+<ol type="1">
+<li><p>Для выборки из табл. <a href="ch01.html#tbl:modules">1.1</a>
+вычислите эмпирический риск с индикатором ошибки для классификатора
+<span class="math inline">g(x) = \operatorname{sign}(f_2(x) -
+10)</span>, который считает подозрительными модули со сложностью больше
+10.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>модель ошибается на <span class="math inline">x_3</span> и <span
+class="math inline">x_5</span>, <span class="math inline">Q = 2/5 =
+0{,}4</span>.</p>
+</details></li>
+<li><p>Для выборки из табл. <a href="ch01.html#tbl:loss-example">1.3</a>
+найдите параметр <span class="math inline">\theta</span> модели <span
+class="math inline">g(x) = \theta x</span>, минимизирующий эмпирический
+риск с квадратичной потерей. <em>Указание:</em> приравняйте к нулю
+производную <span class="math inline">Q</span> по <span
+class="math inline">\theta</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">\theta = \sum x_i y_i / \sum x_i^2 = 46/30
+\approx 1{,}53</span> — почти модель Б.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="notation.html" rel="prev"><span class="dir">Назад</span><span class="t">Основные обозначения</span></a>
+  <a class="next" href="ch02.html" rel="next"><span class="dir">Далее</span><span class="t">Данные и признаки</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Переобучение и валидация">
+  <title>Переобучение и валидация — Машинное обучение: линейные и
+вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li class="current"><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+<ol>
+<li><a href="ch05.html#nedoobuchenie-i-pereobuchenie"><span class="num">5.1</span><span>Недообучение и переобучение</span></a></li>
+<li><a href="ch05.html#obobshchayushchaya-sposobnost"><span class="num">5.2</span><span>Обобщающая способность</span></a></li>
+<li><a href="ch05.html#smeshchenie-i-razbros"><span class="num">5.3</span><span>Смещение и разброс</span></a></li>
+<li><a href="ch05.html#skhemy-validatsii"><span class="num">5.4</span><span>Схемы валидации</span></a></li>
+<li><a href="ch05.html#metriki-kachestva-regressii"><span class="num">5.5</span><span>Метрики качества регрессии</span></a></li>
+<li><a href="ch05.html#podbor-giperparametrov"><span class="num">5.6</span><span>Подбор гиперпараметров</span></a></li>
+<li><a href="ch05.html#voprosy-dlya-samokontrolya-5"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch05.html#zadachi-5"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="5" id="ch05"><span
+class="header-section-number">5</span> Переобучение и валидация</h1>
+<!-- Источники: лекция 03-linear_regression (с. 5–10: пример Рунге, оценки обобщающей способности), 06-quality_metrics (с. 17–21, 27, 29: метрики регрессии, кросс-валидация, базовые модели). Смещение и разброс, временные ряды, подбор гиперпараметров — нет в лекциях. -->
+<p>Метод наименьших квадратов находит параметры, при которых ошибка на
+обучающей выборке минимальна. Но модель строят ради прогнозов на новых
+объектах, и важна ошибка именно на них. Малая ошибка на обучающей
+выборке ещё не гарантирует малой ошибки на новых объектах. В этой главе
+показано, когда ошибка на обучающей выборке и ошибка на новых объектах
+расходятся, как оценить вторую из них и как по этой оценке выбрать
+модель.</p>
+<h2 data-number="5.1" id="nedoobuchenie-i-pereobuchenie"><span
+class="header-section-number">5.1</span> Недообучение и
+переобучение</h2>
+<p>Рассмотрим пример К. Рунге. Функция <span class="math inline">f(x) =
+1/(1 + 25x^2)</span> задана таблично в <span class="math inline">\ell =
+15</span> равноотстоящих точках отрезка <span class="math inline">[-2;\,
+2]</span>; это обучающая выборка. Аппроксимируем функцию многочленами
+степени <span class="math inline">d</span> от 0 до 14, находя
+коэффициенты методом наименьших квадратов. Чтобы проверить качество
+каждого многочлена, нужны объекты, которых метод обучения не видел.
+Поэтому зададим ещё <em>контрольную выборку</em> — значения функции в 14
+точках, лежащих посередине между обучающими. При поиске коэффициентов
+многочлена контрольные точки не используются: по ним только вычисляется
+ошибка уже обученной модели — так же, как модель будет ошибаться на
+новых объектах при применении. Шума в данных нет: ответы — точные
+значения функции. Пример показывает, как ведут себя ошибки на обучающей
+и контрольной выборках при усложнении модели.</p>
+<figure id="fig:runge">
+<img src="fig/runge.svg" style="width: 98%"
+alt="Рис. 5.1. Пример Рунге: а — многочлены трёх степеней; б — среднеквадратичная ошибка на обучающей и контрольной выборках" />
+<figcaption aria-hidden="true">Рис. 5.1. Пример Рунге: а — многочлены
+трёх степеней; б — среднеквадратичная ошибка на обучающей и контрольной
+выборках</figcaption>
+</figure>
+<p>Многочлен второй степени (рис. <a href="#fig:runge">5.1</a>, а)
+слишком прост: он не может повторить острый пик функции и ошибается
+почти везде. Ошибка велика и на обучающей, и на контрольной выборке
+(<span class="math inline">Q \approx 0{,}045</span> и <span
+class="math inline">0{,}031</span>). Это <em>недообучение</em>: модель
+не улавливает закономерность.</p>
+<p>С ростом степени обе ошибки сначала уменьшаются (рис. <a
+href="#fig:runge">5.1</a>, б). Многочлен восьмой степени описывает
+функцию заметно лучше, ошибка на контроле минимальна, <span
+class="math inline">Q \approx 0{,}009</span>. Дальше ошибка на обучающей
+выборке продолжает падать, а на контрольной — растёт. При <span
+class="math inline">d = 14</span> многочлен проходит через все 15 точек
+и ошибка на обучающей выборке равна нулю, но между точками, особенно у
+краёв отрезка, многочлен колеблется с огромной амплитудой, и ошибка на
+контроле достигает 61. Это <em>переобучение</em>: модель подогнана под
+обучающие объекты настолько точно, что на остальных объектах ошибается
+сильнее, чем более простая модель.</p>
+<p>На графике заметны ещё две особенности. Ошибки не меняются при
+переходе от чётной степени к следующей нечётной: функция <span
+class="math inline">f</span> чётная, и коэффициенты при нечётных
+степенях получаются нулевыми. При малых степенях ошибка на контроле чуть
+меньше, чем на обучении: наибольшая ошибка простых моделей — на вершине
+пика, в точке <span class="math inline">x = 0</span>, а она входит в
+обучающую выборку.</p>
+<p>Из примера следует, что ошибка на обучающей выборке с усложнением
+модели только уменьшается и поэтому не годится для выбора модели. Лучшую
+модель указывает ошибка на объектах, не участвовавших в обучении.
+Переобучение возникло здесь даже без шума — из-за лишней гибкости
+модели; при шумных ответах оно наступает ещё раньше, потому что гибкая
+модель повторяет и шум.</p>
+<h2 data-number="5.2" id="obobshchayushchaya-sposobnost"><span
+class="header-section-number">5.2</span> Обобщающая способность</h2>
+<p>Способность модели давать хорошие прогнозы на новых объектах называют
+<em>обобщающей способностью</em>. Её мера — <em>риск</em>, средняя
+потеря на всех возможных объектах (гл. 1). Риск вычислить нельзя, и
+ошибка на обучающей выборке — плохая замена ему. Она похожа на оценку за
+экзамен, вопросы которого студент знал заранее: метод обучения видел
+ответы на всех обучающих объектах и подогнал под них параметры, поэтому
+высокая точность на этих объектах ещё не говорит о качестве на других.
+Чем больше у модели параметров по сравнению с числом объектов, тем
+свободнее такая подгонка и тем сильнее ошибка на обучающей выборке
+расходится с риском. Для многочлена степени <span class="math inline">d
+= \ell - 1</span> в примере Рунге ошибка на обучающей выборке равна
+нулю, а на контрольной она огромна.</p>
+<p>Переобучению способствуют:</p>
+<ul>
+<li>малое число объектов по сравнению с числом параметров;</li>
+<li>лишние или почти линейно зависимые признаки — как показано в гл. 3,
+при мультиколлинеарности веса подстраиваются под мелкие погрешности
+данных;</li>
+<li>шум в ответах, который гибкая модель принимает за
+закономерность.</li>
+</ul>
+<p>Избавиться от переобучения полностью нельзя, но его можно уменьшить:
+собрать больше данных, выбрать модель попроще, ограничить величину
+параметров. Во всех случаях нужна надёжная оценка ошибки на новых данных
+— без неё нельзя понять, помогли ли эти меры. Схемы такой оценки описаны
+в разд. 5.4, а ограничение величины параметров (регуляризация) — в гл.
+6.</p>
+<h2 data-number="5.3" id="smeshchenie-i-razbros"><span
+class="header-section-number">5.3</span> Смещение и разброс</h2>
+<p>Откуда берётся ошибка модели на новом объекте? Для квадратичной
+потери её можно разложить на три слагаемых. Пусть ответ <span
+class="math inline">y = \varphi(x) + \varepsilon</span>, где шум <span
+class="math inline">\varepsilon</span> имеет среднее 0 и дисперсию <span
+class="math inline">\sigma^2</span>. Обучающая выборка случайна: если
+собрать её заново, ответы будут другими из-за шума, и метод обучения
+выдаст другую модель <span class="math inline">g(x)</span>. Обозначим
+через <span class="math inline">\mathbb{E}</span> математическое
+ожидание (среднее) по всем возможным обучающим выборкам и по шуму в
+ответе на новом объекте, а через <span class="math inline">\bar g(x) =
+\mathbb{E}\bigl(g(x)\bigr)</span> — <em>среднюю модель</em>, прогноз в
+точке <span class="math inline">x</span>, усреднённый по всем выборкам.
+Тогда для квадратичной ошибки в точке <span
+class="math inline">x</span></p>
+<div id="eq:bias-variance" class="equation">
+<p><span class="math display">\mathbb{E}\Bigl(\bigl(y -
+g(x)\bigr)^2\Bigr) = \underbrace{\bigl(\varphi(x) - \bar
+g(x)\bigr)^2}_{\text{смещение}^2} +
+\underbrace{\mathbb{E}\Bigl(\bigl(g(x) - \bar
+g(x)\bigr)^2\Bigr)}_{\text{разброс}} +
+\underbrace{\sigma^2}_{\text{шум}}.\tag{5.1}</span></p>
+</div>
+<p><strong>Вывод формулы.</strong> Запишем ошибку как сумму трёх частей:
+<span class="math inline">y - g = \varepsilon + (\varphi - \bar g) +
+(\bar g - g)</span>. При возведении в квадрат появляются квадраты частей
+и попарные произведения. Произведения обращаются в нуль при усреднении:
+шум <span class="math inline">\varepsilon</span> на новом объекте не
+зависит от обучающей выборки и имеет среднее 0, а отклонение <span
+class="math inline">\bar g - g</span> имеет среднее 0 по определению
+средней модели. Остаются три квадрата.</p>
+<p><strong>Читаем формулу.</strong> <em>Смещение</em> — насколько
+средняя модель отличается от истинной зависимости. Оно велико, когда
+модель слишком проста: прямая не повторит синусоиду, на скольких
+выборках её ни обучай. <em>Разброс</em> (дисперсия) — насколько модели,
+обученные на разных выборках, отличаются от средней модели. Он велик,
+когда модель гибкая и подстраивается под случайные особенности
+конкретной выборки. <em>Шум</em> — ошибка, которую не устранит никакая
+модель: часть ответа не определяется признаками. Недообучение — это
+большое смещение, переобучение — большой разброс.</p>
+<p><strong>Пример.</strong> Чтобы увидеть смещение и разброс, обучим
+модели на многих выборках. Пусть <span class="math inline">\varphi(x) =
+\sin 2\pi x</span>, выборка — 15 равноотстоящих точек отрезка <span
+class="math inline">[0;\, 1]</span> с шумом <span
+class="math inline">\sigma = 0{,}3</span>. Сгенерируем 4000 выборок, на
+каждой построим многочлен степени <span class="math inline">d</span>
+методом наименьших квадратов и вычислим слагаемые <a
+href="ch05.html#eq:bias-variance">(5.1)</a>, усреднив их по отрезку
+(табл. <a href="ch05.html#tbl:bias-variance">5.1</a>). На рис. <a
+href="#fig:bias-variance">5.2</a> показаны 20 из этих моделей.</p>
+<table id="tbl:bias-variance">
+<caption>Таблица 5.1. Смещение и разброс многочленов разных степеней
+(<span class="math inline">\sigma^2 = 0{,}09</span>)</caption>
+<thead>
+<tr>
+<th>Степень <span class="math inline">d</span></th>
+<th>Смещение²</th>
+<th>Разброс</th>
+<th>Шум</th>
+<th>Ожидаемая ошибка</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0,210</td>
+<td>0,011</td>
+<td>0,09</td>
+<td>0,311</td>
+</tr>
+<tr>
+<td>3</td>
+<td>0,006</td>
+<td>0,021</td>
+<td>0,09</td>
+<td>0,116</td>
+</tr>
+<tr>
+<td>11</td>
+<td>0,000</td>
+<td>0,154</td>
+<td>0,09</td>
+<td>0,244</td>
+</tr>
+</tbody>
+</table>
+<figure id="fig:bias-variance">
+<img src="fig/bias_variance.svg" style="width: 98%"
+alt="Рис. 5.2. Многочлены, обученные на 20 выборках с разным шумом: а — большое смещение; б — большой разброс" />
+<figcaption aria-hidden="true">Рис. 5.2. Многочлены, обученные на 20
+выборках с разным шумом: а — большое смещение; б — большой
+разброс</figcaption>
+</figure>
+<p>Прямые (<span class="math inline">d = 1</span>) почти совпадают друг
+с другом — разброс мал, — но все одинаково далеки от синусоиды: смещение
+велико. Многочлены степени 11 в среднем повторяют синусоиду — смещение
+почти нулевое, — но каждый по-своему колеблется вслед за шумом своей
+выборки: разброс велик. Многочлен третьей степени — компромисс, его
+ожидаемая ошибка наименьшая. С ростом сложности модели смещение убывает,
+а разброс растёт, поэтому ошибка на новых данных как функция сложности
+сначала падает, а потом растёт — как на рис. <a
+href="#fig:runge">5.1</a>, б.</p>
+<p>На практике слагаемые <a href="ch05.html#eq:bias-variance">(5.1)</a>
+не вычисляют: истинная зависимость неизвестна, а выборка одна.
+Разложение объясняет, как действуют меры против переобучения: больше
+данных — меньше разброс при том же смещении; более простая модель или
+ограничение параметров — меньше разброс ценой большего смещения.</p>
+<h2 data-number="5.4" id="skhemy-validatsii"><span
+class="header-section-number">5.4</span> Схемы валидации</h2>
+<p>Оценивать модель на тех же объектах, на которых она обучена, нельзя.
+Поэтому часть объектов откладывают и в обучении не используют. Все схемы
+ниже — способы такого разбиения.</p>
+<p><strong>Отложенная выборка</strong> (hold-out). Выборку делят на
+обучающую <span class="math inline">X^\ell</span> и контрольную
+(тестовую) <span class="math inline">X^k</span>, обычно в отношении от
+70 : 30 до 80 : 20. Модель обучают на <span
+class="math inline">X^\ell</span>, а оценкой риска служит эмпирический
+риск на <span class="math inline">X^k</span>:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{HO}(\mathcal{M}, X^\ell, X^k) =
+Q\bigl(\mathcal{M}(X^\ell), X^k\bigr).</span></p>
+</div>
+<div class="continuation">
+<p>Схема проста, но оценка зависит от того, какие объекты случайно
+попали в контроль, а часть данных не участвует в обучении.</p>
+</div>
+<p><strong>Кросс-валидация</strong> (скользящий контроль,
+cross-validation). Выборку делят на <span class="math inline">k</span>
+примерно равных блоков <span class="math inline">X_1, \ldots, X_k</span>
+(здесь <span class="math inline">k</span> — число блоков, а не размер
+тестовой выборки <span class="math inline">X^k</span>). Каждый блок по
+очереди служит контрольным, а модель обучается на остальных <span
+class="math inline">k - 1</span> блоках (рис. <a href="#fig:cv">5.3</a>,
+а). Оценка — средняя ошибка по всем блокам:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{CV}(\mathcal{M}, X^\ell) =
+\frac{1}{k} \sum_{s=1}^{k} Q\bigl(\mathcal{M}(X^\ell \setminus X_s),
+X_s\bigr),</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">X^\ell \setminus X_s</span> — выборка
+без блока <span class="math inline">X_s</span>. Обычно берут <span
+class="math inline">k = 5</span> или 10; отсюда название схемы — <span
+class="math inline">k</span>-кратная кросс-валидация (<span
+class="math inline">k</span>-fold). Каждый объект ровно один раз
+оказывается в контроле, поэтому оценка устойчивее, чем у отложенной
+выборки; плата — <span class="math inline">k</span> обучений вместо
+одного. Кроме среднего, полезно смотреть на разброс ошибок по блокам:
+если две модели различаются меньше, чем меняется ошибка от блока к
+блоку, считать одну из них лучшей нельзя.</p>
+</div>
+<figure id="fig:cv">
+<img src="fig/cv_schemes.svg" style="width: 98%"
+alt="Рис. 5.3. Схемы разбиения выборки: а — кросс-валидация с пятью блоками; б — валидация для временного ряда" />
+<figcaption aria-hidden="true">Рис. 5.3. Схемы разбиения выборки: а —
+кросс-валидация с пятью блоками; б — валидация для временного
+ряда</figcaption>
+</figure>
+<p>Крайний случай кросс-валидации — <em>контроль по отдельным
+объектам</em> (leave-one-out, LOO): <span class="math inline">k =
+\ell</span>, каждый блок состоит из одного объекта. В среднем такая
+оценка почти совпадает с ошибкой модели, обученной на всей выборке, но
+требует <span class="math inline">\ell</span> обучений и применяется на
+небольших выборках.</p>
+<p><strong>Стратификация.</strong> В задачах классификации блоки
+формируют так, чтобы доля каждого класса в них была такой же, как во
+всей выборке. Иначе при редком классе в какой-то блок могут не попасть
+его объекты, и ошибка на этом блоке ничего не скажет о качестве
+распознавания редкого класса.</p>
+<p><strong>Временные ряды.</strong> Если данные упорядочены во времени
+(продажи, нагрузка на сервис, история изменений кода), случайное
+разбиение даёт утечку: модель обучается на более поздних данных и
+проверяется на более ранних, то есть «знает будущее». Поэтому
+контрольный блок всегда берут позже обучающих (рис. <a
+href="#fig:cv">5.3</a>, б): модель обучают на данных до некоторого
+момента и проверяют на следующем периоде, затем сдвигают границу. Так
+воспроизводится реальное применение: прогноз строится только по
+прошлому.</p>
+<p><strong>Обучающая, валидационная и тестовая выборки.</strong> Если по
+ошибке на контроле выбирают модель или гиперпараметры (например, степень
+многочлена), эта ошибка тоже становится заниженной: из многих вариантов
+выбран тот, которому повезло на контрольных объектах. Поэтому выборку
+делят на три части. На <em>обучающей</em> находят параметры. На
+<em>валидационной</em> (или кросс-валидацией внутри обучающей части)
+сравнивают модели и подбирают гиперпараметры. <em>Тестовую</em>
+откладывают до конца и используют один раз — для итоговой оценки
+выбранной модели. Если после взгляда на тестовую ошибку что-то меняют в
+модели, тестовая выборка превращается в валидационную, и ошибка на ней
+тоже становится заниженной.</p>
+<h2 data-number="5.5" id="metriki-kachestva-regressii"><span
+class="header-section-number">5.5</span> Метрики качества регрессии</h2>
+<p>Эмпирический риск с квадратичной потерей — лишь одна из мер качества.
+Для регрессии используют несколько <em>метрик</em>; все они вычисляются
+по ответам <span class="math inline">y_i</span> и прогнозам <span
+class="math inline">\hat y_i = g(x_i, \boldsymbol{\theta})</span> на
+объектах выборки, по которой оценивают модель (обычно контрольной);
+число этих объектов здесь обозначено <span
+class="math inline">\ell</span>.</p>
+<p><em>Среднеквадратичная ошибка</em> (mean squared error) и корень из
+неё:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{MSE} = \frac{1}{\ell}
+\sum_{i=1}^{\ell} (\hat y_i - y_i)^2, \qquad \mathrm{RMSE} =
+\sqrt{\mathrm{MSE}}.</span></p>
+</div>
+<div class="continuation">
+<p>MSE совпадает с эмпирическим риском МНК, дифференцируема и удобна для
+оптимизации, но сильно штрафует большие ошибки и чувствительна к
+выбросам. RMSE измеряется в тех же единицах, что и ответ (миллионы
+рублей, миллисекунды), поэтому её легче интерпретировать.</p>
+</div>
+<p><em>Средняя абсолютная ошибка</em> (mean absolute error) и
+<em>средняя абсолютная процентная ошибка</em> (mean absolute percentage
+error):</p>
+<div class="equation">
+<p><span class="math display">\mathrm{MAE} = \frac{1}{\ell}
+\sum_{i=1}^{\ell} |\hat y_i - y_i|, \qquad \mathrm{MAPE} =
+\frac{100\,\%}{\ell} \sum_{i=1}^{\ell} \left| \frac{\hat y_i - y_i}{y_i}
+\right|.</span></p>
+</div>
+<div class="continuation">
+<p>MAE штрафует все ошибки пропорционально их величине и устойчивее к
+выбросам. MAPE выражает ошибку в процентах и не зависит от единиц
+измерения: ошибка 1 млн руб. для квартиры за 5 млн серьёзнее, чем для
+квартиры за 50 млн. Но при ответах, близких к нулю, MAPE теряет смысл —
+знаменатель почти нулевой.</p>
+</div>
+<p><em>Коэффициент детерминации</em> сравнивает модель с простейшей —
+константой, равной среднему ответу <span class="math inline">\bar
+y</span>:</p>
+<div class="equation">
+<p><span class="math display">R^2 = 1 - \frac{\sum\limits_{i=1}^{\ell}
+(\hat y_i - y_i)^2}{\sum\limits_{i=1}^{\ell} (y_i - \bar
+y)^2}.</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Числитель дроби — сумма квадратов
+ошибок модели, знаменатель — сумма квадратов ошибок константной модели
+<span class="math inline">\hat y = \bar y</span>. Если модель
+безошибочна, <span class="math inline">R^2 = 1</span>; если она не лучше
+среднего, <span class="math inline">R^2 = 0</span>. На обучающей выборке
+для линейной регрессии со свободным членом <span class="math inline">0
+\le R^2 \le 1</span>: константа — частный случай линейной модели, и МНК
+не может найти решение хуже неё. На контрольной выборке <span
+class="math inline">R^2</span> бывает отрицательным: модель может
+ошибаться сильнее, чем среднее контрольных ответов.</p>
+<p><strong>Пример.</strong> Покажем, что <span
+class="math inline">R^2</span> на контроле может быть отрицательным. В
+гл. 3 по точкам <span class="math inline">(1; 1)</span>, <span
+class="math inline">(2; 3)</span>, <span class="math inline">(3;
+2)</span> построена модель <span class="math inline">g(x) = 1 +
+0{,}5x</span>. На этой обучающей выборке <span class="math inline">\bar
+y = 2</span>, сумма квадратов ошибок модели равна <span
+class="math inline">0{,}25 + 1 + 0{,}25 = 1{,}5</span>, константы —
+<span class="math inline">1 + 1 + 0 = 2</span>, и <span
+class="math inline">R^2 = 1 - 1{,}5/2 = 0{,}25</span>. Проверим модель
+на четырёх новых объектах <span class="math inline">(0; 2)</span>, <span
+class="math inline">(1; 2{,}5)</span>, <span class="math inline">(2;
+1{,}5)</span>, <span class="math inline">(4; 2)</span>. Прогнозы — 1;
+1,5; 2; 3, ошибки — <span class="math inline">-1</span>; <span
+class="math inline">-1</span>; <span class="math inline">0{,}5</span>;
+<span class="math inline">1</span>, сумма квадратов — 3,25. Среднее
+контрольных ответов равно 2, сумма квадратов отклонений от него — <span
+class="math inline">0 + 0{,}25 + 0{,}25 + 0 = 0{,}5</span>. Получаем
+<span class="math inline">R^2 = 1 - 3{,}25/0{,}5 = -5{,}5</span>: на
+новых объектах ответы почти не меняются, и константа 2 предсказала бы их
+гораздо точнее, чем модель с наклоном.</p>
+<p>Отсюда практическое правило: прежде чем строить сложную модель,
+вычисляют качество <em>базовой модели</em> (baseline) — прогноза средним
+или медианой ответа. Модель, которая на контрольной выборке не лучше
+базовой, бесполезна, как бы хорошо она ни выглядела на обучающей.</p>
+<p><strong>Информационные критерии.</strong> Иногда модели сравнивают
+без отложенной выборки — по ошибке на обучающей выборке со штрафом за
+число параметров. Для линейной регрессии с нормально распределённым
+шумом <em>информационные критерии</em> Акаике (AIC) и Шварца (BIC) с
+точностью до слагаемого, одинакового для всех моделей, записываются
+так:</p>
+<div class="equation">
+<p><span class="math display">\mathrm{AIC} = \ell \ln \mathrm{MSE} + 2(n
++ 1), \qquad \mathrm{BIC} = \ell \ln \mathrm{MSE} + (n + 1) \ln
+\ell,</span></p>
+</div>
+<div class="continuation">
+<p>где MSE вычислена на обучающей выборке, а <span class="math inline">n
++ 1</span> — число параметров модели. Меньшее значение критерия лучше.
+Первое слагаемое убывает с усложнением модели, второе — растёт. BIC при
+<span class="math inline">\ell &gt; 7</span> (когда <span
+class="math inline">\ln \ell &gt; 2</span>) штрафует сложность сильнее и
+выбирает более простые модели.</p>
+</div>
+<h2 data-number="5.6" id="podbor-giperparametrov"><span
+class="header-section-number">5.6</span> Подбор гиперпараметров</h2>
+<p>Степень многочлена, набор признаков, скорость обучения градиентного
+спуска — гиперпараметры: их не находит метод обучения, а задаёт человек.
+Подбирают их перебором: для каждого набора значений обучают модель и
+оценивают её кросс-валидацией на обучающей части выборки, а затем
+выбирают набор с наименьшей ошибкой.</p>
+<p><em>Поиск по сетке</em> (grid search) перебирает все сочетания
+значений из заданных списков: например, степени 1, …, 10 и три способа
+масштабирования — 30 вариантов. Число вариантов растёт как произведение
+длин списков, и при нескольких гиперпараметрах перебор становится
+долгим. <em>Случайный поиск</em> (random search) проверяет заданное
+число случайных сочетаний. Обычно лишь немногие гиперпараметры сильно
+влияют на качество; при том же числе проверок случайный поиск пробует
+больше разных значений каждого из них и поэтому часто находит хорошее
+сочетание быстрее сетки [8]. Непрерывные гиперпараметры, такие как
+скорость обучения, перебирают в логарифмической шкале: 0,001; 0,01;
+0,1.</p>
+<p>В scikit-learn перебор с кросс-валидацией выполняет класс
+<code>GridSearchCV</code> (листинг 5.1); случайный поиск —
+<code>RandomizedSearchCV</code>. Всё, что вычисляется по данным, включая
+стандартизацию, должно входить в конвейер: иначе статистики будут
+посчитаны с участием контрольных блоков, и оценка окажется завышенной. В
+scikit-learn метрики устроены так, что большее значение лучше, поэтому
+MSE задаётся со знаком минус (<code>neg_mean_squared_error</code>).</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 5.1. Выбор степени многочлена кросс-валидацией и итоговая
+оценка на тестовой выборке</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> mean_squared_error</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> GridSearchCV</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PolynomialFeatures</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>X_tr, X_te, y_tr, y_te <span class="op">=</span> train_test_split(</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.2</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> make_pipeline(StandardScaler(), PolynomialFeatures(),</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>                      LinearRegression())</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>search <span class="op">=</span> GridSearchCV(</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    model, {<span class="st">&quot;polynomialfeatures__degree&quot;</span>: <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">11</span>)},</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    cv<span class="op">=</span><span class="dv">5</span>, scoring<span class="op">=</span><span class="st">&quot;neg_mean_squared_error&quot;</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>search.fit(X_tr, y_tr)      <span class="co"># кросс-валидация на обучающей части</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(search.best_params_)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a><span class="co"># тестовая выборка — один раз, в конце</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> search.predict(X_te)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mean_squared_error(y_te, y_pred))</span></code></pre></div>
+<p>После выбора гиперпараметров <code>GridSearchCV</code> заново обучает
+лучшую модель на всей обучающей части; тестовая выборка в выборе не
+участвует, поэтому ошибка на ней не занижена выбором модели.</p>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-5">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Чем недообучение отличается от переобучения? Как каждое из них
+проявляется в ошибках на обучающей и контрольной выборках?</li>
+<li>Почему ошибка на обучающей выборке не годится для выбора степени
+многочлена?</li>
+<li>Что такое смещение и разброс? Как они меняются с ростом сложности
+модели?</li>
+<li>Почему увеличение обучающей выборки уменьшает переобучение?</li>
+<li>Чем кросс-валидация лучше отложенной выборки? Чем хуже?</li>
+<li>Почему для временных рядов нельзя разбивать выборку случайно?</li>
+<li>Зачем нужна тестовая выборка, если модель уже выбрана по
+валидационной?</li>
+<li>Может ли <span class="math inline">R^2</span> быть отрицательным?
+Что это означает?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-5">Задачи</h2>
+<ol type="1">
+<li><p>Ответы на трёх контрольных объектах равны 2, 4, 6, прогнозы
+модели — 3, 4, 8. Вычислите MSE, RMSE, MAE, MAPE и <span
+class="math inline">R^2</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">\mathrm{MSE} = 5/3 \approx 1{,}67</span>;
+<span class="math inline">\mathrm{RMSE} \approx 1{,}29</span>; <span
+class="math inline">\mathrm{MAE} = 1</span>; <span
+class="math inline">\mathrm{MAPE} \approx 27{,}8\,\%</span>; <span
+class="math inline">R^2 = 1 - 5/8 = 0{,}375</span>.</p>
+</details></li>
+<li><p>Выборка из 1000 объектов, 10-кратная кросс-валидация. Сколько раз
+обучается модель и на скольких объектах каждый раз? Сколько обучений
+потребует LOO?</p>
+<details class="answer"><summary>Ответ</summary>
+<p>10 раз по 900 объектов; LOO — 1000 обучений по 999 объектов.</p>
+</details></li>
+<li><p>Две модели на одной выборке из <span class="math inline">\ell =
+100</span> объектов: у первой 3 параметра и MSE = 2,0, у второй 10
+параметров и MSE = 1,8. Какую выберет AIC? BIC?</p>
+<details class="answer"><summary>Ответ</summary>
+<p>AIC: <span class="math inline">100 \ln 2 + 6 \approx 75{,}3</span>
+против <span class="math inline">100 \ln 1{,}8 + 20 \approx
+78{,}8</span> — первую; BIC штрафует сложность сильнее и тем более
+выберет первую.</p>
+</details></li>
+<li><p>Модель предсказания нагрузки на сервис по дням обучили и
+проверили 5-кратной кросс-валидацией со случайным разбиением, ошибка
+мала. После внедрения ошибка оказалась втрое больше. Назовите вероятную
+причину.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>утечка из будущего: для временного ряда нужно разбиение, при котором
+контроль всегда позже обучения.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch04.html" rel="prev"><span class="dir">Назад</span><span class="t">Градиентный спуск</span></a>
+  <a class="next" href="ch06.html" rel="next"><span class="dir">Далее</span><span class="t">Регуляризация</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

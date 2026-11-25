@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Предисловие">
+  <title>Предисловие — Машинное обучение: линейные и вероятностные
+модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li class="current"><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 class="unnumbered" id="preface">Предисловие</h1>
+<p>Машинное обучение стало частью инженерной практики: модели
+предсказывают дефекты в коде, фильтруют письма, оценивают стоимость и
+риски. Чтобы пользоваться готовыми библиотеками осмысленно — выбирать
+модель и метрику, замечать переобучение и утечки данных, понимать,
+почему модель ошибается, — нужно понимать, что происходит внутри них.
+Эта книга объясняет основы машинного обучения на линейных и
+вероятностных моделях. Они просты, но на них видны все главные идеи:
+обучение как минимизация эмпирического риска, градиентный спуск,
+переобучение и способы его обнаружить, регуляризация, вероятностный
+смысл функций потерь, метрики качества. Те же идеи лежат в основе более
+сложных моделей.</p>
+<p>Текст рассчитан на студентов-бакалавров инженерных направлений в
+области информационных технологий, в частности «Программной инженерии»,
+изучающих курс основ машинного обучения, а также на разработчиков,
+которые осваивают предмет самостоятельно. Для понимания материала нужна
+математика в объёме первых курсов технического университета — векторы и
+матрицы из линейной алгебры, производная и градиент из математического
+анализа, начала теории вероятностей, — а также умение программировать на
+Python. Необходимые сведения из математики собраны в приложении А.</p>
+<p><strong>Построение глав.</strong> Главный принцип — объяснять формулы
+простыми словами. Новое понятие вводится через задачу, которую оно
+решает; затем следует формула и её разбор по частям — абзацы «Читаем
+формулу». Почти каждая идея проверяется на примере из нескольких
+объектов, который можно посчитать вручную; полезно действительно
+пересчитать его, прежде чем читать дальше. Короткие листинги показывают,
+как то же самое делается в библиотеке scikit-learn. Глава заканчивается
+вопросами для самоконтроля и задачами с ответами.</p>
+<p>Главы 1 и 2 вводят основные понятия: объекты, признаки, модель,
+функцию потерь, эмпирический риск, подготовку данных. Главы 3–6 на
+примере задачи регрессии строят инструменты, общие для всех моделей:
+метод наименьших квадратов, градиентный спуск, валидацию и
+регуляризацию. Главы 7–9 посвящены классификации: логистической
+регрессии, метрикам качества классификаторов и наивному байесовскому
+классификатору. Главы опираются на предыдущие, поэтому читать их лучше
+по порядку. Сквозные примеры — предсказание ошибок в модулях программы
+(гл. 1 и 8), оценка стоимости квартир на синтетических данных (гл. 2, 6)
+и фильтрация спама (гл. 9).</p>
+<p>Метрические методы, метод опорных векторов, решающие деревья и
+ансамбли, обучение без учителя и нейронные сети здесь не
+рассматриваются; понятия этой книги — основа для их изучения.</p>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="index.html" rel="prev"><span class="dir">Назад</span><span class="t">Машинное обучение: линейные и вероятностные модели</span></a>
+  <a class="next" href="notation.html" rel="next"><span class="dir">Далее</span><span class="t">Основные обозначения</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Логистическая регрессия">
+  <title>Логистическая регрессия — Машинное обучение: линейные и
+вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li class="current"><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+<ol>
+<li><a href="ch07.html#pochemu-ne-podkhodit-lineynaya-regressiya"><span class="num">7.1</span><span>Почему не подходит линейная регрессия</span></a></li>
+<li><a href="ch07.html#lineynyy-klassifikator"><span class="num">7.2</span><span>Линейный классификатор</span></a></li>
+<li><a href="ch07.html#otstup-i-funktsii-poter"><span class="num">7.3</span><span>Отступ и функции потерь</span></a></li>
+<li><a href="ch07.html#sigmoida-i-veroyatnost-klassa"><span class="num">7.4</span><span>Сигмоида и вероятность класса</span></a></li>
+<li><a href="ch07.html#maksimum-pravdopodobiya"><span class="num">7.5</span><span>Максимум правдоподобия</span></a></li>
+<li><a href="ch07.html#veroyatnostnyy-smysl-regulyarizatsii"><span class="num">7.6</span><span>Вероятностный смысл регуляризации</span></a></li>
+<li><a href="ch07.html#neskolko-klassov"><span class="num">7.7</span><span>Несколько классов</span></a></li>
+<li><a href="ch07.html#voprosy-dlya-samokontrolya-7"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch07.html#zadachi-7"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="7" id="ch07"><span
+class="header-section-number">7</span> Логистическая регрессия</h1>
+<!-- Источники: лекция 05-classification (с. 4, 6, 8–10, 12–19); заметки 06 (с. 11, log-loss). Ошибки слайдов 05, с. 9, 10, 12, 14 исправлены (см. analysis/slide_errata.md). Метрические методы (05, с. 21–32) — в книгу 2. -->
+<p>В предыдущих главах решалась задача регрессии. Теперь перейдём к
+классификации с двумя классами, <span class="math inline">Y = \{-1,
++1\}</span>: есть ли в модуле программы ошибка, вернёт ли заёмщик
+кредит, злокачественна ли опухоль. Логистическая регрессия — линейная
+модель, которая не только относит объект к классу, но и оценивает
+вероятность этого класса. Её обучение сводится к минимизации
+эмпирического риска с особой функцией потерь, и в этой главе показано,
+откуда эта функция берётся.</p>
+<h2 data-number="7.1"
+id="pochemu-ne-podkhodit-lineynaya-regressiya"><span
+class="header-section-number">7.1</span> Почему не подходит линейная
+регрессия</h2>
+<p>Можно попробовать обучить на метках <span class="math inline">\pm
+1</span> обычную линейную регрессию и относить объект к классу <span
+class="math inline">+1</span>, если прогноз положителен. На рис. <a
+href="#fig:linreg-class">7.1</a> так классифицируются опухоли по
+размеру: четыре доброкачественные (<span class="math inline">y =
+-1</span>) размером от 1 до 2,5 см и четыре злокачественные (<span
+class="math inline">y = +1</span>) размером от 3,5 до 5 см. Прямая <span
+class="math inline">g(x) = \theta_0 + \theta_1 x</span>, найденная
+методом наименьших квадратов (гл. 3), обращается в нуль при <span
+class="math inline">x = 3</span> см; это и есть порог классификации, и
+он разделяет классы без ошибок.</p>
+<p>Добавим ещё одну злокачественную опухоль размером 14 см.
+Классифицировать её легко, но прежняя прямая дала бы для неё прогноз
+около <span class="math inline">+5</span>, и МНК, приближая прогноз к
+метке <span class="math inline">+1</span>, уменьшает наклон прямой.
+Порог сдвигается до 3,53 см, и опухоль размером 3,5 см теперь ошибочно
+считается доброкачественной. Квадратичная потеря штрафует модель за то,
+что на очевидном объекте прогноз «слишком правильный», и ради этого
+жертвует объектами у границы. Для классификации нужна функция потерь,
+которая не наказывает уверенные верные ответы.</p>
+<figure id="fig:linreg-class">
+<img src="fig/linreg_class.svg" style="width: 88%"
+alt="Рис. 7.1. Линейная регрессия на метках классов: далёкий объект сдвигает порог" />
+<figcaption aria-hidden="true">Рис. 7.1. Линейная регрессия на метках
+классов: далёкий объект сдвигает порог</figcaption>
+</figure>
+<h2 data-number="7.2" id="lineynyy-klassifikator"><span
+class="header-section-number">7.2</span> Линейный классификатор</h2>
+<p>Линейный классификатор для двух классов (гл. 1) имеет вид</p>
+<div class="equation">
+<p><span class="math display">g(x, \boldsymbol{\theta}) =
+\operatorname{sign} h(x, \boldsymbol{\theta}), \qquad h(x,
+\boldsymbol{\theta}) = \langle \boldsymbol{\theta}, \mathbf{x} \rangle =
+\sum_{j=0}^{n} \theta_j f_j(x),</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">h</span> — <em>разделяющая
+функция</em>. Объекты, для которых <span class="math inline">h(x,
+\boldsymbol{\theta}) = 0</span>, образуют <em>разделяющую
+поверхность</em>: по одну её сторону классификатор отвечает <span
+class="math inline">+1</span>, по другую — <span
+class="math inline">-1</span>. Для линейной <span
+class="math inline">h</span> вид поверхности зависит от числа признаков.
+Если признаков два, каждый объект — точка на плоскости, и разделяющая
+поверхность — прямая на этой плоскости. Если признаков три, пространство
+признаков трёхмерное, и поверхность — плоскость. При <span
+class="math inline">n</span> признаках это гиперплоскость — «плоскость»
+размерности <span class="math inline">n - 1</span> в <span
+class="math inline">n</span>-мерном пространстве признаков.</p>
+</div>
+<p><strong>Пример.</strong> Пусть у объекта два признака, <span
+class="math inline">x_1</span> и <span class="math inline">x_2</span>, и
+<span class="math inline">\boldsymbol{\theta} = (-3;\, 1;\, 1)</span>.
+Тогда <span class="math inline">h = -3 + x_1 + x_2</span>, и разделяющая
+поверхность — прямая <span class="math inline">x_1 + x_2 = 3</span>
+(рис. <a href="#fig:boundaries">7.2</a>, а). Объект <span
+class="math inline">(1;\, 1)</span> даёт <span class="math inline">h =
+-1</span> и относится к классу <span class="math inline">-1</span>,
+объект <span class="math inline">(2;\, 2)</span> даёт <span
+class="math inline">h = 1</span> и относится к классу <span
+class="math inline">+1</span>. Величина <span
+class="math inline">|h|</span> пропорциональна расстоянию от объекта до
+прямой: она показывает, насколько уверенно классификатор относит объект
+к классу.</p>
+<figure id="fig:boundaries">
+<img src="fig/boundaries.svg" style="width: 98%"
+alt="Рис. 7.2. Разделяющие поверхности: а — прямая; б — окружность, полученная линейной моделью от квадратов признаков" />
+<figcaption aria-hidden="true">Рис. 7.2. Разделяющие поверхности: а —
+прямая; б — окружность, полученная линейной моделью от квадратов
+признаков</figcaption>
+</figure>
+<p>Модель линейна по параметрам, но не обязана быть линейной по исходным
+признакам — как и в полиномиальной регрессии из гл. 3. Если классы
+разделены окружностью (рис. <a href="#fig:boundaries">7.2</a>, б),
+возьмём признаки <span class="math inline">f_1 = x_1^2</span> и <span
+class="math inline">f_2 = x_2^2</span>. При <span
+class="math inline">\boldsymbol{\theta} = (-1;\, 1;\, 1)</span> получаем
+<span class="math inline">h = -1 + x_1^2 + x_2^2</span>, и разделяющая
+поверхность — окружность <span class="math inline">x_1^2 + x_2^2 =
+1</span>.</p>
+<h2 data-number="7.3" id="otstup-i-funktsii-poter"><span
+class="header-section-number">7.3</span> Отступ и функции потерь</h2>
+<p><em>Отступом</em> объекта <span class="math inline">x_i</span>
+называют величину</p>
+<div class="equation">
+<p><span class="math display">M_i(\boldsymbol{\theta}) = y_i \, h(x_i,
+\boldsymbol{\theta}).</span></p>
+</div>
+<div class="continuation">
+<p>Отступ положителен, если знак <span class="math inline">h</span>
+совпадает с меткой, то есть классификатор отвечает верно, и отрицателен
+при ошибке. Его модуль — та же уверенность <span
+class="math inline">|h|</span>: большой положительный отступ означает
+уверенный верный ответ, большой отрицательный — грубую ошибку. Благодаря
+обозначению классов <span class="math inline">\pm 1</span> одна формула
+описывает оба класса.</p>
+</div>
+<p>Индикатор ошибки из гл. 1 через отступ записывается как <em>пороговая
+функция потерь</em> <span class="math inline">[M_i &lt; 0]</span>, а
+эмпирический риск — как доля ошибок. Минимизировать её напрямую трудно:
+функция ступенчатая, её производная почти везде равна нулю, и
+градиентный спуск (гл. 4) не знает, куда двигаться. Поэтому пороговую
+функцию заменяют непрерывной функцией <span
+class="math inline">\mathcal{L}(M)</span> без скачка, которая лежит не
+ниже неё (рис. <a href="#fig:losses">7.3</a>). Тогда сумма <span
+class="math inline">\mathcal{L}(M_i)</span> — верхняя оценка числа
+ошибок, и, уменьшая её, мы уменьшаем и число ошибок.</p>
+<figure id="fig:losses">
+<img src="fig/margin_losses.svg" style="width: 79%"
+alt="Рис. 7.3. Пороговая функция потерь и её верхние оценки как функции отступа" />
+<figcaption aria-hidden="true">Рис. 7.3. Пороговая функция потерь и её
+верхние оценки как функции отступа</figcaption>
+</figure>
+<p>Три верхние оценки на рис. <a href="#fig:losses">7.3</a> —
+логистическая, кусочно-линейная и экспоненциальная — убывают с ростом
+отступа (кусочно-линейная — до <span class="math inline">M = 1</span>,
+дальше она равна нулю). В отличие от пороговой функции, они штрафуют не
+только ошибки (<span class="math inline">M &lt; 0</span>), но и
+неуверенные верные ответы вблизи границы. При большом положительном
+отступе потеря близка к нулю — именно этого не хватало квадратичной
+потере в разд. 7.1. Логистическая функция <span
+class="math inline">\ln(1 + e^{-M})</span> (на рисунке — с основанием
+логарифма 2, чтобы она проходила через точку <span
+class="math inline">(0;\, 1)</span>; от основания зависит только
+множитель) приводит к логистической регрессии; кусочно-линейная <span
+class="math inline">\max(0,\, 1 - M)</span> — к методу опорных векторов;
+экспоненциальная <span class="math inline">e^{-M}</span> используется в
+бустинге. Выбор логистической функции кажется произвольным, но у неё
+есть вероятностный смысл, который раскрыт в двух следующих разделах.</p>
+<h2 data-number="7.4" id="sigmoida-i-veroyatnost-klassa"><span
+class="header-section-number">7.4</span> Сигмоида и вероятность
+класса</h2>
+<p><em>Сигмоида</em> (логистическая функция)</p>
+<div class="equation">
+<p><span class="math display">\sigma(z) = \frac{1}{1 +
+e^{-z}}</span></p>
+</div>
+<div class="continuation">
+<p>переводит любое число в интервал <span class="math inline">(0;\,
+1)</span>: <span class="math inline">\sigma(0) = 0{,}5</span>, <span
+class="math inline">\sigma(z) \to 1</span> при <span
+class="math inline">z \to +\infty</span> и <span
+class="math inline">\sigma(z) \to 0</span> при <span
+class="math inline">z \to -\infty</span> (рис. <a
+href="#fig:sigmoid">7.4</a>). У неё два полезных свойства, которые
+проверяются прямой подстановкой:</p>
+</div>
+<div class="equation">
+<p><span class="math display">\sigma(-z) = 1 - \sigma(z), \qquad
+\sigma&#39;(z) = \sigma(z)\bigl(1 - \sigma(z)\bigr).</span></p>
+</div>
+<figure id="fig:sigmoid">
+<img src="fig/sigmoid.svg" style="width: 70%"
+alt="Рис. 7.4. Сигмоида и её производная; штрихпунктир — уровень 0,5, который сигмоида проходит при z = 0" />
+<figcaption aria-hidden="true">Рис. 7.4. Сигмоида и её производная;
+штрихпунктир — уровень 0,5, который сигмоида проходит при <span
+class="math inline">z = 0</span></figcaption>
+</figure>
+<p>Логистическая регрессия представляет вероятность класса <span
+class="math inline">+1</span> как сигмоиду от разделяющей функции:</p>
+<div id="eq:logreg-p" class="equation">
+<p><span class="math display">P(y = +1 \mid x) = \sigma\bigl(h(x,
+\boldsymbol{\theta})\bigr).\tag{7.1}</span></p>
+</div>
+<div class="continuation">
+<p>Чем дальше объект от разделяющей поверхности в сторону класса <span
+class="math inline">+1</span>, тем ближе вероятность к единице; на самой
+поверхности она равна 0,5. Вероятность класса <span
+class="math inline">-1</span> по первому свойству сигмоиды равна <span
+class="math inline">1 - \sigma(h) = \sigma(-h)</span>. Обе формулы
+объединяются в одну:</p>
+</div>
+<div id="eq:logreg-margin" class="equation">
+<p><span class="math display">P(y \mid x) = \sigma\bigl(y \, h(x,
+\boldsymbol{\theta})\bigr) = \sigma(M), \quad y \in \{-1,
++1\}.\tag{7.2}</span></p>
+</div>
+<div class="continuation">
+<p>Вероятность правильного ответа — сигмоида от отступа.</p>
+</div>
+<p><strong>Метки 0 и 1.</strong> В scikit-learn и большинстве учебников
+классы обозначают <span class="math inline">\tilde y \in \{0,
+1\}</span>, где <span class="math inline">\tilde y = (y + 1)/2</span>.
+Вероятность класса 1, которую модель предсказывает для объекта <span
+class="math inline">x</span>, обозначим <span class="math inline">\hat
+p</span>:</p>
+<div class="equation">
+<p><span class="math display">\hat p = P(\tilde y = 1 \mid x) =
+\sigma\bigl(h(x, \boldsymbol{\theta})\bigr).</span></p>
+</div>
+<div class="continuation">
+<p>Это та же вероятность, что в <a
+href="ch07.html#eq:logreg-p">(7.1)</a>: событие <span
+class="math inline">\tilde y = 1</span> совпадает с событием <span
+class="math inline">y = +1</span>. Знак «крышка» над буквой, как в <span
+class="math inline">\hat y</span>, напоминает, что это прогноз модели —
+её оценка вероятности, а не сама вероятность; для <span
+class="math inline">i</span>-го объекта пишем <span
+class="math inline">\hat p_i</span>. Вероятность наблюдаемой метки</p>
+</div>
+<div id="eq:logreg-bernoulli" class="equation">
+<p><span class="math display">P(\tilde y \mid x) = \hat p^{\tilde y} (1
+- \hat p)^{1 - \tilde y}\tag{7.3}</span></p>
+</div>
+<div class="continuation">
+<p>(при <span class="math inline">\tilde y = 1</span> остаётся <span
+class="math inline">\hat p</span>, а при <span
+class="math inline">\tilde y = 0</span> остаётся <span
+class="math inline">1 - \hat p</span>). Это та же модель, что <a
+href="ch07.html#eq:logreg-margin">(7.2)</a>, в другой записи. Чтобы
+получить класс, вероятность сравнивают с порогом: при пороге 0,5 класс 1
+выбирается, если <span class="math inline">\hat p \ge 0{,}5</span>, то
+есть <span class="math inline">h \ge 0</span>, — это прежний
+классификатор <span class="math inline">\operatorname{sign} h</span>.
+Если ошибки разных типов имеют разную цену, порог сдвигают.</p>
+</div>
+<p><strong>Шансы и смысл коэффициентов.</strong> <em>Шансы</em> класса —
+отношение <span class="math inline">\hat p/(1 - \hat p)</span>: шансы 3
+означают, что класс 1 втрое вероятнее класса 0. Подставим <span
+class="math inline">\hat p = \sigma(h) = 1/(1 + e^{-h})</span>. Тогда
+<span class="math inline">1 - \hat p = e^{-h}/(1 + e^{-h})</span>,
+знаменатели при делении сокращаются, и шансы равны</p>
+<div class="equation">
+<p><span class="math display">\frac{\hat p}{1 - \hat p} =
+\frac{1}{e^{-h}} = e^{h}.</span></p>
+</div>
+<div class="continuation">
+<p>Логарифмируя, получаем</p>
+</div>
+<div class="equation">
+<p><span class="math display">\ln \frac{\hat p}{1 - \hat p} = h(x,
+\boldsymbol{\theta}) = \theta_0 + \theta_1 f_1(x) + \ldots + \theta_n
+f_n(x).</span></p>
+</div>
+<div class="continuation">
+<p>Логарифм шансов называют <em>логитом</em>; логистическая регрессия —
+линейная модель логита. Отсюда смысл коэффициентов: увеличение признака
+<span class="math inline">f_j</span> на единицу при прочих равных
+прибавляет к логиту <span class="math inline">\theta_j</span>, то есть
+умножает шансы на <span class="math inline">e^{\theta_j}</span>. В
+примере с <span class="math inline">\boldsymbol{\theta} = (-3;\, 1;\,
+1)</span> объект <span class="math inline">(1;\, 1)</span> имеет <span
+class="math inline">h = -1</span>; вероятность класса 1 для него равна
+<span class="math inline">\sigma(-1) \approx 0{,}27</span>, а шансы —
+<span class="math inline">e^{-1} \approx 0{,}37</span>; увеличение <span
+class="math inline">x_1</span> на единицу умножает шансы на <span
+class="math inline">e \approx 2{,}72</span>, и у объекта <span
+class="math inline">(2;\, 1)</span> шансы равны 1, а вероятность —
+0,5.</p>
+</div>
+<h2 data-number="7.5" id="maksimum-pravdopodobiya"><span
+class="header-section-number">7.5</span> Максимум правдоподобия</h2>
+<p>Как подобрать параметры? Естественное требование: модель должна
+приписывать наблюдаемым в выборке меткам высокую вероятность. Если
+объекты выборки независимы, вероятность получить все метки сразу равна
+произведению вероятностей отдельных меток. Эту величину как функцию
+параметров называют <em>правдоподобием</em> и обозначают <span
+class="math inline">L</span> (от англ. likelihood):</p>
+<div class="equation">
+<p><span class="math display">L(\boldsymbol{\theta}) =
+\prod_{i=1}^{\ell} P(y_i \mid x_i, \boldsymbol{\theta}).</span></p>
+</div>
+<div class="continuation">
+<p>Правдоподобие тоже оценивает, насколько параметры согласуются с
+выборкой, но, в отличие от функционала качества <span
+class="math inline">Q</span> (гл. 1), его не минимизируют, а
+максимизируют; ниже одна задача сведена к другой. <em>Принцип максимума
+правдоподобия</em> — выбрать параметры, при которых правдоподобие
+наибольшее. Произведение многих чисел меньше единицы неудобно (оно
+быстро становится неразличимо малым), поэтому максимизируют логарифм —
+он превращает произведение в сумму и не меняет точку максимума.
+Максимизация <span class="math inline">\ln L</span> равносильна
+минимизации <span class="math inline">-\ln L</span>. Подставив <a
+href="ch07.html#eq:logreg-margin">(7.2)</a>, получаем</p>
+</div>
+<div id="eq:logloss" class="equation">
+<p><span class="math display">-\ln L(\boldsymbol{\theta}) =
+-\sum_{i=1}^{\ell} \ln \sigma(M_i) = \sum_{i=1}^{\ell} \ln\bigl(1 +
+e^{-M_i}\bigr).\tag{7.4}</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Слева — минус логарифм
+правдоподобия, справа — сумма логистических потерь из разд. 7.3. Значит,
+<span class="math inline">Q(\boldsymbol{\theta}) = -\frac{1}{\ell} \ln
+L(\boldsymbol{\theta})</span> — эмпирический риск с логистической
+функцией потерь, и максимизация правдоподобия и минимизация <span
+class="math inline">Q</span> — одна и та же задача. Логистическая
+функция потерь не выбрана произвольно: она равна минус логарифму
+вероятности, которую модель приписывает правильному ответу. Уверенный
+верный ответ (<span class="math inline">\sigma(M) \approx 1</span>)
+почти ничего не стоит, уверенная ошибка (<span
+class="math inline">\sigma(M) \approx 0</span>) стоит очень дорого.</p>
+<p>Каждое слагаемое суммы <a href="ch07.html#eq:logloss">(7.4)</a> —
+потеря на одном объекте, минус логарифм вероятности его метки: <span
+class="math inline">-\ln P(y_i \mid x_i)</span>. Если записать эту
+вероятность через метки <span class="math inline">\tilde y \in \{0,
+1\}</span> по формуле <a href="ch07.html#eq:logreg-bernoulli">(7.3)</a>
+и прологарифмировать, получится потеря, которую называют <em>бинарной
+кросс-энтропией</em> (log-loss):</p>
+<div class="equation">
+<p><span class="math display">\mathcal{L} = -\ln P(\tilde y \mid x) =
+-\bigl[\tilde y \ln \hat p + (1 - \tilde y) \ln(1 - \hat p)\bigr], \quad
+\hat p = \sigma(h).</span></p>
+</div>
+<div class="continuation">
+<p>Это та же логистическая потеря <span class="math inline">\ln(1 +
+e^{-M})</span>, только записанная через <span class="math inline">\tilde
+y</span> и <span class="math inline">\hat p</span>; её среднее по
+выборке — тот же функционал <span
+class="math inline">Q(\boldsymbol{\theta})</span>. Из двух слагаемых
+ненулевое только одно: при <span class="math inline">\tilde y = 1</span>
+потеря равна <span class="math inline">-\ln \hat p</span>, а при <span
+class="math inline">\tilde y = 0</span> она равна <span
+class="math inline">-\ln(1 - \hat p)</span>.</p>
+</div>
+<p>Тот же принцип объясняет и метод наименьших квадратов: если в
+регрессии шум нормально распределён, <span class="math inline">y = g(x,
+\boldsymbol{\theta}) + \varepsilon</span>, <span
+class="math inline">\varepsilon \sim N(0, \sigma^2)</span>, то минус
+логарифм вероятности ответа равен <span class="math inline">(y - g)^2 /
+(2\sigma^2)</span> плюс константа, и максимум правдоподобия совпадает с
+минимумом суммы квадратов.</p>
+<p><strong>Пример.</strong> Сравним по правдоподобию две модели <span
+class="math inline">h = \theta_0 + \theta_1 x</span> на трёх объектах с
+одним признаком: <span class="math inline">x = 1, 2, 3</span> и метками
+<span class="math inline">-1, +1, +1</span>. Модель <span
+class="math inline">\boldsymbol{\theta} = (-3;\, 2)</span> даёт <span
+class="math inline">h = -1;\ 1;\ 3</span> и отступы <span
+class="math inline">1;\ 1;\ 3</span>. Вероятности правильных ответов —
+<span class="math inline">\sigma(1) = 0{,}731</span>; <span
+class="math inline">0{,}731</span>; <span class="math inline">\sigma(3)
+= 0{,}953</span>, правдоподобие <span class="math inline">L = 0{,}731
+\cdot 0{,}731 \cdot 0{,}953 \approx 0{,}509</span>, а <span
+class="math inline">-\ln L = 0{,}313 + 0{,}313 + 0{,}049 =
+0{,}675</span>. Модель <span class="math inline">\boldsymbol{\theta} =
+(-1{,}5;\, 1)</span> с той же разделяющей точкой <span
+class="math inline">x = 1{,}5</span> даёт отступы <span
+class="math inline">0{,}5;\ 0{,}5;\ 1{,}5</span>, правдоподобие <span
+class="math inline">0{,}317</span> и <span class="math inline">-\ln L =
+1{,}15</span>. Обе модели классифицируют все объекты верно, но первая
+увереннее, и правдоподобие её предпочитает.</p>
+<p>Продолжим пример: модель <span
+class="math inline">\boldsymbol{\theta} = (-6;\, 4)</span> — та же
+граница, веса вдвое больше — даёт <span class="math inline">-\ln L =
+0{,}256</span>, ещё лучше. Если классы в выборке разделимы, умножение
+весов на любое число больше единицы увеличивает все отступы и
+правдоподобие, и минимум <a href="ch07.html#eq:logloss">(7.4)</a> не
+достигается: веса растут бесконечно. Это крайний случай переобучения, и
+защищает от него регуляризация (разд. 7.6).</p>
+<p><strong>Градиент.</strong> Решения в явном виде у задачи нет, её
+решают градиентным спуском или более быстрыми методами второго порядка.
+Вычислим градиент потери на одном объекте в записи с метками <span
+class="math inline">\tilde y \in \{0, 1\}</span>. По правилу
+дифференцирования сложной функции и свойству <span
+class="math inline">\sigma&#39; = \sigma(1 - \sigma)</span>:</p>
+<div class="equation">
+<p><span class="math display">\frac{\partial \mathcal{L}}{\partial h} =
+-\tilde y \, \frac{\sigma(1 - \sigma)}{\sigma} + (1 - \tilde y) \,
+\frac{\sigma(1 - \sigma)}{1 - \sigma} = \hat p - \tilde y,</span></p>
+</div>
+<div class="continuation">
+<p>а так как <span class="math inline">\partial h / \partial
+\boldsymbol{\theta} = \mathbf{x}</span>, градиент равен <span
+class="math inline">(\hat p - \tilde y)\, \mathbf{x}</span>. Для средней
+потери по выборке</p>
+</div>
+<div class="equation">
+<p><span class="math display">\nabla Q(\boldsymbol{\theta}) =
+\frac{1}{\ell} \mathbf{F}^{\mathrm{T}} (\hat{\mathbf{p}} -
+\tilde{\mathbf{y}}),</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\hat{\mathbf{p}}</span> — вектор
+вероятностей <span class="math inline">\sigma(h(x_i,
+\boldsymbol{\theta}))</span>. Формула той же формы, что градиент
+квадратичной потери <span class="math inline">\frac{2}{\ell}
+\mathbf{F}^{\mathrm{T}}(\mathbf{F}\boldsymbol{\theta} -
+\mathbf{y})</span> из гл. 3: столбцы признаков, умноженные на «ошибки»
+модели, только ошибка теперь — разность между предсказанной вероятностью
+и меткой. Функция <a href="ch07.html#eq:logloss">(7.4)</a> выпукла,
+поэтому при подходящей регуляризации у неё один минимум, и спуск находит
+его из любой начальной точки.</p>
+</div>
+<h2 data-number="7.6" id="veroyatnostnyy-smysl-regulyarizatsii"><span
+class="header-section-number">7.6</span> Вероятностный смысл
+регуляризации</h2>
+<p>Регуляризацию из гл. 6 тоже можно получить из вероятностных
+соображений. Будем считать параметры случайными и до наблюдения данных
+зададим их <em>априорное распределение</em> с плотностью <span
+class="math inline">p(\boldsymbol{\theta})</span> — представление о том,
+какие значения параметров правдоподобны. Обычно веса считают скорее
+малыми, чем большими. Выбирают параметры, при которых велико
+произведение правдоподобия данных и априорной плотности; логарифмируя,
+получаем задачу</p>
+<div class="equation">
+<p><span class="math display">-\ln L(\boldsymbol{\theta}) - \ln
+p(\boldsymbol{\theta}) \to \min_{\boldsymbol{\theta}}.</span></p>
+</div>
+<div class="continuation">
+<p>Это <em>принцип максимума апостериорной вероятности</em> (maximum a
+posteriori, MAP): максимизируется апостериорная вероятность параметров
+при данной выборке, а минимизируемый функционал — её минус логарифм.
+Первое слагаемое — эмпирический риск, второе играет роль штрафа.</p>
+</div>
+<p>Пусть веса <span class="math inline">\theta_1, \ldots,
+\theta_n</span> независимы и распределены нормально со средним 0 и
+дисперсией <span class="math inline">C</span>: <span
+class="math inline">p(\theta_j) \propto \exp(-\theta_j^2 / (2C))</span>.
+Тогда <span class="math inline">-\ln p(\boldsymbol{\theta}) =
+\|\boldsymbol{\theta}\|_2^2 / (2C) + \text{const}</span> — штраф
+гребневой регрессии с <span class="math inline">\lambda = 1/(2C)</span>.
+Если веса распределены по закону Лапласа, <span
+class="math inline">p(\theta_j) \propto \exp(-|\theta_j| / C)</span>,
+получается штраф для LASSO <span
+class="math inline">\|\boldsymbol{\theta}\|_1 / C</span>. Распределение
+Лапласа сильнее сосредоточено около нуля, чем нормальное, и это
+согласуется с тем, что LASSO обнуляет веса.</p>
+<p><strong>Читаем формулы.</strong> Коэффициент регуляризации обратен
+дисперсии априорного распределения: малая дисперсия <span
+class="math inline">C</span> означает твёрдую уверенность, что веса
+близки к нулю, — сильная регуляризация; большая <span
+class="math inline">C</span> — регуляризация слабая. В scikit-learn
+логистическая регрессия параметризована именно так: параметр
+<code>C</code> класса <code>LogisticRegression</code> — обратный
+коэффициент регуляризации (по умолчанию <span class="math inline">C =
+1</span> со штрафом L2), и при уменьшении <code>C</code> регуляризация
+усиливается.</p>
+<h2 data-number="7.7" id="neskolko-klassov"><span
+class="header-section-number">7.7</span> Несколько классов</h2>
+<p>Если классов <span class="math inline">K &gt; 2</span>, <span
+class="math inline">Y = \{1, \ldots, K\}</span>, есть два подхода.
+<em>Один против всех</em> (one-vs-rest): обучают <span
+class="math inline">K</span> бинарных классификаторов, <span
+class="math inline">k</span>-й отделяет класс <span
+class="math inline">k</span> от остальных, и объект относят к классу,
+чей классификатор дал наибольшую вероятность. <em>Многоклассовая
+логистическая регрессия</em> заводит для каждого класса свою разделяющую
+функцию <span class="math inline">h_k(x) = \langle
+\boldsymbol{\theta}_k, \mathbf{x} \rangle</span> и переводит их в
+вероятности функцией <em>softmax</em>:</p>
+<div class="equation">
+<p><span class="math display">P(y = k \mid x) =
+\frac{e^{h_k(x)}}{\sum\limits_{c=1}^{K} e^{h_c(x)}}, \quad k = 1,
+\ldots, K.</span></p>
+</div>
+<div class="continuation">
+<p>Экспонента делает все величины положительными, а после деления на
+знаменатель они в сумме дают единицу, как и положено вероятностям. Класс
+с наибольшей <span class="math inline">h_k</span> получает наибольшую
+вероятность. Параметры находят тем же максимумом правдоподобия: потеря
+на объекте равна <span class="math inline">-\ln P(y_i \mid x_i)</span> —
+многоклассовая кросс-энтропия. При <span class="math inline">K =
+2</span> softmax превращается в сигмоиду от разности <span
+class="math inline">h_1 - h_2</span>.</p>
+</div>
+<p>В scikit-learn оба случая обрабатывает класс
+<code>LogisticRegression</code> (листинг 7.1). Метод
+<code>predict</code> возвращает класс, <code>predict_proba</code> —
+вероятности классов, а экспоненты коэффициентов <code>coef_</code>
+показывают, во сколько раз меняются шансы при увеличении
+стандартизованного признака на одно стандартное отклонение.</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 7.1. Логистическая регрессия в scikit-learn</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LogisticRegression</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> make_pipeline(StandardScaler(),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                      LogisticRegression(C<span class="op">=</span><span class="fl">1.0</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>model.fit(X_train, y_train)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>proba <span class="op">=</span> model.predict_proba(X_test)[:, <span class="dv">1</span>]  <span class="co"># P(класс 1)</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>y_pred <span class="op">=</span> model.predict(X_test)             <span class="co"># порог 0,5</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>odds <span class="op">=</span> np.exp(model[<span class="op">-</span><span class="dv">1</span>].coef_)             <span class="co"># множители шансов</span></span></code></pre></div>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-7">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Почему линейная регрессия плохо подходит для классификации?</li>
+<li>Что такое отступ? Какой знак у отступа при ошибке
+классификатора?</li>
+<li>Почему пороговую функцию потерь заменяют гладкой?</li>
+<li>Почему вероятность правильного ответа в логистической регрессии
+равна <span class="math inline">\sigma(M)</span>?</li>
+<li>Как связаны максимум правдоподобия и минимизация логистической
+потери?</li>
+<li>Как истолковать коэффициент <span class="math inline">\theta_j =
+0{,}7</span> логистической регрессии?</li>
+<li>Что происходит с весами логистической регрессии, если классы
+разделимы, а регуляризация отсутствует?</li>
+<li>Какому априорному распределению весов соответствует штраф L2?
+L1?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-7">Задачи</h2>
+<ol type="1">
+<li><p>Для <span class="math inline">\boldsymbol{\theta} = (-3;\, 1;\,
+1)</span> найдите вероятность класса <span class="math inline">+1</span>
+и шансы для объектов <span class="math inline">(3;\, 1)</span> и <span
+class="math inline">(0;\, 1)</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>для <span class="math inline">(3;\, 1)</span>: <span
+class="math inline">h = 1</span>, <span class="math inline">\hat p =
+\sigma(1) \approx 0{,}73</span>, шансы <span class="math inline">e
+\approx 2{,}72</span>; для <span class="math inline">(0;\, 1)</span>:
+<span class="math inline">h = -2</span>, <span class="math inline">\hat
+p \approx 0{,}12</span>, шансы <span class="math inline">e^{-2} \approx
+0{,}14</span>.</p>
+</details></li>
+<li><p>Вычислите бинарную кросс-энтропию для объекта с меткой <span
+class="math inline">\tilde y = 1</span> при прогнозах <span
+class="math inline">\hat p = 0{,}9</span>; <span
+class="math inline">0{,}5</span>; <span
+class="math inline">0{,}1</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">0{,}105</span>; <span
+class="math inline">0{,}693</span>; <span
+class="math inline">2{,}303</span> — уверенная ошибка стоит в 22 раза
+дороже уверенного верного ответа.</p>
+</details></li>
+<li><p>Покажите, что при <span class="math inline">K = 2</span> softmax
+даёт <span class="math inline">P(y = 1 \mid x) = \sigma(h_1 -
+h_2)</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>разделив числитель и знаменатель на <span
+class="math inline">e^{h_1}</span>, получаем <span
+class="math inline">1/\bigl(1 + e^{-(h_1 - h_2)}\bigr) = \sigma(h_1 -
+h_2)</span>.</p>
+</details></li>
+<li><p>Сделайте один шаг градиентного спуска для потери на одном объекте
+<span class="math inline">x = 2</span>, <span class="math inline">\tilde
+y = 1</span> из <span class="math inline">\boldsymbol{\theta} = (0;\,
+0)</span> при <span class="math inline">\eta = 0{,}5</span> (признаки —
+<span class="math inline">f_0 = 1</span> и <span
+class="math inline">x</span>).</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">\hat p = 0{,}5</span>, градиент <span
+class="math inline">(\hat p - \tilde y)(1;\, 2) = (-0{,}5;\, -1)</span>,
+<span class="math inline">\boldsymbol{\theta} = (0{,}25;\,
+0{,}5)</span>.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch06.html" rel="prev"><span class="dir">Назад</span><span class="t">Регуляризация</span></a>
+  <a class="next" href="ch08.html" rel="next"><span class="dir">Далее</span><span class="t">Метрики качества классификации</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

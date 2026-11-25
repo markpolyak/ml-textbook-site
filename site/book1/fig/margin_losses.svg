@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="225.876535pt" height="152.145525pt" viewBox="0 0 225.876535 152.145525" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-24T16:38:39.632747</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.10.8, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 152.145525 
+L 225.876535 152.145525 
+L 225.876535 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 24.72 124.264744 
+L 222.436535 124.264744 
+L 222.436535 4.2175 
+L 24.72 4.2175 
+z
+" style="fill: #ffffff"/>
+   </g>
+   <g id="matplotlib.axis_1">
+    <g id="xtick_1">
+     <g id="line2d_1">
+      <path d="M 42.69423 124.264744 
+L 42.69423 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_2">
+      <defs>
+       <path id="mff198c5043" d="M 0 0 
+L 0 3.5 
+" style="stroke: #000000; stroke-width: 0.6"/>
+      </defs>
+      <g>
+       <use xlink:href="#mff198c5043" x="42.69423" y="124.264744" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_1">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: middle" x="42.69423" y="136.819744" transform="rotate(-0 42.69423 136.819744)">−2</text>
+     </g>
+    </g>
+    <g id="xtick_2">
+     <g id="line2d_3">
+      <path d="M 78.642691 124.264744 
+L 78.642691 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_4">
+      <g>
+       <use xlink:href="#mff198c5043" x="78.642691" y="124.264744" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_2">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: middle" x="78.642691" y="136.819744" transform="rotate(-0 78.642691 136.819744)">−1</text>
+     </g>
+    </g>
+    <g id="xtick_3">
+     <g id="line2d_5">
+      <path d="M 114.591152 124.264744 
+L 114.591152 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_6">
+      <g>
+       <use xlink:href="#mff198c5043" x="114.591152" y="124.264744" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_3">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: middle" x="114.591152" y="136.819744" transform="rotate(-0 114.591152 136.819744)">0</text>
+     </g>
+    </g>
+    <g id="xtick_4">
+     <g id="line2d_7">
+      <path d="M 150.539613 124.264744 
+L 150.539613 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_8">
+      <g>
+       <use xlink:href="#mff198c5043" x="150.539613" y="124.264744" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_4">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: middle" x="150.539613" y="136.819744" transform="rotate(-0 150.539613 136.819744)">1</text>
+     </g>
+    </g>
+    <g id="xtick_5">
+     <g id="line2d_9">
+      <path d="M 186.488074 124.264744 
+L 186.488074 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_10">
+      <g>
+       <use xlink:href="#mff198c5043" x="186.488074" y="124.264744" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_5">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: middle" x="186.488074" y="136.819744" transform="rotate(-0 186.488074 136.819744)">2</text>
+     </g>
+    </g>
+    <g id="xtick_6">
+     <g id="line2d_11">
+      <path d="M 222.436535 124.264744 
+L 222.436535 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_12">
+      <g>
+       <use xlink:href="#mff198c5043" x="222.436535" y="124.264744" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_6">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: middle" x="222.436535" y="136.819744" transform="rotate(-0 222.436535 136.819744)">3</text>
+     </g>
+    </g>
+    <g id="text_7">
+     <!-- отступ $M$ -->
+     <g transform="translate(105.848268 148.725525)">
+      <text>
+       <tspan x="0" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="4.5" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'">т</tspan>
+       <tspan x="8.433105" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'">с</tspan>
+       <tspan x="12.427734" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'">т</tspan>
+       <tspan x="16.36084" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'">у</tspan>
+       <tspan x="20.86084" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'">п</tspan>
+       <tspan x="25.677246" y="-0.046875" style="font-size: 9px; font-family: 'Times New Roman'"> </tspan>
+       <tspan x="27.927246" y="-0.046875" style="font-style: italic; font-size: 9px; font-family: 'Times New Roman'">M</tspan>
+      </text>
+     </g>
+    </g>
+   </g>
+   <g id="matplotlib.axis_2">
+    <g id="ytick_1">
+     <g id="line2d_13">
+      <path d="M 24.72 121.336763 
+L 222.436535 121.336763 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_14">
+      <defs>
+       <path id="m3bca178537" d="M 0 0 
+L -3.5 0 
+" style="stroke: #000000; stroke-width: 0.6"/>
+      </defs>
+      <g>
+       <use xlink:href="#m3bca178537" x="24.72" y="121.336763" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_8">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: end" x="17.72" y="124.114263" transform="rotate(-0 17.72 124.114263)">0</text>
+     </g>
+    </g>
+    <g id="ytick_2">
+     <g id="line2d_15">
+      <path d="M 24.72 92.056947 
+L 222.436535 92.056947 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_16">
+      <g>
+       <use xlink:href="#m3bca178537" x="24.72" y="92.056947" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_9">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: end" x="17.72" y="94.834447" transform="rotate(-0 17.72 94.834447)">1</text>
+     </g>
+    </g>
+    <g id="ytick_3">
+     <g id="line2d_17">
+      <path d="M 24.72 62.777131 
+L 222.436535 62.777131 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_18">
+      <g>
+       <use xlink:href="#m3bca178537" x="24.72" y="62.777131" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_10">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: end" x="17.72" y="65.554631" transform="rotate(-0 17.72 65.554631)">2</text>
+     </g>
+    </g>
+    <g id="ytick_4">
+     <g id="line2d_19">
+      <path d="M 24.72 33.497316 
+L 222.436535 33.497316 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_20">
+      <g>
+       <use xlink:href="#m3bca178537" x="24.72" y="33.497316" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_11">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: end" x="17.72" y="36.274816" transform="rotate(-0 17.72 36.274816)">3</text>
+     </g>
+    </g>
+    <g id="ytick_5">
+     <g id="line2d_21">
+      <path d="M 24.72 4.2175 
+L 222.436535 4.2175 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #cccccc; stroke-width: 0.4; stroke-linecap: square"/>
+     </g>
+     <g id="line2d_22">
+      <g>
+       <use xlink:href="#m3bca178537" x="24.72" y="4.2175" style="stroke: #000000; stroke-width: 0.6"/>
+      </g>
+     </g>
+     <g id="text_12">
+      <text style="font-size: 8px; font-family: 'Times New Roman'; text-anchor: end" x="17.72" y="6.995" transform="rotate(-0 17.72 6.995)">4</text>
+     </g>
+    </g>
+    <g id="text_13">
+     <!-- $ℒ(M)$ -->
+     <g transform="translate(7.74 75.266122) rotate(-90)">
+      <text>
+       <tspan x="0" y="-0.75" style="font-size: 9px; font-family: 'STIXGeneral'">ℒ</tspan>
+       <tspan x="8.513992" y="-0.75" style="font-size: 9px; font-family: 'Times New Roman'">(</tspan>
+       <tspan x="19.008133" y="-0.75" style="font-size: 9px; font-family: 'Times New Roman'">)</tspan>
+       <tspan x="11.511063" y="-0.75" style="font-style: italic; font-size: 9px; font-family: 'Times New Roman'">M</tspan>
+      </text>
+     </g>
+    </g>
+   </g>
+   <g id="line2d_23">
+    <path d="M 24.72 92.056947 
+L 114.266968 92.056947 
+L 114.663193 121.336763 
+L 222.436535 121.336763 
+L 222.436535 121.336763 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #000000; stroke-width: 1.4; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_24">
+    <path d="M 24.72 12.399703 
+L 36.21054 24.711902 
+L 46.116178 35.012515 
+L 55.229365 44.170742 
+L 63.550101 52.213746 
+L 71.078386 59.186303 
+L 78.210445 65.490249 
+L 84.946279 71.14615 
+L 91.285888 76.182913 
+L 97.229271 80.636402 
+L 103.172653 84.817688 
+L 109.116036 88.717767 
+L 114.663193 92.099252 
+L 120.210351 95.22953 
+L 125.757508 98.110123 
+L 131.304665 100.745455 
+L 136.851823 103.142643 
+L 142.39898 105.311185 
+L 148.342363 107.393968 
+L 154.285746 109.243515 
+L 160.625354 110.978914 
+L 167.361188 112.578348 
+L 174.097022 113.952011 
+L 181.625307 115.251961 
+L 189.549817 116.38821 
+L 198.266779 117.405869 
+L 207.776191 118.28745 
+L 218.47428 119.051546 
+L 222.436535 119.284343 
+L 222.436535 119.284343 
+" clip-path="url(#pa465568075)" style="fill: none; stroke: #1b4f9c; stroke-linecap: square"/>
+   </g>
+   <g id="line2d_25">
+    <path d="M 24.72 18.857408 
+L 150.32349 121.160732 
+L 150.719716 121.336763 
+L 222.436535 121.336763 
+L 222.436535 121.336763 
+" clip-path="url(#pa465568075)" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #d55e00"/>
+   </g>
+   <g id="line2d_26">
+    <path d="M 63.189373 -1 
+L 65.927454 7.972544 
+L 68.701033 16.390178 
+L 71.474612 24.182778 
+L 74.24819 31.396754 
+L 77.417994 38.987745 
+L 80.587799 45.938052 
+L 83.757603 52.301749 
+L 86.927407 58.128346 
+L 90.097211 63.463174 
+L 93.267015 68.34774 
+L 96.436819 72.820046 
+L 99.606624 76.914886 
+L 102.776428 80.664119 
+L 105.946232 84.096915 
+L 109.512262 87.613734 
+L 113.078291 90.798434 
+L 116.644321 93.682381 
+L 120.210351 96.293977 
+L 124.172606 98.907526 
+L 128.134861 101.248315 
+L 132.097116 103.344812 
+L 136.455597 105.399149 
+L 140.814078 107.218919 
+L 145.568784 108.96799 
+L 150.719716 110.619151 
+L 156.266873 112.151689 
+L 162.210256 113.551371 
+L 168.549864 114.810096 
+L 175.285698 115.925288 
+L 182.813983 116.947756 
+L 191.134719 117.854648 
+L 200.644132 118.664005 
+L 211.738446 119.373724 
+L 222.436535 119.879006 
+L 222.436535 119.879006 
+" clip-path="url(#pa465568075)" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #e69f00"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 24.72 124.264744 
+L 24.72 4.2175 
+" style="fill: none; stroke: #000000; stroke-width: 0.6; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 222.436535 124.264744 
+L 222.436535 4.2175 
+" style="fill: none; stroke: #000000; stroke-width: 0.6; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 24.72 124.264744 
+L 222.436535 124.264744 
+" style="fill: none; stroke: #000000; stroke-width: 0.6; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 24.72 4.2175 
+L 222.436535 4.2175 
+" style="fill: none; stroke: #000000; stroke-width: 0.6; stroke-linejoin: miter; stroke-linecap: square"/>
+   </g>
+   <g id="legend_1">
+    <g id="line2d_27">
+     <path d="M 84.756535 14.2175 
+L 92.756535 14.2175 
+L 100.756535 14.2175 
+" style="fill: none; stroke: #000000; stroke-width: 1.4; stroke-linecap: square"/>
+    </g>
+    <g id="text_14">
+     <!-- пороговая $[M &lt; 0]$ -->
+     <g transform="translate(107.156535 17.0175)">
+      <text>
+       <tspan x="0" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">п</tspan>
+       <tspan x="4.28125" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="8.28125" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">р</tspan>
+       <tspan x="12.28125" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="16.28125" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">г</tspan>
+       <tspan x="19.5625" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="23.5625" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">в</tspan>
+       <tspan x="27.339844" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">а</tspan>
+       <tspan x="30.890625" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">я</tspan>
+       <tspan x="34.570312" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'"> </tspan>
+       <tspan x="36.570312" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">[</tspan>
+       <tspan x="47.053906" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">&lt;</tspan>
+       <tspan x="52.721094" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">0</tspan>
+       <tspan x="56.721094" y="-0.578125" style="font-size: 8px; font-family: 'Times New Roman'">]</tspan>
+       <tspan x="39.234375" y="-0.578125" style="font-style: italic; font-size: 8px; font-family: 'Times New Roman'">M</tspan>
+      </text>
+     </g>
+    </g>
+    <g id="line2d_28">
+     <path d="M 84.756535 28.3775 
+L 92.756535 28.3775 
+L 100.756535 28.3775 
+" style="fill: none; stroke: #1b4f9c; stroke-linecap: square"/>
+    </g>
+    <g id="text_15">
+     <!-- логистическая $\log_2(1 + e^{-M})$ -->
+     <g transform="translate(107.156535 31.1775)">
+      <text>
+       <tspan x="0" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">л</tspan>
+       <tspan x="3.992188" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="7.992188" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">г</tspan>
+       <tspan x="11.273438" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">и</tspan>
+       <tspan x="15.554688" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">с</tspan>
+       <tspan x="19.105469" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">т</tspan>
+       <tspan x="22.601562" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">и</tspan>
+       <tspan x="26.882812" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">ч</tspan>
+       <tspan x="30.90625" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">е</tspan>
+       <tspan x="34.457031" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">с</tspan>
+       <tspan x="38.007812" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">к</tspan>
+       <tspan x="41.894531" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">а</tspan>
+       <tspan x="45.445312" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">я</tspan>
+       <tspan x="49.125" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'"> </tspan>
+       <tspan x="51.125" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">l</tspan>
+       <tspan x="53.347656" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">o</tspan>
+       <tspan x="57.347656" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">g</tspan>
+       <tspan x="65.556572" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">(</tspan>
+       <tspan x="68.220635" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">1</tspan>
+       <tspan x="73.376104" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">+</tspan>
+       <tspan x="90.856432" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">)</tspan>
+       <tspan x="61.463287" y="1.315312" style="font-size: 5.6px; font-family: 'Times New Roman'">2</tspan>
+       <tspan x="82.70301" y="-5.292188" style="font-size: 5.6px; font-family: 'Times New Roman'">−</tspan>
+       <tspan x="79.043291" y="-0.666938" style="font-style: italic; font-size: 8px; font-family: 'Times New Roman'">e</tspan>
+       <tspan x="85.861213" y="-5.292188" style="font-style: italic; font-size: 5.6px; font-family: 'Times New Roman'">M</tspan>
+      </text>
+     </g>
+    </g>
+    <g id="line2d_29">
+     <path d="M 84.756535 39.9775 
+L 92.756535 39.9775 
+L 100.756535 39.9775 
+" style="fill: none; stroke-dasharray: 3.7,1.6; stroke-dashoffset: 0; stroke: #d55e00"/>
+    </g>
+    <g id="text_16">
+     <!-- кусочно-линейная $\max(0, 1 - M)$ -->
+     <g transform="translate(107.156535 42.7775)">
+      <text>
+       <tspan x="0" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">к</tspan>
+       <tspan x="3.886719" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">у</tspan>
+       <tspan x="7.886719" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">с</tspan>
+       <tspan x="11.4375" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="15.4375" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">ч</tspan>
+       <tspan x="19.460938" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">н</tspan>
+       <tspan x="23.742188" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="27.742188" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">-</tspan>
+       <tspan x="30.40625" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">л</tspan>
+       <tspan x="34.398438" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">и</tspan>
+       <tspan x="38.679688" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">н</tspan>
+       <tspan x="42.960938" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">е</tspan>
+       <tspan x="46.511719" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">й</tspan>
+       <tspan x="50.792969" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">н</tspan>
+       <tspan x="55.074219" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">а</tspan>
+       <tspan x="58.625" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">я</tspan>
+       <tspan x="62.304688" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'"> </tspan>
+       <tspan x="64.304688" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">m</tspan>
+       <tspan x="70.527344" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">a</tspan>
+       <tspan x="74.078125" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">x</tspan>
+       <tspan x="78.078125" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">(</tspan>
+       <tspan x="80.742188" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">0</tspan>
+       <tspan x="84.742188" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">,</tspan>
+       <tspan x="87.897656" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">1</tspan>
+       <tspan x="93.053125" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">−</tspan>
+       <tspan x="105.384375" y="-0.4375" style="font-size: 8px; font-family: 'Times New Roman'">)</tspan>
+       <tspan x="98.720312" y="-0.4375" style="font-style: italic; font-size: 8px; font-family: 'Times New Roman'">M</tspan>
+      </text>
+     </g>
+    </g>
+    <g id="line2d_30">
+     <path d="M 84.756535 53.46625 
+L 92.756535 53.46625 
+L 100.756535 53.46625 
+" style="fill: none; stroke-dasharray: 1,1.65; stroke-dashoffset: 0; stroke: #e69f00"/>
+    </g>
+    <g id="text_17">
+     <!-- экспоненциальная $e^{-M}$ -->
+     <g transform="translate(107.156535 56.26625)">
+      <text>
+       <tspan x="0" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">э</tspan>
+       <tspan x="3.433594" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">к</tspan>
+       <tspan x="7.320312" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">с</tspan>
+       <tspan x="10.871094" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">п</tspan>
+       <tspan x="15.152344" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">о</tspan>
+       <tspan x="19.152344" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">н</tspan>
+       <tspan x="23.433594" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">е</tspan>
+       <tspan x="26.984375" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">н</tspan>
+       <tspan x="31.265625" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">ц</tspan>
+       <tspan x="35.546875" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">и</tspan>
+       <tspan x="39.828125" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">а</tspan>
+       <tspan x="43.378906" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">л</tspan>
+       <tspan x="47.371094" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">ь</tspan>
+       <tspan x="51.019531" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">н</tspan>
+       <tspan x="55.300781" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">а</tspan>
+       <tspan x="58.851562" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'">я</tspan>
+       <tspan x="62.53125" y="-0.666938" style="font-size: 8px; font-family: 'Times New Roman'"> </tspan>
+       <tspan x="64.53125" y="-0.666938" style="font-style: italic; font-size: 8px; font-family: 'Times New Roman'">e</tspan>
+       <tspan x="68.190969" y="-5.292188" style="font-size: 5.6px; font-family: 'Times New Roman'">−</tspan>
+       <tspan x="71.349172" y="-5.292188" style="font-style: italic; font-size: 5.6px; font-family: 'Times New Roman'">M</tspan>
+      </text>
+     </g>
+    </g>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pa465568075">
+   <rect x="24.72" y="4.2175" width="197.716535" height="120.047244"/>
+  </clipPath>
+ </defs>
+</svg>

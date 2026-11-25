@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Машинное обучение: линейные и
+вероятностные модели">
+  <title>Машинное обучение: линейные и вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="home">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<section class="cover">
+  <p class="series">Учебное пособие</p>
+  <h1>Машинное обучение: линейные и вероятностные модели</h1>
+  <p class="author">Поляк Марк Дмитриевич</p>
+  <p class="cover-actions">
+    <a class="btn primary" href="preface.html">Читать</a>
+    <a class="btn" href="book1.pdf" download>Скачать PDF</a>
+  </p>
+  <p class="cover-links">
+    <a href="cite.html">Как цитировать</a>
+    <a href="errata.html">Опечатки</a>
+  </p>
+</section>
+<nav class="cover-toc" aria-label="Содержание">
+<h2>Содержание</h2>
+<ul>
+<li><a href="preface.html#preface" id="toc-preface">Предисловие</a></li>
+<li><a href="notation.html#notation" id="toc-notation">Основные
+обозначения</a></li>
+<li><a href="ch01.html#ch01" id="toc-ch01"><span
+class="toc-section-number">1</span> Задача обучения по прецедентам</a>
+<ul>
+<li><a href="ch01.html#chto-takoe-mashinnoe-obuchenie"
+id="toc-chto-takoe-mashinnoe-obuchenie"><span
+class="toc-section-number">1.1</span> Что такое машинное
+обучение</a></li>
+<li><a href="ch01.html#obekty-priznaki-i-otvety"
+id="toc-obekty-priznaki-i-otvety"><span
+class="toc-section-number">1.2</span> Объекты, признаки и
+ответы</a></li>
+<li><a href="ch01.html#tipy-zadach" id="toc-tipy-zadach"><span
+class="toc-section-number">1.3</span> Типы задач</a></li>
+<li><a href="ch01.html#model-i-metod-obucheniya"
+id="toc-model-i-metod-obucheniya"><span
+class="toc-section-number">1.4</span> Модель и метод обучения</a></li>
+<li><a href="ch01.html#funktsiya-poter-i-empiricheskiy-risk"
+id="toc-funktsiya-poter-i-empiricheskiy-risk"><span
+class="toc-section-number">1.5</span> Функция потерь и эмпирический
+риск</a></li>
+<li><a href="ch01.html#postanovka-zadachi-na-praktike"
+id="toc-postanovka-zadachi-na-praktike"><span
+class="toc-section-number">1.6</span> Постановка задачи на
+практике</a></li>
+<li><a href="ch01.html#voprosy-dlya-samokontrolya"
+id="toc-voprosy-dlya-samokontrolya">Вопросы для самоконтроля</a></li>
+<li><a href="ch01.html#zadachi" id="toc-zadachi">Задачи</a></li>
+</ul></li>
+<li><a href="ch02.html#ch02" id="toc-ch02"><span
+class="toc-section-number">2</span> Данные и признаки</a>
+<ul>
+<li><a href="ch02.html#tablitsa-dannykh" id="toc-tablitsa-dannykh"><span
+class="toc-section-number">2.1</span> Таблица данных</a></li>
+<li><a href="ch02.html#razvedochnyy-analiz"
+id="toc-razvedochnyy-analiz"><span class="toc-section-number">2.2</span>
+Разведочный анализ</a></li>
+<li><a href="ch02.html#propuski" id="toc-propuski"><span
+class="toc-section-number">2.3</span> Пропуски</a></li>
+<li><a href="ch02.html#kategorialnye-priznaki"
+id="toc-kategorialnye-priznaki"><span
+class="toc-section-number">2.4</span> Категориальные признаки</a></li>
+<li><a href="ch02.html#masshtabirovanie" id="toc-masshtabirovanie"><span
+class="toc-section-number">2.5</span> Масштабирование</a></li>
+<li><a href="ch02.html#konstruirovanie-priznakov"
+id="toc-konstruirovanie-priznakov"><span
+class="toc-section-number">2.6</span> Конструирование признаков</a></li>
+<li><a href="ch02.html#utechki-dannykh" id="toc-utechki-dannykh"><span
+class="toc-section-number">2.7</span> Утечки данных</a></li>
+<li><a href="ch02.html#voprosy-dlya-samokontrolya-2"
+id="toc-voprosy-dlya-samokontrolya-2">Вопросы для самоконтроля</a></li>
+<li><a href="ch02.html#zadachi-2" id="toc-zadachi-2">Задачи</a></li>
+</ul></li>
+<li><a href="ch03.html#ch03" id="toc-ch03"><span
+class="toc-section-number">3</span> Линейная регрессия и метод
+наименьших квадратов</a>
+<ul>
+<li><a href="ch03.html#zadacha-regressii"
+id="toc-zadacha-regressii"><span class="toc-section-number">3.1</span>
+Задача регрессии</a></li>
+<li><a href="ch03.html#odin-priznak" id="toc-odin-priznak"><span
+class="toc-section-number">3.2</span> Один признак</a></li>
+<li><a href="ch03.html#mnogo-priznakov" id="toc-mnogo-priznakov"><span
+class="toc-section-number">3.3</span> Много признаков</a></li>
+<li><a href="ch03.html#geometricheskiy-smysl"
+id="toc-geometricheskiy-smysl"><span
+class="toc-section-number">3.4</span> Геометрический смысл</a></li>
+<li><a href="ch03.html#multikollinearnost"
+id="toc-multikollinearnost"><span class="toc-section-number">3.5</span>
+Мультиколлинеарность</a></li>
+<li><a href="ch03.html#polinomialnaya-regressiya"
+id="toc-polinomialnaya-regressiya"><span
+class="toc-section-number">3.6</span> Полиномиальная регрессия</a></li>
+<li><a href="ch03.html#voprosy-dlya-samokontrolya-3"
+id="toc-voprosy-dlya-samokontrolya-3">Вопросы для самоконтроля</a></li>
+<li><a href="ch03.html#zadachi-3" id="toc-zadachi-3">Задачи</a></li>
+</ul></li>
+<li><a href="ch04.html#ch04" id="toc-ch04"><span
+class="toc-section-number">4</span> Градиентный спуск</a>
+<ul>
+<li><a href="ch04.html#zachem-nuzhny-iteratsii"
+id="toc-zachem-nuzhny-iteratsii"><span
+class="toc-section-number">4.1</span> Зачем нужны итерации</a></li>
+<li><a href="ch04.html#intuitsiya-na-odnom-parametre"
+id="toc-intuitsiya-na-odnom-parametre"><span
+class="toc-section-number">4.2</span> Интуиция на одном
+параметре</a></li>
+<li><a href="ch04.html#algoritm" id="toc-algoritm"><span
+class="toc-section-number">4.3</span> Алгоритм</a></li>
+<li><a href="ch04.html#gradientnyy-spusk-dlya-lineynoy-regressii"
+id="toc-gradientnyy-spusk-dlya-lineynoy-regressii"><span
+class="toc-section-number">4.4</span> Градиентный спуск для линейной
+регрессии</a></li>
+<li><a href="ch04.html#stokhasticheskiy-i-mini-paketnyy-spusk"
+id="toc-stokhasticheskiy-i-mini-paketnyy-spusk"><span
+class="toc-section-number">4.5</span> Стохастический и мини-пакетный
+спуск</a></li>
+<li><a href="ch04.html#prakticheskie-priemy"
+id="toc-prakticheskie-priemy"><span
+class="toc-section-number">4.6</span> Практические приёмы</a></li>
+<li><a href="ch04.html#voprosy-dlya-samokontrolya-4"
+id="toc-voprosy-dlya-samokontrolya-4">Вопросы для самоконтроля</a></li>
+<li><a href="ch04.html#zadachi-4" id="toc-zadachi-4">Задачи</a></li>
+</ul></li>
+<li><a href="ch05.html#ch05" id="toc-ch05"><span
+class="toc-section-number">5</span> Переобучение и валидация</a>
+<ul>
+<li><a href="ch05.html#nedoobuchenie-i-pereobuchenie"
+id="toc-nedoobuchenie-i-pereobuchenie"><span
+class="toc-section-number">5.1</span> Недообучение и
+переобучение</a></li>
+<li><a href="ch05.html#obobshchayushchaya-sposobnost"
+id="toc-obobshchayushchaya-sposobnost"><span
+class="toc-section-number">5.2</span> Обобщающая способность</a></li>
+<li><a href="ch05.html#smeshchenie-i-razbros"
+id="toc-smeshchenie-i-razbros"><span
+class="toc-section-number">5.3</span> Смещение и разброс</a></li>
+<li><a href="ch05.html#skhemy-validatsii"
+id="toc-skhemy-validatsii"><span class="toc-section-number">5.4</span>
+Схемы валидации</a></li>
+<li><a href="ch05.html#metriki-kachestva-regressii"
+id="toc-metriki-kachestva-regressii"><span
+class="toc-section-number">5.5</span> Метрики качества
+регрессии</a></li>
+<li><a href="ch05.html#podbor-giperparametrov"
+id="toc-podbor-giperparametrov"><span
+class="toc-section-number">5.6</span> Подбор гиперпараметров</a></li>
+<li><a href="ch05.html#voprosy-dlya-samokontrolya-5"
+id="toc-voprosy-dlya-samokontrolya-5">Вопросы для самоконтроля</a></li>
+<li><a href="ch05.html#zadachi-5" id="toc-zadachi-5">Задачи</a></li>
+</ul></li>
+<li><a href="ch06.html#ch06" id="toc-ch06"><span
+class="toc-section-number">6</span> Регуляризация</a>
+<ul>
+<li><a href="ch06.html#shtraf-za-bolshie-vesa"
+id="toc-shtraf-za-bolshie-vesa"><span
+class="toc-section-number">6.1</span> Штраф за большие веса</a></li>
+<li><a href="ch06.html#grebnevaya-regressiya"
+id="toc-grebnevaya-regressiya"><span
+class="toc-section-number">6.2</span> Гребневая регрессия</a></li>
+<li><a href="ch06.html#lasso" id="toc-lasso"><span
+class="toc-section-number">6.3</span> LASSO</a></li>
+<li><a href="ch06.html#geometricheskiy-smysl-2"
+id="toc-geometricheskiy-smysl-2"><span
+class="toc-section-number">6.4</span> Геометрический смысл</a></li>
+<li><a href="ch06.html#regulyarizatsiya-na-praktike"
+id="toc-regulyarizatsiya-na-praktike"><span
+class="toc-section-number">6.5</span> Регуляризация на практике</a></li>
+<li><a href="ch06.html#voprosy-dlya-samokontrolya-6"
+id="toc-voprosy-dlya-samokontrolya-6">Вопросы для самоконтроля</a></li>
+<li><a href="ch06.html#zadachi-6" id="toc-zadachi-6">Задачи</a></li>
+</ul></li>
+<li><a href="ch07.html#ch07" id="toc-ch07"><span
+class="toc-section-number">7</span> Логистическая регрессия</a>
+<ul>
+<li><a href="ch07.html#pochemu-ne-podkhodit-lineynaya-regressiya"
+id="toc-pochemu-ne-podkhodit-lineynaya-regressiya"><span
+class="toc-section-number">7.1</span> Почему не подходит линейная
+регрессия</a></li>
+<li><a href="ch07.html#lineynyy-klassifikator"
+id="toc-lineynyy-klassifikator"><span
+class="toc-section-number">7.2</span> Линейный классификатор</a></li>
+<li><a href="ch07.html#otstup-i-funktsii-poter"
+id="toc-otstup-i-funktsii-poter"><span
+class="toc-section-number">7.3</span> Отступ и функции потерь</a></li>
+<li><a href="ch07.html#sigmoida-i-veroyatnost-klassa"
+id="toc-sigmoida-i-veroyatnost-klassa"><span
+class="toc-section-number">7.4</span> Сигмоида и вероятность
+класса</a></li>
+<li><a href="ch07.html#maksimum-pravdopodobiya"
+id="toc-maksimum-pravdopodobiya"><span
+class="toc-section-number">7.5</span> Максимум правдоподобия</a></li>
+<li><a href="ch07.html#veroyatnostnyy-smysl-regulyarizatsii"
+id="toc-veroyatnostnyy-smysl-regulyarizatsii"><span
+class="toc-section-number">7.6</span> Вероятностный смысл
+регуляризации</a></li>
+<li><a href="ch07.html#neskolko-klassov" id="toc-neskolko-klassov"><span
+class="toc-section-number">7.7</span> Несколько классов</a></li>
+<li><a href="ch07.html#voprosy-dlya-samokontrolya-7"
+id="toc-voprosy-dlya-samokontrolya-7">Вопросы для самоконтроля</a></li>
+<li><a href="ch07.html#zadachi-7" id="toc-zadachi-7">Задачи</a></li>
+</ul></li>
+<li><a href="ch08.html#ch08" id="toc-ch08"><span
+class="toc-section-number">8</span> Метрики качества классификации</a>
+<ul>
+<li><a href="ch08.html#funktsiya-poter-i-metrika-kachestva"
+id="toc-funktsiya-poter-i-metrika-kachestva"><span
+class="toc-section-number">8.1</span> Функция потерь и метрика
+качества</a></li>
+<li><a href="ch08.html#matritsa-oshibok" id="toc-matritsa-oshibok"><span
+class="toc-section-number">8.2</span> Матрица ошибок</a></li>
+<li><a href="ch08.html#tochnost-i-polnota"
+id="toc-tochnost-i-polnota"><span class="toc-section-number">8.3</span>
+Точность и полнота</a></li>
+<li><a href="ch08.html#porog-roc-krivaya-i-auc"
+id="toc-porog-roc-krivaya-i-auc"><span
+class="toc-section-number">8.4</span> Порог, ROC-кривая и AUC</a></li>
+<li><a
+href="ch08.html#krivaya-tochnost-polnota-i-logarifmicheskaya-poterya"
+id="toc-krivaya-tochnost-polnota-i-logarifmicheskaya-poterya"><span
+class="toc-section-number">8.5</span> Кривая точность–полнота и
+логарифмическая потеря</a></li>
+<li><a href="ch08.html#vybor-metriki" id="toc-vybor-metriki"><span
+class="toc-section-number">8.6</span> Выбор метрики</a></li>
+<li><a href="ch08.html#voprosy-dlya-samokontrolya-8"
+id="toc-voprosy-dlya-samokontrolya-8">Вопросы для самоконтроля</a></li>
+<li><a href="ch08.html#zadachi-8" id="toc-zadachi-8">Задачи</a></li>
+</ul></li>
+<li><a href="ch09.html#ch09" id="toc-ch09"><span
+class="toc-section-number">9</span> Наивный байесовский
+классификатор</a>
+<ul>
+<li><a href="ch09.html#formula-bayesa" id="toc-formula-bayesa"><span
+class="toc-section-number">9.1</span> Формула Байеса</a></li>
+<li><a href="ch09.html#optimalnyy-bayesovskiy-klassifikator"
+id="toc-optimalnyy-bayesovskiy-klassifikator"><span
+class="toc-section-number">9.2</span> Оптимальный байесовский
+классификатор</a></li>
+<li><a href="ch09.html#naivnoe-predpolozhenie"
+id="toc-naivnoe-predpolozhenie"><span
+class="toc-section-number">9.3</span> Наивное предположение</a></li>
+<li><a href="ch09.html#gaussovskiy-naivnyy-bayes"
+id="toc-gaussovskiy-naivnyy-bayes"><span
+class="toc-section-number">9.4</span> Гауссовский наивный байес</a></li>
+<li><a href="ch09.html#teksty-i-meshok-slov"
+id="toc-teksty-i-meshok-slov"><span
+class="toc-section-number">9.5</span> Тексты и мешок слов</a></li>
+<li><a href="ch09.html#sglazhivanie-laplasa"
+id="toc-sglazhivanie-laplasa"><span
+class="toc-section-number">9.6</span> Сглаживание Лапласа</a></li>
+<li><a href="ch09.html#naivnyy-bayes-i-logisticheskaya-regressiya"
+id="toc-naivnyy-bayes-i-logisticheskaya-regressiya"><span
+class="toc-section-number">9.7</span> Наивный байес и логистическая
+регрессия</a></li>
+<li><a href="ch09.html#voprosy-dlya-samokontrolya-9"
+id="toc-voprosy-dlya-samokontrolya-9">Вопросы для самоконтроля</a></li>
+<li><a href="ch09.html#zadachi-9" id="toc-zadachi-9">Задачи</a></li>
+</ul></li>
+<li><a href="conclusion.html#conclusion"
+id="toc-conclusion">Заключение</a></li>
+<li><a href="references.html#references" id="toc-references">Список
+литературы</a></li>
+<li><a href="appendix-a.html#appendix-a" id="toc-appendix-a">Приложение
+А. Математический минимум</a>
+<ul>
+<li><a href="appendix-a.html#vektory-i-matritsy"
+id="toc-vektory-i-matritsy">А.1 Векторы и матрицы</a></li>
+<li><a href="appendix-a.html#proizvodnaya-i-gradient"
+id="toc-proizvodnaya-i-gradient">А.2 Производная и градиент</a></li>
+<li><a href="appendix-a.html#veroyatnost" id="toc-veroyatnost">А.3
+Вероятность</a></li>
+<li><a href="appendix-a.html#eksponenta-i-logarifm"
+id="toc-eksponenta-i-logarifm">А.4 Экспонента и логарифм</a></li>
+</ul></li>
+<li><a href="appendix-b.html#appendix-b" id="toc-appendix-b">Приложение
+Б. Русско-английский словарь терминов</a></li>
+</ul>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

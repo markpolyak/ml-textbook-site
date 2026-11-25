@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Регуляризация">
+  <title>Регуляризация — Машинное обучение: линейные и вероятностные
+модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li class="current"><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+<ol>
+<li><a href="ch06.html#shtraf-za-bolshie-vesa"><span class="num">6.1</span><span>Штраф за большие веса</span></a></li>
+<li><a href="ch06.html#grebnevaya-regressiya"><span class="num">6.2</span><span>Гребневая регрессия</span></a></li>
+<li><a href="ch06.html#lasso"><span class="num">6.3</span><span>LASSO</span></a></li>
+<li><a href="ch06.html#geometricheskiy-smysl-2"><span class="num">6.4</span><span>Геометрический смысл</span></a></li>
+<li><a href="ch06.html#regulyarizatsiya-na-praktike"><span class="num">6.5</span><span>Регуляризация на практике</span></a></li>
+<li><a href="ch06.html#voprosy-dlya-samokontrolya-6"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch06.html#zadachi-6"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="6" id="ch06"><span
+class="header-section-number">6</span> Регуляризация</h1>
+<!-- Источники: лекция 03-linear_regression (с. 17–19), lectures/regularization (03a, ridge_regression), 04-gradient_descent (с. 16–17). Ошибка слайда 03, с. 18 (штраф τ/2, производная 2τθ) исправлена: штраф λ‖θ‖². Вероятностный смысл регуляризации — в гл. 7. -->
+<p>В гл. 3 и 5 переобучение проявлялось по-разному: при почти
+совпадающих признаках решение МНК менялось от малейшего изменения
+ответов, а многочлен высокой степени колебался между точками. В этой
+главе описано средство борьбы с таким переобучением —
+<em>регуляризация</em>: к эмпирическому риску добавляют штраф за
+величину весов.</p>
+<h2 data-number="6.1" id="shtraf-za-bolshie-vesa"><span
+class="header-section-number">6.1</span> Штраф за большие веса</h2>
+<p>Вспомним пример с почти совпадающими признаками из гл. 3. Изменение
+ответа <span class="math inline">y_3</span> всего на 0,1 (с 6,1 до 6,0
+или до 6,2) переводило решение из <span class="math inline">(1;\,
+1)</span> в <span class="math inline">(0;\, 2)</span> или <span
+class="math inline">(2;\, 0)</span>, хотя все три решения почти
+одинаково точно описывали обучающую выборку. Среди моделей с почти
+равной ошибкой МНК выбирает случайно, под влиянием шума. Естественно
+добавить к ошибке требование, которое сделает выбор однозначным: при
+прочих равных предпочитать модель с меньшими весами.</p>
+<p>Регуляризованный функционал качества имеет вид</p>
+<div class="equation">
+<p><span class="math display">Q_\lambda(\boldsymbol{\theta}) =
+\|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2 + \lambda \,
+R(\boldsymbol{\theta}),</span></p>
+</div>
+<div class="continuation">
+<p>где первое слагаемое — сумма квадратов остатков, <span
+class="math inline">R(\boldsymbol{\theta})</span> — штраф, растущий с
+величиной весов, а <span class="math inline">\lambda \ge 0</span> —
+<em>коэффициент регуляризации</em>. В этой главе сумма квадратов
+записана без множителя <span class="math inline">1/\ell</span>, как в
+документации scikit-learn: множитель лишь меняет масштаб <span
+class="math inline">\lambda</span>, а точка минимума остаётся
+прежней.</p>
+</div>
+<p><strong>Читаем формулу.</strong> Слагаемые предъявляют к весам
+противоположные требования: первое — точно описать обучающую выборку,
+второе — оставаться малыми. Коэффициент <span
+class="math inline">\lambda</span> задаёт, что важнее. При <span
+class="math inline">\lambda = 0</span> получается обычный МНК; при очень
+большом <span class="math inline">\lambda</span> все веса стремятся к
+нулю, и модель предсказывает константу. Между этими крайностями —
+компромисс между смещением и разбросом (гл. 5): штраф уменьшает разброс
+модели ценой некоторого смещения. Коэффициент <span
+class="math inline">\lambda</span> — гиперпараметр: метод обучения его
+не находит. Его выбирают перебором, как степень многочлена в гл. 5: для
+каждого значения из сетки оценивают ошибку модели кросс-валидацией и
+берут значение с наименьшей ошибкой.</p>
+<p>Свободный член <span class="math inline">\theta_0</span> не штрафуют:
+он задаёт средний уровень ответа и с переобучением не связан. Если бы
+его штрафовали, результат зависел бы от начала отсчёта ответов: после
+вычитания из всех цен 5 млн руб. прогнозы уменьшились бы не ровно на 5
+млн. Поэтому суммы в штрафах ниже начинаются с <span
+class="math inline">j = 1</span>. На практике признаки стандартизуют, а
+из ответов вычитают их среднее <span class="math inline">\bar y</span>;
+тогда <span class="math inline">\theta_0 = \bar y</span>, а остальные
+веса находят по матрице <span class="math inline">\mathbf{F}</span> без
+столбца из единиц.</p>
+<h2 data-number="6.2" id="grebnevaya-regressiya"><span
+class="header-section-number">6.2</span> Гребневая регрессия</h2>
+<p>Если штраф — квадрат евклидовой нормы вектора весов, получается
+<em>гребневая регрессия</em> (ridge regression), или регуляризация
+Тихонова:</p>
+<div class="equation">
+<p><span class="math display">Q_\lambda(\boldsymbol{\theta}) =
+\|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2 + \lambda
+\|\boldsymbol{\theta}\|_2^2 = \sum_{i=1}^{\ell} \bigl(\langle
+\boldsymbol{\theta}, \mathbf{x}_i \rangle - y_i\bigr)^2 + \lambda
+\sum_{j=1}^{n} \theta_j^2.</span></p>
+</div>
+<div class="continuation">
+<p>Градиент первого слагаемого найден в гл. 3 (без множителя <span
+class="math inline">1/\ell</span> он равен <span
+class="math inline">2\mathbf{F}^{\mathrm{T}}(\mathbf{F}\boldsymbol{\theta}
+- \mathbf{y})</span>), градиент второго равен <span
+class="math inline">2\lambda\boldsymbol{\theta}</span>. Приравняв сумму
+к нулю, получаем</p>
+</div>
+<div id="eq:ridge" class="equation">
+<p><span class="math display">(\mathbf{F}^{\mathrm{T}} \mathbf{F} +
+\lambda \mathbf{I}) \boldsymbol{\theta} = \mathbf{F}^{\mathrm{T}}
+\mathbf{y}, \qquad \boldsymbol{\theta}^*_\lambda =
+(\mathbf{F}^{\mathrm{T}} \mathbf{F} + \lambda \mathbf{I})^{-1}
+\mathbf{F}^{\mathrm{T}} \mathbf{y},\tag{6.1}</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\mathbf{I}</span> — единичная
+матрица.</p>
+</div>
+<p><strong>Читаем формулу.</strong> Отличие от нормальной системы МНК —
+слагаемое <span class="math inline">\lambda \mathbf{I}</span>: к каждому
+диагональному элементу матрицы <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span>
+прибавляется <span class="math inline">\lambda</span>. Отсюда название:
+на диагонали вырастает «гребень». Матрица <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F} + \lambda
+\mathbf{I}</span> при <span class="math inline">\lambda &gt; 0</span>
+всегда обратима — даже если признаки линейно зависимы и решение МНК не
+единственно.</p>
+<p><strong>Пример.</strong> Проверим, как гребень действует на пример из
+гл. 3: <span class="math inline">\mathbf{F}</span> со строками <span
+class="math inline">(1;\, 1)</span>, <span class="math inline">(2;\,
+2)</span>, <span class="math inline">(3;\, 3{,}1)</span> и ответы <span
+class="math inline">\mathbf{y} = (2;\, 4;\, 6{,}1)</span>. При <span
+class="math inline">\lambda = 0{,}1</span></p>
+<div class="equation">
+<p><span class="math display">\mathbf{F}^{\mathrm{T}} \mathbf{F} + 0{,}1
+\mathbf{I} = \begin{pmatrix} 14{,}1 &amp; 14{,}3 \\ 14{,}3 &amp; 14{,}71
+\end{pmatrix}, \quad \mathbf{F}^{\mathrm{T}} \mathbf{y} =
+\begin{pmatrix} 28{,}3 \\ 28{,}91 \end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Определитель этой матрицы равен <span class="math inline">14{,}1
+\cdot 14{,}71 - 14{,}3^2 = 2{,}921</span> — почти в 60 раз больше, чем
+0,05 без гребня. Решение:</p>
+</div>
+<div class="equation">
+<p><span class="math display">\boldsymbol{\theta}^*_\lambda =
+\frac{1}{2{,}921} \begin{pmatrix} 14{,}71 \cdot 28{,}3 - 14{,}3 \cdot
+28{,}91 \\ -14{,}3 \cdot 28{,}3 + 14{,}1 \cdot 28{,}91 \end{pmatrix} =
+\frac{1}{2{,}921} \begin{pmatrix} 2{,}880 \\ 2{,}941 \end{pmatrix}
+\approx \begin{pmatrix} 0{,}99 \\ 1{,}01 \end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Повторим расчёт для <span class="math inline">y_3 = 6{,}0</span> и
+<span class="math inline">y_3 = 6{,}2</span> и для <span
+class="math inline">\lambda = 1</span> (табл. <a
+href="ch06.html#tbl:ridge">6.1</a>).</p>
+</div>
+<table id="tbl:ridge">
+<caption>Таблица 6.1. Решения МНК и гребневой регрессии при трёх
+значениях <span class="math inline">y_3</span></caption>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Величина</th>
+<th>МНК, <span class="math inline">\lambda = 0</span></th>
+<th><span class="math inline">\lambda = 0{,}1</span></th>
+<th><span class="math inline">\lambda = 1</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">y_3 = 6{,}0</span></td>
+<td>(2; 0)</td>
+<td>(0,99; 0,98)</td>
+<td>(0,95; 0,96)</td>
+</tr>
+<tr>
+<td><span class="math inline">y_3 = 6{,}1</span></td>
+<td>(1; 1)</td>
+<td>(0,99; 1,01)</td>
+<td>(0,96; 0,98)</td>
+</tr>
+<tr>
+<td><span class="math inline">y_3 = 6{,}2</span></td>
+<td>(0; 2)</td>
+<td>(0,98; 1,03)</td>
+<td>(0,96; 0,99)</td>
+</tr>
+<tr>
+<td>Прогноз для объекта <span class="math inline">(2;\, 3)</span></td>
+<td>от 4 до 6</td>
+<td>от 4,92 до 5,06</td>
+<td>от 4,79 до 4,89</td>
+</tr>
+</tbody>
+</table>
+<p>Таблица показывает три эффекта. Решение стало устойчивым: при
+изменении <span class="math inline">y_3</span> на 0,1 веса меняются на
+сотые доли, а прогноз для нового объекта — на 3 % вместо 50 %. Гребень
+выбрал из всех почти равноценных решений то, в котором вес поровну
+разделён между двумя одинаковыми признаками, — это решение с наименьшей
+нормой. Наконец, с ростом <span class="math inline">\lambda</span>
+растёт ошибка на обучающей выборке (при <span class="math inline">y_3 =
+6{,}1</span> MSE равна 0 для МНК, 0,0002 при <span
+class="math inline">\lambda = 0{,}1</span> и 0,022 при <span
+class="math inline">\lambda = 1</span>), и прогнозы систематически
+занижаются: при <span class="math inline">\lambda = 1</span> модель
+предсказывает для третьего объекта 5,89 вместо 6,1. Это смещение — цена
+устойчивости, поэтому <span class="math inline">\lambda</span> не должен
+быть слишком большим.</p>
+<p><strong>Сингулярное разложение.</strong> Подставив <span
+class="math inline">\mathbf{F} =
+\mathbf{V}\mathbf{D}\mathbf{U}^{\mathrm{T}}</span> (гл. 3) в <a
+href="ch06.html#eq:ridge">(6.1)</a>, получим</p>
+<div class="equation">
+<p><span class="math display">\boldsymbol{\theta}^*_\lambda =
+\sum_{j=1}^{n} \frac{s_j}{s_j^2 + \lambda} \, \mathbf{u}_j \,
+(\mathbf{v}_j^{\mathrm{T}} \mathbf{y}).</span></p>
+</div>
+<div class="continuation">
+<p>В решении МНК на месте дроби стоял множитель <span
+class="math inline">1/s_j</span>, который при малом сингулярном числе
+<span class="math inline">s_j</span> становился огромным. Теперь при
+<span class="math inline">s_j^2 \gg \lambda</span> дробь почти равна
+<span class="math inline">1/s_j</span> — направления, хорошо
+определённые данными, гребень почти не трогает. А при <span
+class="math inline">s_j^2 \ll \lambda</span> дробь близка к <span
+class="math inline">s_j/\lambda</span> и мала — неустойчивые направления
+подавляются. В примере <span class="math inline">s_2 \approx
+0{,}042</span>: множитель МНК <span class="math inline">1/s_2 \approx
+24</span>, а при <span class="math inline">\lambda = 0{,}1</span> он
+равен <span class="math inline">0{,}042/(0{,}0017 + 0{,}1) \approx
+0{,}41</span>. Число обусловленности матрицы системы уменьшается с <span
+class="math inline">s_1^2/s_2^2 \approx 16\,400</span> до <span
+class="math inline">(s_1^2 + \lambda)/(s_2^2 + \lambda) \approx
+280</span>.</p>
+</div>
+<h2 data-number="6.3" id="lasso"><span
+class="header-section-number">6.3</span> LASSO</h2>
+<p>Если штраф — сумма модулей весов, получается метод LASSO (least
+absolute shrinkage and selection operator):</p>
+<div class="equation">
+<p><span class="math display">Q_\lambda(\boldsymbol{\theta}) =
+\|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2 + \lambda
+\|\boldsymbol{\theta}\|_1 = \sum_{i=1}^{\ell} \bigl(\langle
+\boldsymbol{\theta}, \mathbf{x}_i \rangle - y_i\bigr)^2 + \lambda
+\sum_{j=1}^{n} |\theta_j|.</span></p>
+</div>
+<div class="continuation">
+<p>Модуль не дифференцируем в нуле, и формулы решения, как <a
+href="ch06.html#eq:ridge">(6.1)</a>, нет; минимум ищут численно. Зато у
+LASSO есть свойство, которого нет у гребневой регрессии: при достаточно
+большом <span class="math inline">\lambda</span> часть весов становится
+<em>в точности</em> нулевой. Признаки с нулевыми весами модель не
+использует, поэтому LASSO одновременно обучает модель и отбирает
+признаки.</p>
+</div>
+<p><strong>Почему веса зануляются.</strong> Рассмотрим простейший
+случай: столбцы <span class="math inline">\mathbf{F}</span>
+ортонормированы, <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F} = \mathbf{I}</span>. Тогда решение МНК — вектор <span
+class="math inline">\mathbf{a} = \mathbf{F}^{\mathrm{T}}
+\mathbf{y}</span>, а сумма квадратов остатков раскладывается на
+независимые слагаемые: <span
+class="math inline">\|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2 =
+\sum_j (\theta_j - a_j)^2 + \text{const}</span>. Каждый вес находится
+отдельно. Для гребневой регрессии минимум <span
+class="math inline">(\theta_j - a_j)^2 + \lambda\theta_j^2</span>
+даёт</p>
+<div class="equation">
+<p><span class="math display">\theta_j = \frac{a_j}{1 +
+\lambda}</span></p>
+</div>
+<div class="continuation">
+<p>— вес МНК уменьшается в одно и то же число раз и нулём не становится.
+Для LASSO при <span class="math inline">\theta_j &gt; 0</span>
+производная функции <span class="math inline">(\theta_j - a_j)^2 +
+\lambda|\theta_j|</span> равна <span class="math inline">2(\theta_j -
+a_j) + \lambda</span>, она обращается в нуль при <span
+class="math inline">\theta_j = a_j - \lambda/2</span>, но только если
+<span class="math inline">a_j &gt; \lambda/2</span>; случай <span
+class="math inline">\theta_j &lt; 0</span> симметричен. Если же <span
+class="math inline">|a_j| \le \lambda/2</span>, минимум достигается в
+нуле. Итого</p>
+</div>
+<div class="equation">
+<p><span class="math display">\theta_j = \operatorname{sign}(a_j)
+\max\bigl(|a_j| - \lambda/2,\; 0\bigr).</span></p>
+</div>
+<p><strong>Читаем формулы.</strong> Гребневая регрессия <em>сжимает</em>
+все веса пропорционально, LASSO <em>сдвигает</em> их к нулю на
+постоянную величину <span class="math inline">\lambda/2</span>, а веса
+меньше <span class="math inline">\lambda/2</span> по модулю обнуляет.
+Причина — в производной штрафа. Производная <span
+class="math inline">\lambda\theta_j^2</span> равна <span
+class="math inline">2\lambda\theta_j</span> и вблизи нуля исчезает:
+штраф почти не мешает малому весу оставаться ненулевым. Производная
+<span class="math inline">\lambda|\theta_j|</span> по модулю всегда
+равна <span class="math inline">\lambda</span>: штраф тянет вес к нулю с
+постоянной силой, и если данные «тянут» его в другую сторону слабее, вес
+становится нулевым.</p>
+<h2 data-number="6.4" id="geometricheskiy-smysl-2"><span
+class="header-section-number">6.4</span> Геометрический смысл</h2>
+<p>Требование «предпочитать малые веса» можно выразить двумя способами.
+<em>Мягкое ограничение</em> — штраф: веса могут быть любыми, но за
+большие веса приходится платить, и минимизируется <span
+class="math inline">Q_\lambda</span>. <em>Жёсткое ограничение</em> —
+веса обязаны лежать в заданной области, а внутри неё ищется минимум
+суммы квадратов остатков:</p>
+<div class="equation">
+<p><span class="math display">\|\mathbf{F}\boldsymbol{\theta} -
+\mathbf{y}\|_2^2 \to \min_{\boldsymbol{\theta}} \quad \text{при условии}
+\quad \|\boldsymbol{\theta}\|_2^2 \le t^2</span></p>
+</div>
+<div class="continuation">
+<p>для гребневой регрессии и при условии <span
+class="math inline">\|\boldsymbol{\theta}\|_1 \le t</span> для LASSO.
+Число <span class="math inline">t</span> — радиус допустимой области.
+Две постановки эквивалентны: каждому <span class="math inline">\lambda
+&gt; 0</span> соответствует такое <span class="math inline">t</span>,
+что решения задач совпадают, и наоборот; чем больше <span
+class="math inline">\lambda</span>, тем меньше <span
+class="math inline">t</span>.</p>
+</div>
+<p><strong>Почему постановки эквивалентны.</strong> Рассмотрим гребневую
+регрессию. Если решение МНК лежит внутри круга радиуса <span
+class="math inline">t</span>, ограничение ничего не меняет, и это
+соответствует <span class="math inline">\lambda = 0</span>. Иначе
+решение задачи с ограничением лежит на границе круга, в точке, где линия
+уровня суммы квадратов остатков касается окружности. Сумма квадратов
+убывает в сторону решения МНК, то есть за пределы круга, и в точке
+касания её антиградиент направлен по радиусу наружу. Значит, градиенты
+суммы квадратов и штрафа <span
+class="math inline">\|\boldsymbol{\theta}\|_2^2</span> (он направлен по
+радиусу наружу) противоположны: <span class="math inline">\nabla
+\|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2 = -\lambda \nabla
+\|\boldsymbol{\theta}\|_2^2</span> при некотором <span
+class="math inline">\lambda &gt; 0</span>. Но это равенство и есть
+условие минимума <span class="math inline">Q_\lambda</span>: градиент
+суммы <span class="math inline">\|\mathbf{F}\boldsymbol{\theta} -
+\mathbf{y}\|_2^2 + \lambda \|\boldsymbol{\theta}\|_2^2</span> равен
+нулю. Решение задачи с ограничением — минимум функционала со штрафом при
+этом <span class="math inline">\lambda</span>. Число <span
+class="math inline">\lambda</span> называют <em>множителем
+Лагранжа</em>, а сам приём — методом множителей Лагранжа.</p>
+<p>Как штраф сдвигает решение, проще всего увидеть на модели с одним
+признаком и одним весом: <span class="math inline">g(x, \theta) = \theta
+f(x)</span>, без свободного члена (рис. <a
+href="#fig:reg-soft">6.1</a>). Пусть МНК даёт для неё вес <span
+class="math inline">\theta = 2</span>, а сумма квадратов остатков с
+точностью до постоянного слагаемого равна <span
+class="math inline">(\theta - 2)^2</span> — так получается, когда
+столбец признака имеет единичную длину, как в случае ортонормированных
+признаков из разд. 6.3. Штраф — ещё одна функция <span
+class="math inline">\theta</span> с минимумом в нуле, и минимум
+функционала <span class="math inline">Q_\lambda</span> — суммы квадратов
+остатков и штрафа — оказывается между нулём и решением МНК. Для
+гребневой регрессии он равен <span class="math inline">2/(1 +
+\lambda)</span>: 1 при <span class="math inline">\lambda = 1</span>, 0,5
+при <span class="math inline">\lambda = 3</span>, — и в нуль не попадает
+ни при каком <span class="math inline">\lambda</span>. Для LASSO минимум
+равен <span class="math inline">\max(2 - \lambda/2,\, 0)</span>: 1 при
+<span class="math inline">\lambda = 2</span> и ровно 0 уже при <span
+class="math inline">\lambda = 4</span>, потому что излом <span
+class="math inline">|\theta|</span> в нуле удерживает там минимум <span
+class="math inline">Q_\lambda</span>.</p>
+<figure id="fig:reg-soft">
+<img src="fig/reg_soft.svg" style="width: 98%"
+alt="Рис. 6.1. Мягкое ограничение для модели с одним весом \theta: минимум суммы квадратов остатков и штрафа сдвигается к нулю с ростом \lambda; а — гребневая регрессия; б — LASSO" />
+<figcaption aria-hidden="true">Рис. 6.1. Мягкое ограничение для модели с
+одним весом <span class="math inline">\theta</span>: минимум суммы
+квадратов остатков и штрафа сдвигается к нулю с ростом <span
+class="math inline">\lambda</span>; а — гребневая регрессия; б —
+LASSO</figcaption>
+</figure>
+<figure id="fig:reg-geometry">
+<img src="fig/reg_geometry.svg" style="width: 98%"
+alt="Рис. 6.2. Решение МНК с ограничением: а — на круг (гребневая регрессия); б — на ромб (LASSO)" />
+<figcaption aria-hidden="true">Рис. 6.2. Решение МНК с ограничением: а —
+на круг (гребневая регрессия); б — на ромб (LASSO)</figcaption>
+</figure>
+<p>Постановка с жёстким ограничением наглядна и для двух весов (рис. <a
+href="#fig:reg-geometry">6.2</a>). Сумма квадратов остатков теперь
+зависит от двух весов, и её график — поверхность над плоскостью <span
+class="math inline">(\theta_1, \theta_2)</span>, своего рода чаша. Чтобы
+изобразить её на плоскости, рисуют <em>линии уровня</em> — кривые, вдоль
+которых сумма постоянна, как горизонтали на топографической карте. У
+суммы квадратов остатков линии уровня — эллипсы с центром в решении МНК
+(гл. 3). Допустимая область для гребневой регрессии — круг, для LASSO —
+ромб с вершинами на осях. Решение — точка допустимой области, лежащая на
+самом «низком» эллипсе, то есть точка, где расширяющийся от центра
+эллипс впервые касается области. Круг гладкий, и эллипс касается его в
+произвольной точке, где обе координаты, как правило, ненулевые. У ромба
+есть углы, выступающие вдоль осей, и эллипс чаще всего касается ромба
+именно в углу — там, где одна из координат равна нулю (на рис. <a
+href="#fig:reg-geometry">6.2</a>, б <span class="math inline">\theta_2 =
+0</span>). При многих признаках у многомерного «ромба» много вершин и
+рёбер, лежащих в координатных плоскостях, поэтому нулевыми оказываются
+сразу несколько весов.</p>
+<h2 data-number="6.5" id="regulyarizatsiya-na-praktike"><span
+class="header-section-number">6.5</span> Регуляризация на практике</h2>
+<p><strong>Масштабирование признаков обязательно.</strong> Штраф
+одинаков для всех весов, а величина веса зависит от единиц измерения
+признака: если площадь выразить не в квадратных метрах, а в сотнях
+квадратных метров, её вес вырастет в 100 раз, и штраф на него — в <span
+class="math inline">10^4</span> раз (для гребневой регрессии). Без
+стандартизации регуляризация наказывает признаки неравномерно, в
+зависимости от выбора единиц измерения. Поэтому перед регуляризацией
+признаки стандартизуют (гл. 2).</p>
+<p><strong>Пути регуляризации.</strong> Чтобы увидеть, как штраф меняет
+модель, строят графики весов в зависимости от <span
+class="math inline">\lambda</span>. На рис. <a
+href="#fig:reg-paths">6.3</a> — синтетические данные о квартирах с пятью
+стандартизованными признаками: площадь, жилая площадь (почти копия
+площади, корреляция 0,98), расстояние до метро, этаж и случайный
+признак; цена зависит только от площади и расстояния до метро. МНК
+(<span class="math inline">\lambda</span> близко к нулю) даёт жилой
+площади отрицательный вес <span class="math inline">-0{,}78</span>, хотя
+с ценой она связана положительно, — знакомое по гл. 3 проявление
+мультиколлинеарности. В гребневой регрессии с ростом <span
+class="math inline">\lambda</span> вес жилой площади становится
+положительным, и веса двух почти одинаковых признаков сближаются:
+гребень делит вклад между ними. В LASSO вес жилой площади при <span
+class="math inline">\lambda \approx 10</span> обнуляется первым, затем
+обнуляются веса этажа и случайного признака, потом расстояния до метро;
+дольше всех остаётся площадь. LASSO выбирает из двух одинаковых
+признаков один.</p>
+<figure id="fig:reg-paths">
+<img src="fig/reg_paths.svg" style="width: 98%"
+alt="Рис. 6.3. Веса признаков в зависимости от коэффициента регуляризации (синтетические данные)" />
+<figcaption aria-hidden="true">Рис. 6.3. Веса признаков в зависимости от
+коэффициента регуляризации (синтетические данные)</figcaption>
+</figure>
+<p><strong>Выбор <span class="math inline">\lambda</span>.</strong>
+Коэффициент регуляризации перебирают по сетке в логарифмической шкале,
+например <span class="math inline">10^{-3}, 10^{-2}, \ldots,
+10^{3}</span>, оценивают ошибку при каждом значении кросс-валидацией
+(гл. 5) и выбирают значение с наименьшей ошибкой. Слишком малое <span
+class="math inline">\lambda</span> оставляет переобучение, слишком
+большое приводит к недообучению; ошибка на валидации как функция <span
+class="math inline">\lambda</span> обычно имеет минимум посередине. В
+scikit-learn для этого есть классы <code>RidgeCV</code> и
+<code>LassoCV</code> (листинг 6.1). Следует учесть, что масштаб
+коэффициента в разных классах разный: в <code>Ridge</code> параметр
+<code>alpha</code> совпадает с <span class="math inline">\lambda</span>,
+а в <code>Lasso</code> сумма квадратов остатков делится на <span
+class="math inline">2\ell</span>, так что <span
+class="math inline">\lambda = 2\ell \cdot</span> <code>alpha</code>.</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 6.1. Выбор коэффициента регуляризации по оценке
+кросс-валидации</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LassoCV, RidgeCV</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>ridge <span class="op">=</span> make_pipeline(StandardScaler(),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                      RidgeCV(alphas<span class="op">=</span>np.logspace(<span class="op">-</span><span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">13</span>)))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>lasso <span class="op">=</span> make_pipeline(StandardScaler(), LassoCV(cv<span class="op">=</span><span class="dv">5</span>))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>ridge.fit(X_train, y_train)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>lasso.fit(X_train, y_train)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(ridge[<span class="op">-</span><span class="dv">1</span>].alpha_)        <span class="co"># выбранный коэффициент</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># сколько признаков осталось в модели LASSO</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">sum</span>(lasso[<span class="op">-</span><span class="dv">1</span>].coef_ <span class="op">!=</span> <span class="dv">0</span>))</span></code></pre></div>
+<p><strong>Эластичная сеть.</strong> LASSO из нескольких сильно
+коррелированных признаков оставляет один, причём какой именно — зависит
+от случайностей выборки. Если нужно сохранить все признаки, используют
+<em>эластичную сеть</em> (elastic net) со штрафом <span
+class="math inline">\lambda_1 \|\boldsymbol{\theta}\|_1 + \lambda_2
+\|\boldsymbol{\theta}\|_2^2</span>: L1-часть отбирает признаки, L2-часть
+распределяет вес между коррелированными признаками, как в гребневой
+регрессии. В scikit-learn это класс <code>ElasticNet</code>.</p>
+<p><strong>Регуляризация в градиентном спуске.</strong> Если параметры
+ищут градиентным спуском (гл. 4), к градиенту добавляется производная
+штрафа. Для гребневой регрессии она равна <span
+class="math inline">2\lambda\boldsymbol{\theta}</span>, и шаг принимает
+вид</p>
+<div class="equation">
+<p><span class="math display">\boldsymbol{\theta} := (1 -
+2\eta\lambda)\, \boldsymbol{\theta} - \eta \, \nabla
+\|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2.</span></p>
+</div>
+<div class="continuation">
+<p>Перед обычным шагом все веса умножаются на число чуть меньше единицы,
+поэтому такую регуляризацию называют <em>сокращением весов</em> (weight
+decay). На каждом шаге сокращение тянет все веса к нулю, а градиент
+ошибки удерживает те из них, которые уменьшают ошибку на обучающей
+выборке. Вес признака, который почти не влияет на ошибку, ничто не
+удерживает, и он убывает как геометрическая прогрессия со знаменателем
+<span class="math inline">1 - 2\eta\lambda</span>. Этот приём
+используется и в моделях, для которых формулы решения нет, — от
+логистической регрессии до нейронных сетей.</p>
+</div>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-6">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Какую задачу решает регуляризация? Что происходит при <span
+class="math inline">\lambda = 0</span> и при очень большом <span
+class="math inline">\lambda</span>?</li>
+<li>Почему свободный член <span class="math inline">\theta_0</span> не
+штрафуют?</li>
+<li>Почему матрица <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F} + \lambda \mathbf{I}</span> обратима при любом <span
+class="math inline">\lambda &gt; 0</span>?</li>
+<li>Как гребневая регрессия распределяет вес между двумя одинаковыми
+признаками? Как это делает LASSO?</li>
+<li>Объясните, почему LASSO может обнулять веса, а гребневая регрессия —
+нет.</li>
+<li>Почему перед регуляризацией признаки нужно стандартизовать?</li>
+<li>Как выбирают коэффициент регуляризации?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-6">Задачи</h2>
+<ol type="1">
+<li><p>Для примера из табл. <a href="ch06.html#tbl:ridge">6.1</a>
+найдите решение гребневой регрессии при <span
+class="math inline">\lambda = 1</span> и <span
+class="math inline">\mathbf{y} = (2;\, 4;\, 6{,}1)</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F} +
+\mathbf{I} = \begin{pmatrix} 15 &amp; 14{,}3 \\ 14{,}3 &amp; 15{,}61
+\end{pmatrix}</span>, определитель 29,66, <span
+class="math inline">\boldsymbol{\theta}^*_\lambda \approx (0{,}956;\,
+0{,}976)</span>.</p>
+</details></li>
+<li><p>Признаки ортонормированы, решение МНК <span
+class="math inline">\mathbf{a} = (3;\, -0{,}5;\, 1{,}2)</span>. Найдите
+веса гребневой регрессии и LASSO при <span class="math inline">\lambda =
+2</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>гребневая регрессия — <span class="math inline">(1;\, -0{,}17;\,
+0{,}4)</span>; LASSO — <span class="math inline">(2;\, 0;\,
+0{,}2)</span>.</p>
+</details></li>
+<li><p>Один признак умножили на 10 (перешли к другим единицам),
+остальные не меняли. Как изменятся вес этого признака в МНК и в
+гребневой регрессии?</p>
+<details class="answer"><summary>Ответ</summary>
+<p>в МНК вес уменьшится ровно в 10 раз, прогнозы не изменятся; в
+гребневой регрессии штраф на этот вес станет относительно меньше, модель
+изменится — поэтому признаки стандартизуют.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch05.html" rel="prev"><span class="dir">Назад</span><span class="t">Переобучение и валидация</span></a>
+  <a class="next" href="ch07.html" rel="next"><span class="dir">Далее</span><span class="t">Логистическая регрессия</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Наивный байесовский классификатор">
+  <title>Наивный байесовский классификатор — Машинное обучение: линейные
+и вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li class="current"><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+<ol>
+<li><a href="ch09.html#formula-bayesa"><span class="num">9.1</span><span>Формула Байеса</span></a></li>
+<li><a href="ch09.html#optimalnyy-bayesovskiy-klassifikator"><span class="num">9.2</span><span>Оптимальный байесовский классификатор</span></a></li>
+<li><a href="ch09.html#naivnoe-predpolozhenie"><span class="num">9.3</span><span>Наивное предположение</span></a></li>
+<li><a href="ch09.html#gaussovskiy-naivnyy-bayes"><span class="num">9.4</span><span>Гауссовский наивный байес</span></a></li>
+<li><a href="ch09.html#teksty-i-meshok-slov"><span class="num">9.5</span><span>Тексты и мешок слов</span></a></li>
+<li><a href="ch09.html#sglazhivanie-laplasa"><span class="num">9.6</span><span>Сглаживание Лапласа</span></a></li>
+<li><a href="ch09.html#naivnyy-bayes-i-logisticheskaya-regressiya"><span class="num">9.7</span><span>Наивный байес и логистическая регрессия</span></a></li>
+<li><a href="ch09.html#voprosy-dlya-samokontrolya-9"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch09.html#zadachi-9"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="9" id="ch09"><span
+class="header-section-number">9</span> Наивный байесовский
+классификатор</h1>
+<!-- В лекциях нет — написано заново. Источники: Mitchell 1997, гл. 6 (наивный байес, классификация текстов); Hastie 2009, разд. 6.6.3; Ng, Jordan 2002 (сравнение с логистической регрессией); Domingos, Pazzani 1997 (почему работает при зависимых признаках). Числа примеров проверены в scikit-learn. -->
+<p>Логистическая регрессия оценивает вероятность класса по признакам
+объекта напрямую. Есть и другой подход: описать, как выглядят объекты
+каждого класса, — какие слова встречаются в спаме и какие в обычных
+письмах, — а затем по формуле Байеса пересчитать это описание в
+вероятность класса для нового объекта. Наивный байесовский классификатор
+— простейшая из моделей, построенных по этому принципу. Он обучается
+подсчётом частот, работает при огромном числе признаков и на малых
+выборках и служит стандартной базовой моделью для классификации
+текстов.</p>
+<h2 data-number="9.1" id="formula-bayesa"><span
+class="header-section-number">9.1</span> Формула Байеса</h2>
+<p><em>Условная вероятность</em> <span class="math inline">P(A \mid
+B)</span> — вероятность события <span class="math inline">A</span> при
+условии, что событие <span class="math inline">B</span> произошло.
+Формула Байеса связывает вероятность класса при известном объекте с
+вероятностью объекта при известном классе:</p>
+<div id="eq:bayes" class="equation">
+<p><span class="math display">P(y \mid x) = \frac{P(y)\, p(x \mid
+y)}{p(x)}, \qquad p(x) = \sum_{c \in Y} P(c)\, p(x \mid
+c).\tag{9.1}</span></p>
+</div>
+<div class="continuation">
+<p>Здесь <span class="math inline">P(y)</span> — <em>априорная
+вероятность</em> класса, известная до того, как мы увидели объект; <span
+class="math inline">p(x \mid y)</span> — <em>правдоподобие</em>,
+вероятность (для непрерывных признаков — плотность) встретить такой
+объект среди объектов класса <span class="math inline">y</span>; <span
+class="math inline">P(y \mid x)</span> — <em>апостериорная
+вероятность</em> класса после наблюдения объекта. Знаменатель <span
+class="math inline">p(x)</span> одинаков для всех классов и лишь делает
+сумму апостериорных вероятностей равной единице.</p>
+</div>
+<p><strong>Пример.</strong> Покажем, как формула Байеса связывает
+частоту класса и частоту признака. Пусть спам составляет 30 % писем,
+слово «выигрыш» встречается в 40 % спама и в 2 % обычных писем. Какова
+вероятность, что письмо со словом «выигрыш» — спам? По формуле <a
+href="ch09.html#eq:bayes">(9.1)</a></p>
+<div class="equation">
+<p><span class="math display">P(\text{спам} \mid \text{«выигрыш»}) =
+\frac{0{,}3 \cdot 0{,}4}{0{,}3 \cdot 0{,}4 + 0{,}7 \cdot 0{,}02} =
+\frac{0{,}12}{0{,}134} \approx 0{,}90.</span></p>
+</div>
+<div class="continuation">
+<p>Слово встречается меньше чем в половине спам-писем, но сдвигает
+вероятность с 0,3 до 0,9: ключевое значение имеет отношение
+правдоподобий <span class="math inline">0{,}4 / 0{,}02 = 20</span>, а не
+сама частота встречаемости 0,4.</p>
+</div>
+<p><strong>Два подхода к классификации.</strong> Логистическая регрессия
+(гл. 7) моделирует апостериорную вероятность <span
+class="math inline">P(y \mid x)</span> напрямую; такие модели называют
+<em>дискриминативными</em> — они учатся отличать классы друг от друга.
+<em>Генеративные</em> модели описывают, как устроены объекты каждого
+класса: оценивают <span class="math inline">P(y)</span> и <span
+class="math inline">p(x \mid y)</span>, а <span class="math inline">P(y
+\mid x)</span> получают по формуле Байеса. Генеративная модель знает о
+данных больше, чем нужно для классификации (из неё можно порождать новые
+объекты), но платит за это допущениями о виде <span
+class="math inline">p(x \mid y)</span>.</p>
+<h2 data-number="9.2" id="optimalnyy-bayesovskiy-klassifikator"><span
+class="header-section-number">9.2</span> Оптимальный байесовский
+классификатор</h2>
+<p>Предположим, что распределения <span class="math inline">P(y)</span>
+и <span class="math inline">p(x \mid y)</span> известны точно. Если
+отнести объект <span class="math inline">x</span> к классу <span
+class="math inline">y</span>, классификатор ошибётся с вероятностью
+<span class="math inline">1 - P(y \mid x)</span>. Значит, вероятность
+ошибки наименьшая, если выбирать класс с наибольшей апостериорной
+вероятностью. Знаменатель <span class="math inline">p(x)</span> в
+формуле <a href="ch09.html#eq:bayes">(9.1)</a> от класса не зависит, и
+его можно отбросить:</p>
+<div id="eq:bayes-opt" class="equation">
+<p><span class="math display">g(x) = \arg\max_{y \in Y} P(y)\, p(x \mid
+y).\tag{9.2}</span></p>
+</div>
+<div class="continuation">
+<p>Это <em>оптимальный байесовский классификатор</em>. Если ошибки
+первого и второго рода (гл. 8) имеют разную цену, выбирают класс с
+наименьшими ожидаемыми потерями; для двух классов это даёт порог <span
+class="math inline">c_-/(c_- + c_+)</span> на апостериорную вероятность
+класса <span class="math inline">+1</span> — тот же, что в гл. 8.</p>
+</div>
+<p>Его ошибка — наименьшая возможная при данных признаках. Она больше
+нуля, если объекты разных классов бывают одинаковыми по признакам (два
+письма с одним набором слов, одно — спам, другое нет); такую ошибку не
+устранит никакое обучение, нужны другие признаки.</p>
+<p>На практике распределения неизвестны, и их оценивают по выборке.
+Вероятность класса оценить легко: <span class="math inline">P(y) \approx
+\ell_y / \ell</span>, где <span class="math inline">\ell_y</span> —
+число объектов класса <span class="math inline">y</span> в выборке. С
+правдоподобием <span class="math inline">p(x \mid y)</span> дело обстоит
+сложнее. Пусть у объекта <span class="math inline">n</span> бинарных
+признаков, например наличие или отсутствие <span
+class="math inline">n</span> слов в письме. Различных объектов <span
+class="math inline">2^n</span>, и для каждого класса нужно оценить
+вероятность каждого из них. При <span class="math inline">n = 30</span>
+это около миллиарда чисел; большинство сочетаний слов в выборке не
+встретится ни разу, и их вероятность оценить невозможно.</p>
+<h2 data-number="9.3" id="naivnoe-predpolozhenie"><span
+class="header-section-number">9.3</span> Наивное предположение</h2>
+<p>Наивный байесовский классификатор упрощает задачу допущением: <em>при
+известном классе признаки независимы</em>. Тогда правдоподобие объекта
+распадается в произведение правдоподобий отдельных признаков:</p>
+<div class="equation">
+<p><span class="math display">p(x \mid y) = \prod_{j=1}^{n}
+p\bigl(f_j(x) \mid y\bigr).</span></p>
+</div>
+<div class="continuation">
+<p>Вместо распределения на <span class="math inline">2^n</span>
+сочетаниях в каждом классе нужно оценить <span
+class="math inline">n</span> одномерных распределений (для бинарных
+признаков — <span class="math inline">n</span> чисел), и каждое
+оценивается по всем объектам класса.</p>
+</div>
+<p>Произведение многих вероятностей становится меньше наименьшего числа,
+представимого в компьютере: для 1000 слов с вероятностями около 0,001
+оно порядка <span class="math inline">10^{-3000}</span>, а числа двойной
+точности не бывают меньше примерно <span
+class="math inline">10^{-324}</span>. Поэтому, как и в гл. 7, переходят
+к логарифмам:</p>
+<div id="eq:nb" class="equation">
+<p><span class="math display">g(x) = \arg\max_{y \in Y} \Bigl( \ln P(y)
++ \sum_{j=1}^{n} \ln p\bigl(f_j(x) \mid y\bigr)
+\Bigr).\tag{9.3}</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Каждый класс набирает очки:
+начальный запас — логарифм его априорной вероятности, затем каждый
+признак вносит свой вклад <span class="math inline">\ln p(f_j(x) \mid
+y)</span>, больший у того класса, для которого такое значение признака
+типично. Побеждает класс с наибольшей суммой.</p>
+<p><strong>Почему «наивный».</strong> Допущение почти всегда неверно:
+слова «выигрыш» и «бесплатно» в спаме встречаются вместе, рост и вес
+человека связаны, а значит допущение о независимости признаков не
+выполняется. Тем не менее классификатор часто работает хорошо. Для
+верного ответа не нужно, чтобы оценки вероятностей были точными, — нужно
+только, чтобы у правильного класса сумма в <a
+href="ch09.html#eq:nb">(9.3)</a> была наибольшей, а это выполняется и
+при заметной зависимости признаков [9]. За это допущение приходится
+платить точностью самих вероятностей: информацию, общую для нескольких
+признаков, классификатор учитывает несколько раз, и его оценки
+получаются слишком близкими к 0 или 1.</p>
+<h2 data-number="9.4" id="gaussovskiy-naivnyy-bayes"><span
+class="header-section-number">9.4</span> Гауссовский наивный байес</h2>
+<p>Для непрерывного признака нужно выбрать вид распределения <span
+class="math inline">p(f_j(x) \mid y)</span>. Обычно берут
+нормальное:</p>
+<div class="equation">
+<p><span class="math display">p\bigl(f_j(x) \mid y\bigr) =
+\frac{1}{\sqrt{2\pi}\,\sigma_{jy}} \exp\biggl(-\frac{\bigl(f_j(x) -
+\mu_{jy}\bigr)^2}{2\sigma_{jy}^2}\biggr),</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\mu_{jy}</span> и <span
+class="math inline">\sigma_{jy}^2</span> — среднее и дисперсия признака
+<span class="math inline">f_j</span> в классе <span
+class="math inline">y</span>. Обучение сводится к их подсчёту по
+объектам класса <span class="math inline">y</span> (это оценки
+максимального правдоподобия из гл. 7).</p>
+</div>
+<p><strong>Пример.</strong> Покажем, как выглядит граница между
+классами. Пусть признак один, класс <span class="math inline">-1</span>
+составляет 60 % выборки, и у объектов этого класса значения признака
+распределены нормально со средним 2 и стандартным отклонением 1, а у
+объектов класса <span class="math inline">+1</span> (40 % выборки) — со
+средним 5 и стандартным отклонением 2. На рис. <a
+href="#fig:nb">9.1</a>, а показаны произведения <span
+class="math inline">P(y)\, p(x \mid y)</span> — величины, которые
+сравнивает правило <a href="ch09.html#eq:bayes-opt">(9.2)</a>. Для
+объекта <span class="math inline">x = 3</span> они равны <span
+class="math inline">0{,}6 \cdot 0{,}242 = 0{,}145</span> и <span
+class="math inline">0{,}4 \cdot 0{,}121 = 0{,}048</span>, и
+апостериорная вероятность класса <span class="math inline">+1</span>
+равна <span class="math inline">0{,}048 / (0{,}145 + 0{,}048) \approx
+0{,}25</span>. Кривые пересекаются при <span class="math inline">x
+\approx 3{,}63</span>: правее классификатор выбирает класс <span
+class="math inline">+1</span>.</p>
+<figure id="fig:nb">
+<img src="fig/naive_bayes.svg" style="width: 98%"
+alt="Рис. 9.1. Гауссовский наивный байес: а — произведения P(y)\,p(x \mid y) для одного признака, класс +1 выбирается в закрашенной области; б — граница наивного байеса (штриховая) и логистической регрессии (сплошная) при коррелированных признаках" />
+<figcaption aria-hidden="true">Рис. 9.1. Гауссовский наивный байес: а —
+произведения <span class="math inline">P(y)\,p(x \mid y)</span> для
+одного признака, класс <span class="math inline">+1</span> выбирается в
+закрашенной области; б — граница наивного байеса (штриховая) и
+логистической регрессии (сплошная) при коррелированных
+признаках</figcaption>
+</figure>
+<p>Граница проходит не посередине между средними (3,5): сказываются и
+априорные вероятности, и дисперсии. Есть и вторая точка пересечения,
+<span class="math inline">x \approx -1{,}63</span>, где обе кривые почти
+нулевые: там снова выигрывает класс <span class="math inline">+1</span>,
+его распределение шире и на краях убывает медленнее. Причина в том, что
+логарифм нормальной плотности квадратичен по признаку, и граница между
+классами квадратичная. Если дисперсии признака в обоих классах
+одинаковы, слагаемые с <span class="math inline">f_j^2</span> при
+сравнении классов сокращаются, и граница становится линейной.</p>
+<h2 data-number="9.5" id="teksty-i-meshok-slov"><span
+class="header-section-number">9.5</span> Тексты и мешок слов</h2>
+<p>Чтобы классифицировать тексты, их нужно превратить в признаки.
+Простейший способ — <em>мешок слов</em> (bag of words, BoW): составляют
+словарь из <span class="math inline">n</span> слов, встречающихся в
+обучающих текстах, и признаком <span class="math inline">f_j(x)</span>
+служит число вхождений <span class="math inline">j</span>-го слова в
+текст <span class="math inline">x</span>. Порядок слов теряется — отсюда
+название. Классификация текстов наивным байесом подробно разобрана в
+[1].</p>
+<p><em>Мультиномиальный</em> наивный байес считает, что текст класса
+<span class="math inline">y</span> порождается так: слова выбираются
+независимо одно за другим, и слово <span class="math inline">j</span>
+выбирается с вероятностью <span class="math inline">q_{jy}</span>. Тогда
+правдоподобие текста с точностью до множителя, одинакового для всех
+классов, равно</p>
+<div class="equation">
+<p><span class="math display">p(x \mid y) \propto \prod_{j=1}^{n}
+q_{jy}^{f_j(x)}:</span></p>
+</div>
+<div class="continuation">
+<p>каждое вхождение слова умножает правдоподобие на его вероятность.
+Оценка вероятности слова — его доля среди всех слов текстов класса:</p>
+</div>
+<div id="eq:nb-freq" class="equation">
+<p><span class="math display">q_{jy} =
+\frac{N_{jy}}{N_y},\tag{9.4}</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">N_{jy}</span> — сколько раз слово <span
+class="math inline">j</span> встретилось в обучающих текстах класса
+<span class="math inline">y</span>, а <span class="math inline">N_y =
+\sum_j N_{jy}</span> — общее число слов в них.</p>
+</div>
+<p><em>Бернуллиевский</em> вариант учитывает только наличие слова, <span
+class="math inline">f_j(x) \in \{0, 1\}</span>, и оценивает <span
+class="math inline">q_{jy}</span> как долю текстов класса <span
+class="math inline">y</span>, содержащих слово <span
+class="math inline">j</span>. Правдоподобие <span
+class="math inline">\prod_j q_{jy}^{f_j(x)} (1 - q_{jy})^{1 -
+f_j(x)}</span> учитывает и отсутствие слов: если в письме нет слова,
+типичного для спама, это довод против спама.</p>
+<p><strong>Пример: спам-фильтр.</strong> Покажем на примере, как по
+обучающей выборке вручную вычисляется вероятность класса, и заодно
+обнаружим проблему нулевых частот. Словарь — четыре слова, обучающая
+выборка — шесть писем (табл. <a href="ch09.html#tbl:spam">9.1</a>), спам
+— класс <span class="math inline">+1</span>.</p>
+<table id="tbl:spam">
+<caption>Таблица 9.1. Обучающая выборка спам-фильтра</caption>
+<thead>
+<tr>
+<th>Письмо</th>
+<th>Текст</th>
+<th>Класс</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>выигрыш выигрыш бесплатно</td>
+<td><span class="math inline">+1</span></td>
+</tr>
+<tr>
+<td>2</td>
+<td>бесплатно выигрыш</td>
+<td><span class="math inline">+1</span></td>
+</tr>
+<tr>
+<td>3</td>
+<td>бесплатно встреча</td>
+<td><span class="math inline">+1</span></td>
+</tr>
+<tr>
+<td>4</td>
+<td>отчёт встреча</td>
+<td><span class="math inline">-1</span></td>
+</tr>
+<tr>
+<td>5</td>
+<td>отчёт отчёт бесплатно</td>
+<td><span class="math inline">-1</span></td>
+</tr>
+<tr>
+<td>6</td>
+<td>встреча отчёт</td>
+<td><span class="math inline">-1</span></td>
+</tr>
+</tbody>
+</table>
+<p><span class="math inline">P(+1) = P(-1) = 0{,}5</span>. В спаме семь
+слов: «выигрыш» — 3 раза, «бесплатно» — 3, «отчёт» — 0, «встреча» — 1. В
+обычных письмах тоже семь: 0, 1, 4 и 2 раза соответственно. По формуле
+<a href="ch09.html#eq:nb-freq">(9.4)</a> вероятности слов в спаме —
+<span class="math inline">3/7</span>, <span
+class="math inline">3/7</span>, <span class="math inline">0</span>,
+<span class="math inline">1/7</span>, в обычных письмах — <span
+class="math inline">0</span>, <span class="math inline">1/7</span>,
+<span class="math inline">4/7</span>, <span
+class="math inline">2/7</span>.</p>
+<p>Классифицируем письмо «выигрыш встреча». Для спама произведение <span
+class="math inline">0{,}5 \cdot \frac{3}{7} \cdot \frac{1}{7}</span>,
+для обычного письма <span class="math inline">0{,}5 \cdot 0 \cdot
+\frac{2}{7} = 0</span>: слово «выигрыш» ни разу не встретилось в обычных
+письмах, и вероятность спама получается равной 1. Письмо «бесплатно
+отчёт», наоборот, получает вероятность спама 0, потому что слова «отчёт»
+не было в спаме, — хотя «бесплатно» встречается в спаме втрое чаще.
+Слово, не встретившееся в обучающих текстах класса, перечёркивает вклад
+всех остальных слов: в сумме <a href="ch09.html#eq:nb">(9.3)</a> его
+слагаемое равно <span class="math inline">\ln 0 = -\infty</span>. Это
+<em>проблема нулевых частот</em>.</p>
+<h2 data-number="9.6" id="sglazhivanie-laplasa"><span
+class="header-section-number">9.6</span> Сглаживание Лапласа</h2>
+<p>Нулевая оценка — следствие малой выборки, а не свойство класса.
+<em>Сглаживание Лапласа</em> прибавляет к каждому счётчику число <span
+class="math inline">\alpha &gt; 0</span>, как будто каждое слово словаря
+встретилось в каждом классе ещё <span class="math inline">\alpha</span>
+раз:</p>
+<div class="equation">
+<p><span class="math display">q_{jy} = \frac{N_{jy} + \alpha}{N_y +
+\alpha n}.</span></p>
+</div>
+<div class="continuation">
+<p>В знаменателе добавлено <span class="math inline">\alpha n</span>,
+чтобы вероятности всех <span class="math inline">n</span> слов
+по-прежнему давали в сумме единицу. При <span class="math inline">\alpha
+= 1</span> сглаживание называют лапласовским, при <span
+class="math inline">0 &lt; \alpha &lt; 1</span> — сглаживанием Лидстона.
+На больших выборках добавка мало меняет частоты частых слов, а редким
+словам не даёт нулевых оценок.</p>
+</div>
+<p>Применим сглаживание с <span class="math inline">\alpha = 1</span> к
+тому же примеру (<span class="math inline">n = 4</span>). Знаменатель в
+обоих классах <span class="math inline">7 + 4 = 11</span>; вероятности
+слов «выигрыш», «бесплатно», «отчёт», «встреча» в спаме — <span
+class="math inline">4/11</span>, <span class="math inline">4/11</span>,
+<span class="math inline">1/11</span>, <span
+class="math inline">2/11</span>, в обычных письмах — <span
+class="math inline">1/11</span>, <span class="math inline">2/11</span>,
+<span class="math inline">5/11</span>, <span
+class="math inline">3/11</span>. Для письма «выигрыш встреча»
+произведения равны <span class="math inline">0{,}5 \cdot \frac{4}{11}
+\cdot \frac{2}{11}</span> и <span class="math inline">0{,}5 \cdot
+\frac{1}{11} \cdot \frac{3}{11}</span>, они относятся как <span
+class="math inline">8 : 3</span>. Вероятность спама — доля первого
+произведения в их сумме, то есть <span class="math inline">8/(8 + 3) =
+8/11 \approx 0{,}73</span>; совпадение со знаменателем 11 в вероятностях
+слов случайно. Для письма «бесплатно отчёт» произведения равны <span
+class="math inline">0{,}5 \cdot \frac{4}{11} \cdot \frac{1}{11}</span> и
+<span class="math inline">0{,}5 \cdot \frac{2}{11} \cdot
+\frac{5}{11}</span>, они относятся как <span class="math inline">4 :
+10</span>, и вероятность спама <span class="math inline">4/(4 + 10) =
+4/14 \approx 0{,}29</span>. Вместо категоричных 1 и 0 получились
+осторожные оценки, учитывающие оба слова. Гиперпараметр <span
+class="math inline">\alpha</span> по роли похож на коэффициент
+регуляризации (гл. 6): чем он больше, тем сильнее оценки стянуты к
+равномерным, — и подбирают его так же, кросс-валидацией.</p>
+<p><strong>Пример: бернуллиевский вариант.</strong> Покажем, как на
+ответ влияет отсутствие слов. Теперь <span
+class="math inline">q_{jy}</span> — доля писем класса <span
+class="math inline">y</span>, содержащих слово <span
+class="math inline">j</span>. Сглаживание прибавляет <span
+class="math inline">\alpha</span> к числу таких писем и <span
+class="math inline">2\alpha</span> к числу писем класса (у признака два
+значения): <span class="math inline">q_{jy} = (D_{jy} + \alpha) /
+(\ell_y + 2\alpha)</span>, где <span class="math inline">D_{jy}</span> —
+число писем класса <span class="math inline">y</span> со словом <span
+class="math inline">j</span>. В табл. <a
+href="ch09.html#tbl:spam">9.1</a> «выигрыш» есть в двух письмах спама из
+трёх, «бесплатно» — в трёх, «отчёт» — ни в одном, «встреча» — в одном; в
+обычных письмах — в 0, 1, 3 и 2. При <span class="math inline">\alpha =
+1</span> вероятности слов в спаме — <span
+class="math inline">3/5</span>, <span class="math inline">4/5</span>,
+<span class="math inline">1/5</span>, <span
+class="math inline">2/5</span>, в обычных письмах — <span
+class="math inline">1/5</span>, <span class="math inline">2/5</span>,
+<span class="math inline">4/5</span>, <span
+class="math inline">3/5</span>.</p>
+<p>Классифицируем снова письмо «выигрыш встреча». В шансы спама входят
+все четыре слова словаря: присутствующее — множителем <span
+class="math inline">q_{j,+1} / q_{j,-1}</span>, отсутствующее —
+множителем <span class="math inline">(1 - q_{j,+1}) / (1 -
+q_{j,-1})</span>. «Выигрыш» есть: <span class="math inline">3</span>;
+«встреча» есть: <span class="math inline">2/3</span>; «бесплатно» нет:
+<span class="math inline">(1/5) / (3/5) = 1/3</span> — довод против
+спама, ведь в спаме это слово есть всегда; «отчёт» нет: <span
+class="math inline">(4/5) / (1/5) = 4</span> — довод за спам. Шансы
+спама <span class="math inline">3 \cdot \frac{2}{3} \cdot \frac{1}{3}
+\cdot 4 = \frac{8}{3}</span>, вероятность <span class="math inline">8/11
+\approx 0{,}73</span> — здесь случайно та же, что у мультиномиального
+варианта. Для письма из одного слова «встреча» варианты расходятся.
+Мультиномиальный учитывает только это слово и даёт шансы <span
+class="math inline">2 : 3</span>, вероятность спама 0,40. Бернуллиевский
+добавляет вклад трёх отсутствующих слов: шансы <span
+class="math inline">\frac{2}{3} \cdot \frac{1}{2} \cdot \frac{1}{3}
+\cdot 4 = \frac{4}{9}</span>, вероятность <span class="math inline">4/13
+\approx 0{,}31</span>.</p>
+<p>Таким образом, бернуллиевский вариант оценивает письмо и по тому,
+каких слов в нём нет. При небольшом словаре это помогает, а при словаре
+из десятков тысяч слов отсутствие отдельного слова почти ничего не
+говорит, и мультиномиальный вариант обычно точнее [10].</p>
+<h2 data-number="9.7"
+id="naivnyy-bayes-i-logisticheskaya-regressiya"><span
+class="header-section-number">9.7</span> Наивный байес и логистическая
+регрессия</h2>
+<p>Возьмём для мультиномиального наивного байеса логарифм отношения
+апостериорных вероятностей двух классов — логит из гл. 7. По формуле
+Байеса</p>
+<div id="eq:nb-linear" class="equation">
+<p><span class="math display">\ln \frac{P(+1 \mid x)}{P(-1 \mid x)} =
+\ln \frac{P(+1)}{P(-1)} + \sum_{j=1}^{n} f_j(x) \ln
+\frac{q_{j,+1}}{q_{j,-1}}.\tag{9.5}</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Справа — линейная функция признаков:
+свободный член <span class="math inline">\theta_0 =
+\ln(P(+1)/P(-1))</span> и веса <span class="math inline">\theta_j =
+\ln(q_{j,+1}/q_{j,-1})</span>. Значит, <span class="math inline">P(+1
+\mid x) = \sigma(h(x, \boldsymbol{\theta}))</span> — модель той же
+формы, что логистическая регрессия. В примере веса слов «выигрыш»,
+«бесплатно», «отчёт», «встреча» равны <span class="math inline">\ln 4 =
+1{,}39</span>; <span class="math inline">\ln 2 = 0{,}69</span>; <span
+class="math inline">\ln 0{,}2 = -1{,}61</span>; <span
+class="math inline">\ln(2/3) = -0{,}41</span>, а <span
+class="math inline">\theta_0 = 0</span>. Для текста «выигрыш встреча»
+<span class="math inline">h = 1{,}39 - 0{,}41 = 0{,}98</span> и <span
+class="math inline">\sigma(0{,}98) \approx 0{,}73</span> — тот же ответ.
+Логит линеен по признакам и в бернуллиевском варианте, и в гауссовском —
+если дисперсия каждого признака одинакова в обоих классах (иначе, как
+показано выше, граница квадратичная).</p>
+<p>Различаются модели способом нахождения весов. Наивный байес оценивает
+вес каждого признака отдельно, по частотам в классах. Логистическая
+регрессия подбирает все веса совместно, максимизируя правдоподобие
+ответов, и учитывает зависимость признаков. Поэтому наивный байес
+учитывает одну и ту же информацию дважды: если бы у слова «выигрыш» в
+словаре был двойник, всегда стоящий рядом с ним (например, если бы в
+спаме всегда писали «крупный выигрыш», а слово «крупный» отдельно не
+встречалось), наивный байес сложил бы оба вклада, и вероятность спама
+для письма «выигрыш встреча» выросла бы с 0,73 примерно до 0,91, хотя
+информации не прибавилось; логистическая регрессия разделила бы вес
+между двойниками.</p>
+<p>На рис. <a href="#fig:nb">9.1</a>, б признаки <span
+class="math inline">x_1</span> и <span class="math inline">x_2</span>
+сильно коррелированы в обоих классах (коэффициент корреляции 0,8), а
+классы различаются тем, что у класса <span class="math inline">+1</span>
+(чёрные точки) <span class="math inline">x_1</span> больше при том же
+<span class="math inline">x_2</span>. Наивный байес считает оба признака
+независимыми доводами в пользу класса <span
+class="math inline">+1</span> и проводит границу поперёк облака точек.
+Логистическая регрессия нашла веса <span
+class="math inline">3{,}0</span> и <span
+class="math inline">-2{,}0</span>: при фиксированном <span
+class="math inline">x_1</span> большое <span
+class="math inline">x_2</span> говорит против класса <span
+class="math inline">+1</span>. На 100 000 новых объектов из тех же
+распределений доля правильных ответов наивного байеса 0,74,
+логистической регрессии — 0,83.</p>
+<p>Зато наивный байес выигрывает при малых выборках: он приближается к
+своей наилучшей ошибке уже при числе объектов, растущем логарифмически с
+числом признаков, тогда как логистической регрессии нужно число объектов
+порядка числа признаков; при большой выборке логистическая регрессия
+обычно точнее [11].</p>
+<p>Итак, достоинства наивного байеса: обучение — один проход по выборке
+с подсчётом частот, без оптимизации, и дообучение на новых данных —
+прибавление к счётчикам; работа на малых выборках и при десятках тысяч
+признаков; пропущенный признак просто не участвует в сумме <a
+href="ch09.html#eq:nb">(9.3)</a>. Недостатки: зависимость признаков не
+учитывается; для непрерывных признаков приходится угадывать вид
+распределения; вероятности излишне уверенные — по метрикам гл. 8 AUC,
+зависящая только от порядка оценок, бывает высокой, а log-loss плохой.
+Если нужен не только класс, но и правдоподобная оценка вероятности —
+например, чтобы рассчитать по ней ожидаемые затраты, как в гл. 8, —
+оценки <em>калибруют</em>: подправляют так, чтобы среди объектов с
+оценкой около 0,8 к классу <span class="math inline">+1</span>
+действительно относилось около 80 %. В scikit-learn для этого служит
+класс <code>CalibratedClassifierCV</code>.</p>
+<p>В scikit-learn описанные в этой главе виды наивного байесовского
+классификатора реализованы в классах <code>GaussianNB</code>,
+<code>MultinomialNB</code> и <code>BernoulliNB</code> модуля
+<code>sklearn.naive_bayes</code>; параметр <code>alpha</code> —
+коэффициент сглаживания (по умолчанию 1). В листинге 9.1 — спам-фильтр
+из примера выше; мешок слов строится с помощью класса
+<code>CountVectorizer</code>.</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 9.1. Мультиномиальный наивный байес для текстов</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.feature_extraction.text <span class="im">import</span> CountVectorizer</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.naive_bayes <span class="im">import</span> MultinomialNB</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>texts <span class="op">=</span> [<span class="st">&quot;выигрыш выигрыш бесплатно&quot;</span>, <span class="st">&quot;бесплатно выигрыш&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;бесплатно встреча&quot;</span>, <span class="st">&quot;отчёт встреча&quot;</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>         <span class="st">&quot;отчёт отчёт бесплатно&quot;</span>, <span class="st">&quot;встреча отчёт&quot;</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">0</span>]                      <span class="co"># 1 — спам</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> make_pipeline(CountVectorizer(),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                      MultinomialNB(alpha<span class="op">=</span><span class="fl">1.0</span>))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>model.fit(texts, y)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>model.predict_proba([<span class="st">&quot;выигрыш встреча&quot;</span>])    <span class="co"># [[0.27, 0.73]]</span></span></code></pre></div>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-9">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Что такое априорная и апостериорная вероятности и правдоподобие в
+формуле Байеса?</li>
+<li>Чем генеративная модель отличается от дискриминативной? К какому
+типу относятся логистическая регрессия и наивный байес?</li>
+<li>Почему ошибка оптимального байесовского классификатора может быть
+больше нуля?</li>
+<li>В чём состоит наивное предположение? Зачем оно нужно?</li>
+<li>Чем мультиномиальный вариант отличается от бернуллиевского?</li>
+<li>Какую проблему решает сглаживание Лапласа?</li>
+<li>Почему вероятности наивного байеса бывают излишне уверенными?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-9">Задачи</h2>
+<ol type="1">
+<li><p>Болезнь встречается у 1 % людей. Тест обнаруживает её у 90 %
+больных и ошибочно даёт положительный результат у 5 % здоровых. Какова
+вероятность болезни при положительном тесте?</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">0{,}009 / (0{,}009 + 0{,}0495) \approx
+0{,}15</span>: здоровых намного больше, и большинство положительных
+результатов ложные.</p>
+</details></li>
+<li><p>В примере со спам-фильтром (с <span class="math inline">\alpha =
+1</span>) найдите вероятность спама для письма «бесплатно бесплатно
+встреча».</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">h = 2 \ln 2 + \ln(2/3) \approx
+0{,}98</span> (веса слов «бесплатно» и «встреча»), вероятность <span
+class="math inline">8/11 \approx 0{,}73</span>.</p>
+</details></li>
+<li><p>Признак распределён нормально с дисперсией 1 в обоих классах, со
+средним 0 в классе <span class="math inline">-1</span> и 4 в классе
+<span class="math inline">+1</span>. Найдите границу при <span
+class="math inline">P(-1) = 0{,}8</span>, <span
+class="math inline">P(+1) = 0{,}2</span>.</p>
+<details class="answer"><summary>Ответ</summary>
+<p>из <span class="math inline">\ln 0{,}8 - x^2/2 = \ln 0{,}2 - (x -
+4)^2/2</span> получаем <span class="math inline">x = 2 + \ln 4 / 4
+\approx 2{,}35</span>: граница сдвинута к редкому классу.</p>
+</details></li>
+<li><p>Объекты описаны 20 бинарными признаками, классов два. Сколько
+вероятностей нужно оценить для правдоподобия без допущения о
+независимости и с ним?</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">2 \cdot (2^{20} - 1) \approx 2{,}1</span>
+млн и <span class="math inline">2 \cdot 20 = 40</span>.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch08.html" rel="prev"><span class="dir">Назад</span><span class="t">Метрики качества классификации</span></a>
+  <a class="next" href="conclusion.html" rel="next"><span class="dir">Далее</span><span class="t">Заключение</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

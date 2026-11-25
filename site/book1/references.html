@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Список литературы">
+  <title>Список литературы — Машинное обучение: линейные и вероятностные
+модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li class="current"><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 class="unnumbered" id="references">Список литературы</h1>
+<!-- ГОСТ Р 7.0.100–2018. Порядок здесь не важен: фильтр нумерует по первой ссылке в тексте.
+     Сверено 2026-10-12: Жерон (рус.) — по РГБ (Москва ; Санкт-Петербург : Диалектика, 2020. – 1039 с.);
+     Лакшманан (рус.) — БХВ-Петербург, 2022, 448 с., ISBN 978-5-9775-6797-8 (в части магазинов 444 с.);
+     Хасти (рус.) — Диалектика, 2020, пер. Д. А. Клюшина, ISBN 978-5-907144-42-2; 768 с. у издательства
+     и большинства магазинов, 760 с. у части магазинов (вероятно, 760, [8] с.); город по аналогии с Жероном,
+     записи РГБ не нашлось; Domingos, Pazzani — Springer, DOI 10.1023/A:1007413511361; Ng, Jordan — NIPS 14
+     (конференция 2001, том 2002). Оригиналы: Géron 3rd ed. 2022 — 861 p. (Amazon; в других 850–864),
+     Lakshmanan 2020 — 408 p., Hastie 2009 — 745 p. Перевод Жерона — 2-го изд., оригинал — 3-го;
+     русского перевода Митчелла нет. -->
+<ol>
+<li><p>Mitchell, T. M. Machine Learning / T. M. Mitchell. – New York :
+McGraw-Hill, 1997. – 414 p.</p></li>
+<li><p>Géron, A. Hands-On Machine Learning with Scikit-Learn, Keras, and
+TensorFlow : Concepts, Tools, and Techniques to Build Intelligent
+Systems / A. Géron. – 3rd ed. – Sebastopol : O’Reilly Media, 2022. –
+861 p.</p></li>
+<li><p>Жерон, О. Прикладное машинное обучение с помощью Scikit-Learn,
+Keras и TensorFlow : концепции, инструменты и техники для создания
+интеллектуальных систем / О. Жерон ; перевод с английского Ю. Н.
+Артеменко. – 2-е изд. – Москва ; Санкт-Петербург : Диалектика, 2020. –
+1039 с.</p></li>
+<li><p>Lakshmanan, V. Machine Learning Design Patterns : Solutions to
+Common Challenges in Data Preparation, Model Building, and MLOps / V.
+Lakshmanan, S. Robinson, M. Munn. – Sebastopol : O’Reilly Media, 2020. –
+408 p.</p></li>
+<li><p>Лакшманан, В. Машинное обучение. Паттерны проектирования / В.
+Лакшманан, С. Робинсон, М. Мунн ; перевод с английского. –
+Санкт-Петербург : БХВ-Петербург, 2022. – 448 с.</p></li>
+<li><p>Hastie, T. The Elements of Statistical Learning : Data Mining,
+Inference, and Prediction / T. Hastie, R. Tibshirani, J. Friedman. – 2nd
+ed. – New York : Springer, 2009. – 745 p.</p></li>
+<li><p>Хасти, Т. Основы статистического обучения : интеллектуальный
+анализ данных, логический вывод и прогнозирование / Т. Хасти, Р.
+Тибширани, Дж. Фридман ; перевод с английского Д. А. Клюшина. – 2-е изд.
+– Москва ; Санкт-Петербург : Диалектика, 2020. – 768 с.</p></li>
+<li><p>Bergstra, J. Random Search for Hyper-Parameter Optimization / J.
+Bergstra, Y. Bengio // Journal of Machine Learning Research. – 2012. –
+Vol. 13. – P. 281–305.</p></li>
+<li><p>Domingos, P. On the Optimality of the Simple Bayesian Classifier
+under Zero-One Loss / P. Domingos, M. Pazzani // Machine Learning. –
+1997. – Vol. 29, no. 2–3. – P. 103–130.</p></li>
+<li><p>McCallum, A. A Comparison of Event Models for Naive Bayes Text
+Classification / A. McCallum, K. Nigam // Learning for Text
+Categorization : Papers from the AAAI Workshop, Technical Report
+WS-98-05. – Menlo Park : AAAI Press, 1998. – P. 41–48.</p></li>
+<li><p>Ng, A. Y. On Discriminative vs. Generative Classifiers : A
+Comparison of Logistic Regression and Naive Bayes / A. Y. Ng, M. I.
+Jordan // Advances in Neural Information Processing Systems 14. –
+Cambridge : MIT Press, 2002. – P. 841–848.</p></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="conclusion.html" rel="prev"><span class="dir">Назад</span><span class="t">Заключение</span></a>
+  <a class="next" href="appendix-a.html" rel="next"><span class="dir">Далее</span><span class="t">Приложение А. Математический минимум</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

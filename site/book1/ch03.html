@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Линейная регрессия и метод
+наименьших квадратов">
+  <title>Линейная регрессия и метод наименьших квадратов — Машинное
+обучение: линейные и вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li class="current"><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+<ol>
+<li><a href="ch03.html#zadacha-regressii"><span class="num">3.1</span><span>Задача регрессии</span></a></li>
+<li><a href="ch03.html#odin-priznak"><span class="num">3.2</span><span>Один признак</span></a></li>
+<li><a href="ch03.html#mnogo-priznakov"><span class="num">3.3</span><span>Много признаков</span></a></li>
+<li><a href="ch03.html#geometricheskiy-smysl"><span class="num">3.4</span><span>Геометрический смысл</span></a></li>
+<li><a href="ch03.html#multikollinearnost"><span class="num">3.5</span><span>Мультиколлинеарность</span></a></li>
+<li><a href="ch03.html#polinomialnaya-regressiya"><span class="num">3.6</span><span>Полиномиальная регрессия</span></a></li>
+<li><a href="ch03.html#voprosy-dlya-samokontrolya-3"><span>Вопросы для самоконтроля</span></a></li>
+<li><a href="ch03.html#zadachi-3"><span>Задачи</span></a></li>
+</ol>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 data-number="3" id="ch03"><span
+class="header-section-number">3</span> Линейная регрессия и метод
+наименьших квадратов</h1>
+<!-- Источники: лекция 03-linear_regression (с. 4, 11–17), 04-gradient_descent (с. 3–5); SVD и геометрия — [hastie2009]. -->
+<p>В гл. 1 обучение было сведено к минимизации эмпирического риска. В
+этой главе задача решается до конца для самого простого случая: модель
+линейная, потеря квадратичная. Тогда оптимальные параметры находятся
+точно — как решение системы линейных уравнений. Из этого решения видно и
+слабое место метода: при почти совпадающих признаках веса модели
+становятся неустойчивыми.</p>
+<h2 data-number="3.1" id="zadacha-regressii"><span
+class="header-section-number">3.1</span> Задача регрессии</h2>
+<p>Пусть функция задана <em>таблично</em>: известны её значения <span
+class="math inline">y_i</span> в точках <span
+class="math inline">x_i</span>, <span class="math inline">i = 1, \ldots,
+\ell</span>, а аналитическое выражение неизвестно. Восстановить функцию
+по таблице можно с разными целями. <em>Интерполяция</em> — найти
+значения функции между узлами таблицы; искомая функция проходит через
+все табличные точки точно. <em>Экстраполяция</em> — найти значения за
+пределами отрезка, на котором задана таблица. <em>Аппроксимация</em> —
+подобрать функцию заданного вида, которая проходит близко к табличным
+точкам, но не обязательно через них. Во всех трёх случаях по конечной
+таблице восстанавливается аналитическое выражение функции.</p>
+<p>Обучающая выборка в задаче регрессии — такая же таблица: объектам
+<span class="math inline">x_i</span> сопоставлены ответы <span
+class="math inline">y_i</span>. Регрессия — это аппроксимация, потому
+что ответы содержат шум: цена квартиры зависит не только от её
+признаков, но и от торга, срочности продажи, ошибок в объявлении. Обычно
+считают, что</p>
+<div class="equation">
+<p><span class="math display">y = \varphi(x) + \varepsilon,</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\varphi(x)</span> — закономерная часть
+ответа, а <span class="math inline">\varepsilon</span> — случайная
+ошибка со средним 0. Функция, которая проходит через все точки выборки,
+повторяет вместе с закономерностью и шум, и на новых объектах её
+прогнозы будут ошибаться на величину этого шума. Поэтому от модели
+требуют не точного совпадения с ответами, а малой средней ошибки.
+Экстраполяция для регрессии опасна: за пределами диапазона обучающих
+данных модель ничем не проверена.</p>
+</div>
+<p>Термин «регрессия» ввёл Ф. Гальтон в конце XIX в., изучая связь роста
+детей и родителей. Метод наименьших квадратов опубликовал А. Лежандр в
+1805 г.; К. Гаусс применял его раньше и дал ему вероятностное
+обоснование.</p>
+<h2 data-number="3.2" id="odin-priznak"><span
+class="header-section-number">3.2</span> Один признак</h2>
+<p>Начнём со случая, когда у объекта один числовой признак. Для
+краткости будем обозначать его значение на <span
+class="math inline">i</span>-м объекте через <span
+class="math inline">x_i</span> (как в табл. <a
+href="ch01.html#tbl:loss-example">1.3</a>). Модель — прямая</p>
+<div class="equation">
+<p><span class="math display">g(x, \boldsymbol{\theta}) = \theta_0 +
+\theta_1 x,</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\theta_1</span> — наклон, <span
+class="math inline">\theta_0</span> — значение модели при <span
+class="math inline">x = 0</span>, то есть ордината точки, в которой
+прямая пересекает ось ординат. Разность <span class="math inline">g(x_i,
+\boldsymbol{\theta}) - y_i</span> называют <em>остатком</em> на <span
+class="math inline">i</span>-м объекте. Эмпирический риск с квадратичной
+потерей — это средний квадрат остатков:</p>
+</div>
+<div class="equation">
+<p><span class="math display">Q(\theta_0, \theta_1) = \frac{1}{\ell}
+\sum_{i=1}^{\ell} (\theta_0 + \theta_1 x_i - y_i)^2.</span></p>
+</div>
+<div class="continuation">
+<p>Найти параметры, при которых <span class="math inline">Q</span>
+минимален, — это и есть <em>метод наименьших квадратов</em> (МНК).</p>
+</div>
+<p>Квадрат, в отличие от модуля, — гладкая функция: у <span
+class="math inline">Q</span> есть производные по обоим параметрам, и
+точку минимума можно найти, приравняв их к нулю. График <span
+class="math inline">Q</span> — «чаша» с единственным минимумом (рис. <a
+href="#fig:ols-example">3.1</a>, б); линии уровня <span
+class="math inline">Q</span> — вложенные эллипсы с общим центром в точке
+минимума. Недостаток квадратичной потери — чувствительность к выбросам:
+большой остаток после возведения в квадрат вносит в <span
+class="math inline">Q</span> непропорционально большой вклад, и прямая
+смещается к выбросу.</p>
+<figure id="fig:ols-example">
+<img src="fig/ols_example.svg" style="width: 98%"
+alt="Рис. 3.1. МНК на трёх точках (1; 1), (2; 3), (3; 2)" />
+<figcaption aria-hidden="true">Рис. 3.1. МНК на трёх точках (1; 1), (2;
+3), (3; 2)</figcaption>
+</figure>
+<p><strong>Вывод формул.</strong> В точке минимума обе частные
+производные <span class="math inline">Q</span> равны нулю. Производная
+по <span class="math inline">\theta_0</span>:</p>
+<div class="equation">
+<p><span class="math display">\frac{\partial Q}{\partial \theta_0} =
+\frac{2}{\ell} \sum_{i=1}^{\ell} (\theta_0 + \theta_1 x_i - y_i) =
+0.</span></p>
+</div>
+<div class="continuation">
+<p>Разделим на 2 и раскроем сумму: <span class="math inline">\theta_0 +
+\theta_1 \bar x - \bar y = 0</span>, где <span class="math inline">\bar
+x</span> и <span class="math inline">\bar y</span> — средние значения
+признака и ответа. Отсюда</p>
+</div>
+<div id="eq:theta0" class="equation">
+<p><span class="math display">\theta_0 = \bar y - \theta_1 \bar
+x.\tag{3.1}</span></p>
+</div>
+<div class="continuation">
+<p>Производная по <span class="math inline">\theta_1</span> отличается
+множителем <span class="math inline">x_i</span> под знаком суммы:</p>
+</div>
+<div class="equation">
+<p><span class="math display">\frac{\partial Q}{\partial \theta_1} =
+\frac{2}{\ell} \sum_{i=1}^{\ell} (\theta_0 + \theta_1 x_i - y_i)\, x_i =
+0.</span></p>
+</div>
+<div class="continuation">
+<p>Подставим сюда <span class="math inline">\theta_0</span> из <a
+href="ch03.html#eq:theta0">(3.1)</a>: под суммой окажется <span
+class="math inline">\bigl(\theta_1 (x_i - \bar x) - (y_i - \bar y)\bigr)
+x_i</span>. Множитель <span class="math inline">x_i</span> можно
+заменить на <span class="math inline">x_i - \bar x</span>: добавка <span
+class="math inline">\bar x \sum (\ldots)</span> равна нулю, потому что
+сумма отклонений от среднего равна нулю. Получаем</p>
+</div>
+<div id="eq:theta1" class="equation">
+<p><span class="math display">\theta_1 = \frac{\sum\limits_{i=1}^{\ell}
+(x_i - \bar x)(y_i - \bar y)}{\sum\limits_{i=1}^{\ell} (x_i - \bar
+x)^2}.\tag{3.2}</span></p>
+</div>
+<p><strong>Читаем формулы.</strong> Равенство <a
+href="ch03.html#eq:theta0">(3.1)</a> означает, что прямая МНК проходит
+через точку средних <span class="math inline">(\bar x, \bar y)</span>, а
+сумма остатков равна нулю: модель в среднем не завышает и не занижает
+ответы. Числитель <a href="ch03.html#eq:theta1">(3.2)</a> — тот же, что
+у коэффициента корреляции из гл. 2: он положителен, если <span
+class="math inline">x</span> и <span class="math inline">y</span> чаще
+одновременно выше или одновременно ниже своих средних. Знаменатель —
+разброс признака. Если признак почти не меняется, знаменатель мал и
+наклон определяется ненадёжно; если все <span
+class="math inline">x_i</span> одинаковы, наклон не определён вовсе.
+Можно проверить, что <span class="math inline">\theta_1 = r s_y /
+s_x</span>, где <span class="math inline">r</span> — коэффициент
+корреляции, а <span class="math inline">s_x</span> и <span
+class="math inline">s_y</span> — стандартные отклонения признака и
+ответа.</p>
+<p><strong>Пример.</strong> Выборка из трёх точек: <span
+class="math inline">(1; 1)</span>, <span class="math inline">(2;
+3)</span>, <span class="math inline">(3; 2)</span>. Средние <span
+class="math inline">\bar x = 2</span>, <span class="math inline">\bar y
+= 2</span>. Числитель <a href="ch03.html#eq:theta1">(3.2)</a>: <span
+class="math inline">(-1)(-1) + 0 \cdot 1 + 1 \cdot 0 = 1</span>,
+знаменатель: <span class="math inline">1 + 0 + 1 = 2</span>, значит
+<span class="math inline">\theta_1 = 0{,}5</span> и <span
+class="math inline">\theta_0 = 2 - 0{,}5 \cdot 2 = 1</span>. Модель
+<span class="math inline">g(x) = 1 + 0{,}5x</span> даёт прогнозы <span
+class="math inline">1{,}5</span>; <span class="math inline">2</span>;
+<span class="math inline">2{,}5</span> и остатки <span
+class="math inline">0{,}5</span>; <span class="math inline">-1</span>;
+<span class="math inline">0{,}5</span> (рис. <a
+href="#fig:ols-example">3.1</a>, а). Их сумма равна нулю, а <span
+class="math inline">Q = (0{,}25 + 1 + 0{,}25)/3 = 0{,}5</span>. Никакая
+другая прямая не даёт меньшего среднего квадрата остатков.</p>
+<h2 data-number="3.3" id="mnogo-priznakov"><span
+class="header-section-number">3.3</span> Много признаков</h2>
+<p>Пусть теперь признаков <span class="math inline">n</span>. Линейная
+модель <a href="ch01.html#eq:linear-model">(1.1)</a> из гл. 1 с
+фиктивным признаком <span class="math inline">f_0(x) = 1</span>
+записывается скалярным произведением <span class="math inline">g(x,
+\boldsymbol{\theta}) = \langle \boldsymbol{\theta}, \mathbf{x}
+\rangle</span>. Добавим в матрицу объекты–признаки столбец из
+единиц:</p>
+<div class="equation">
+<p><span class="math display">\mathbf{F} = \begin{pmatrix} 1 &amp;
+f_1(x_1) &amp; \ldots &amp; f_n(x_1) \\ \vdots &amp; \vdots &amp; \ddots
+&amp; \vdots \\ 1 &amp; f_1(x_\ell) &amp; \ldots &amp; f_n(x_\ell)
+\end{pmatrix}, \quad \boldsymbol{\theta} = \begin{pmatrix} \theta_0 \\
+\theta_1 \\ \vdots \\ \theta_n \end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Тогда произведение <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}</span> — вектор
+прогнозов для всех объектов сразу: его <span
+class="math inline">i</span>-я компонента равна <span
+class="math inline">\sum_j \theta_j f_j(x_i) = g(x_i,
+\boldsymbol{\theta})</span>. Вектор остатков — <span
+class="math inline">\mathbf{F}\boldsymbol{\theta} - \mathbf{y}</span>, а
+эмпирический риск — квадрат его длины, делённый на <span
+class="math inline">\ell</span>:</p>
+</div>
+<div class="equation">
+<p><span class="math display">Q(\boldsymbol{\theta}) = \frac{1}{\ell}
+\sum_{i=1}^{\ell} \bigl(\langle \boldsymbol{\theta}, \mathbf{x}_i
+\rangle - y_i\bigr)^2 = \frac{1}{\ell} \|\mathbf{F}\boldsymbol{\theta} -
+\mathbf{y}\|_2^2.</span></p>
+</div>
+<p><strong>Градиент.</strong> Частная производная по <span
+class="math inline">\theta_k</span> вычисляется так же, как в одномерном
+случае:</p>
+<div class="equation">
+<p><span class="math display">\frac{\partial Q}{\partial \theta_k} =
+\frac{2}{\ell} \sum_{i=1}^{\ell} \bigl(\langle \boldsymbol{\theta},
+\mathbf{x}_i \rangle - y_i\bigr) f_k(x_i), \quad k = 0, \ldots,
+n.</span></p>
+</div>
+<div class="continuation">
+<p>Сумма по объектам произведений остатка на значение <span
+class="math inline">k</span>-го признака — это скалярное произведение
+<span class="math inline">k</span>-го столбца матрицы <span
+class="math inline">\mathbf{F}</span> на вектор остатков, то есть <span
+class="math inline">k</span>-я компонента вектора <span
+class="math inline">\mathbf{F}^{\mathrm{T}}(\mathbf{F}\boldsymbol{\theta}
+- \mathbf{y})</span>. Все <span class="math inline">n + 1</span>
+производных вместе образуют градиент</p>
+</div>
+<div id="eq:grad-mse" class="equation">
+<p><span class="math display">\nabla Q(\boldsymbol{\theta}) =
+\frac{2}{\ell} \mathbf{F}^{\mathrm{T}} (\mathbf{F}\boldsymbol{\theta} -
+\mathbf{y}).\tag{3.3}</span></p>
+</div>
+<div class="continuation">
+<p>Приравняв градиент к нулю, получаем <em>нормальную систему
+уравнений</em></p>
+</div>
+<div id="eq:normal-system" class="equation">
+<p><span class="math display">\mathbf{F}^{\mathrm{T}} \mathbf{F}
+\boldsymbol{\theta} = \mathbf{F}^{\mathrm{T}}
+\mathbf{y}.\tag{3.4}</span></p>
+</div>
+<div class="continuation">
+<p>Если матрица <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F}</span> обратима, решение единственно:</p>
+</div>
+<div id="eq:normal" class="equation">
+<p><span class="math display">\boldsymbol{\theta}^* =
+(\mathbf{F}^{\mathrm{T}} \mathbf{F})^{-1} \mathbf{F}^{\mathrm{T}}
+\mathbf{y}.\tag{3.5}</span></p>
+</div>
+<p><strong>Проверка размерностей.</strong> Ошибки в матричных формулах
+удобно ловить по размерам сомножителей. Матрица <span
+class="math inline">\mathbf{F}</span> имеет размер <span
+class="math inline">\ell \times (n + 1)</span>, вектор <span
+class="math inline">\boldsymbol{\theta}</span> — <span
+class="math inline">(n + 1) \times 1</span>, вектор <span
+class="math inline">\mathbf{y}</span> — <span class="math inline">\ell
+\times 1</span>. Тогда <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}</span> — <span
+class="math inline">\ell \times 1</span>, как и <span
+class="math inline">\mathbf{y}</span>, их можно вычитать. Матрица <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span>
+квадратная, <span class="math inline">(n + 1) \times (n + 1)</span>, —
+по строке и столбцу на каждый параметр; вектор <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{y}</span> — <span
+class="math inline">(n + 1) \times 1</span>. Значит, в <a
+href="ch03.html#eq:normal-system">(3.4)</a> столько же уравнений,
+сколько неизвестных, и размер системы зависит от числа признаков, а не
+от числа объектов.</p>
+<p><strong>Когда решение единственно.</strong> Матрица <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span> обратима,
+если столбцы <span class="math inline">\mathbf{F}</span> линейно
+независимы: ни один признак не выражается линейно через остальные. Для
+этого объектов должно быть не меньше, чем параметров: <span
+class="math inline">\ell \ge n + 1</span>. Типичное нарушение описано в
+гл. 2: если при прямом кодировании оставить индикаторы всех районов, их
+сумма совпадёт со столбцом <span class="math inline">f_0</span>. Тогда
+решений бесконечно много: увеличим <span
+class="math inline">\theta_0</span> на любое число и уменьшим на то же
+число веса всех районов — прогнозы не изменятся.</p>
+<p><strong>Пример.</strong> Проверим результат разд. 3.2 по формуле <a
+href="ch03.html#eq:normal">(3.5)</a>. Для трёх точек</p>
+<div class="equation">
+<p><span class="math display">\mathbf{F} = \begin{pmatrix} 1 &amp; 1 \\
+1 &amp; 2 \\ 1 &amp; 3 \end{pmatrix}, \quad \mathbf{F}^{\mathrm{T}}
+\mathbf{F} = \begin{pmatrix} 3 &amp; 6 \\ 6 &amp; 14 \end{pmatrix},
+\quad \mathbf{F}^{\mathrm{T}} \mathbf{y} = \begin{pmatrix} 6 \\ 13
+\end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Определитель <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F}</span> равен <span class="math inline">3 \cdot 14 - 6 \cdot 6
+= 6</span>, обратная матрица и решение:</p>
+</div>
+<div class="equation">
+<p><span class="math display">(\mathbf{F}^{\mathrm{T}} \mathbf{F})^{-1}
+= \frac{1}{6} \begin{pmatrix} 14 &amp; -6 \\ -6 &amp; 3 \end{pmatrix},
+\quad \boldsymbol{\theta}^* = \frac{1}{6} \begin{pmatrix} 14 \cdot 6 - 6
+\cdot 13 \\ -6 \cdot 6 + 3 \cdot 13 \end{pmatrix} = \begin{pmatrix} 1 \\
+0{,}5 \end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Получились те же <span class="math inline">\theta_0 = 1</span>, <span
+class="math inline">\theta_1 = 0{,}5</span>: формулы разд. 3.2 — частный
+случай <a href="ch03.html#eq:normal">(3.5)</a>.</p>
+</div>
+<p><strong>На практике</strong> обратную матрицу не вычисляют: это
+дольше, а при почти линейно зависимых признаках ещё и теряет точность.
+Систему решают численно устойчивыми методами — через QR- или сингулярное
+разложение <span class="math inline">\mathbf{F}</span>. В NumPy это
+функция <code>np.linalg.lstsq(F, y)</code>, в scikit-learn — класс
+<code>LinearRegression</code> (листинг 3.1); столбец из единиц он
+добавляет сам, свободный член хранится в атрибуте
+<code>intercept_</code>, остальные веса — в <code>coef_</code>.</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 3.1. Линейная регрессия в NumPy и scikit-learn</em></p>
+</div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([[<span class="fl">1.0</span>], [<span class="fl">2.0</span>], [<span class="fl">3.0</span>]])        <span class="co"># один признак</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="fl">1.0</span>, <span class="fl">3.0</span>, <span class="fl">2.0</span>])</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> np.hstack([np.ones((<span class="dv">3</span>, <span class="dv">1</span>)), x])        <span class="co"># столбец f0 = 1</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>theta <span class="op">=</span> np.linalg.lstsq(F, y, rcond<span class="op">=</span><span class="va">None</span>)[<span class="dv">0</span>]</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(theta)                               <span class="co"># [1.  0.5]</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> LinearRegression().fit(x, y)       <span class="co"># f0 добавляется сам</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(model.intercept_, model.coef_)       <span class="co"># 1.0 [0.5]</span></span></code></pre></div>
+<p>Вычисление <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F}</span> требует порядка <span class="math inline">\ell
+n^2</span> операций, решение системы — порядка <span
+class="math inline">n^3</span>. При сотнях тысяч признаков или выборке,
+которая не помещается в память, точное решение становится слишком
+дорогим; тогда минимум ищут приближённо, итерационными методами, — им
+посвящена следующая глава.</p>
+<h2 data-number="3.4" id="geometricheskiy-smysl"><span
+class="header-section-number">3.4</span> Геометрический смысл</h2>
+<p>Решение МНК можно увидеть геометрически [6, 7]. Векторы ответов и
+прогнозов — точки <span class="math inline">\ell</span>-мерного
+пространства, по одной координате на объект. При всевозможных <span
+class="math inline">\boldsymbol{\theta}</span> векторы прогнозов <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}</span> — это линейные
+комбинации столбцов <span class="math inline">\mathbf{F}</span>; вместе
+они образуют подпространство</p>
+<div class="equation">
+<p><span class="math display">\mathcal{F} =
+\{\mathbf{F}\boldsymbol{\theta} \mid \boldsymbol{\theta} \in
+\mathbb{R}^{n+1}\}</span></p>
+</div>
+<div class="continuation">
+<p>размерности <span class="math inline">n + 1</span> — на рис. <a
+href="#fig:projection">3.2</a> это плоскость. Каждая точка плоскости
+<span class="math inline">\mathcal{F}</span> — вектор прогнозов при
+каком-то конкретном <span
+class="math inline">\boldsymbol{\theta}</span>. Вектор ответов <span
+class="math inline">\mathbf{y}</span> из-за шума обычно плоскости <span
+class="math inline">\mathcal{F}</span> не принадлежит. МНК ищет точку
+плоскости, ближайшую к <span class="math inline">\mathbf{y}</span>, ведь
+<span class="math inline">Q</span> — квадрат расстояния между точками
+<span class="math inline">\mathbf{y}</span> и <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}</span> (с точностью до
+множителя <span class="math inline">1/\ell</span>).</p>
+</div>
+<figure id="fig:projection">
+<img src="fig/projection.svg" style="width: 70%"
+alt="Рис. 3.2. Решение МНК — проекция вектора ответов на множество векторов прогнозов" />
+<figcaption aria-hidden="true">Рис. 3.2. Решение МНК — проекция вектора
+ответов на множество векторов прогнозов</figcaption>
+</figure>
+<p>Ближайшая точка — ортогональная проекция: вектор остатков <span
+class="math inline">\mathbf{y} - \mathbf{F}\boldsymbol{\theta}^*</span>
+перпендикулярен плоскости <span class="math inline">\mathcal{F}</span>,
+то есть каждому столбцу <span class="math inline">\mathbf{F}</span>. Это
+и есть нормальная система <a
+href="ch03.html#eq:normal-system">(3.4)</a>, записанная в виде <span
+class="math inline">\mathbf{F}^{\mathrm{T}}(\mathbf{y} -
+\mathbf{F}\boldsymbol{\theta}^*) = \mathbf{0}</span>; отсюда и её
+название («нормаль» — перпендикуляр). Убедимся, что проекция
+действительно ближе к <span class="math inline">\mathbf{y}</span>, чем
+любая другая точка плоскости. Возьмём произвольный вектор параметров
+<span class="math inline">\tilde{\boldsymbol{\theta}} \ne
+\boldsymbol{\theta}^*</span> и соответствующую ему точку <span
+class="math inline">\mathbf{F}\tilde{\boldsymbol{\theta}}</span>
+плоскости <span class="math inline">\mathcal{F}</span> (рис. <a
+href="#fig:projection">3.2</a>). Точки <span
+class="math inline">\mathbf{y}</span>, <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}^*</span> и <span
+class="math inline">\mathbf{F}\tilde{\boldsymbol{\theta}}</span>
+образуют прямоугольный треугольник с прямым углом при вершине <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}^*</span>: катет <span
+class="math inline">\mathbf{y} - \mathbf{F}\boldsymbol{\theta}^*</span>
+перпендикулярен плоскости, а катет <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}^* -
+\mathbf{F}\tilde{\boldsymbol{\theta}}</span> лежит в ней. По теореме
+Пифагора</p>
+<div class="equation">
+<p><span class="math display">\|\mathbf{y} -
+\mathbf{F}\tilde{\boldsymbol{\theta}}\|_2^2 = \|\mathbf{y} -
+\mathbf{F}\boldsymbol{\theta}^*\|_2^2 +
+\|\mathbf{F}\boldsymbol{\theta}^* -
+\mathbf{F}\tilde{\boldsymbol{\theta}}\|_2^2 &gt; \|\mathbf{y} -
+\mathbf{F}\boldsymbol{\theta}^*\|_2^2,</span></p>
+</div>
+<div class="continuation">
+<p>то есть гипотенуза длиннее катета: при любых других параметрах сумма
+квадратов остатков больше.</p>
+</div>
+<p>В примере из разд. 3.2 вектор остатков <span
+class="math inline">(-0{,}5;\, 1;\, -0{,}5)</span> перпендикулярен обоим
+столбцам <span class="math inline">\mathbf{F}</span>: <span
+class="math inline">-0{,}5 + 1 - 0{,}5 = 0</span> и <span
+class="math inline">-0{,}5 \cdot 1 + 1 \cdot 2 - 0{,}5 \cdot 3 =
+0</span>. Ортогональность столбцу из единиц и означает, что сумма
+остатков равна нулю, — это верно для любой линейной регрессии со
+свободным членом.</p>
+<p>Вектор прогнозов равен <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}^* =
+\mathbf{P}\mathbf{y}</span>, где <span class="math inline">\mathbf{P} =
+\mathbf{F}(\mathbf{F}^{\mathrm{T}} \mathbf{F})^{-1}
+\mathbf{F}^{\mathrm{T}}</span> — <em>проекционная матрица</em> размера
+<span class="math inline">\ell \times \ell</span>. Прогнозы на обучающих
+объектах — линейная функция ответов: каждый прогноз — взвешенная сумма
+всех <span class="math inline">y_i</span>.</p>
+<h2 data-number="3.5" id="multikollinearnost"><span
+class="header-section-number">3.5</span> Мультиколлинеарность</h2>
+<p><em>Мультиколлинеарностью</em> называют ситуацию, когда признаки
+почти линейно зависимы: например, площадь квартиры по документам и по
+результатам обмера, длина модуля программы в строках и в символах.
+Формально матрица <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F}</span> обратима, но решение МНК становится неустойчивым.</p>
+<p><strong>Пример.</strong> Покажем, к чему приводит почти линейная
+зависимость признаков. Пусть у трёх объектов два признака почти
+совпадают (свободного члена нет):</p>
+<div class="equation">
+<p><span class="math display">\mathbf{F} = \begin{pmatrix} 1 &amp; 1 \\
+2 &amp; 2 \\ 3 &amp; 3{,}1 \end{pmatrix}, \quad \mathbf{F}^{\mathrm{T}}
+\mathbf{F} = \begin{pmatrix} 14 &amp; 14{,}3 \\ 14{,}3 &amp; 14{,}61
+\end{pmatrix}.</span></p>
+</div>
+<div class="continuation">
+<p>Определитель матрицы <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span>, равный
+<span class="math inline">14 \cdot 14{,}61 - 14{,}3^2 = 0{,}05</span>,
+мал по сравнению с её элементами, поэтому элементы обратной матрицы
+велики, около 290, и любая погрешность в правой части <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{y}</span> умножается
+на эти большие числа.</p>
+</div>
+<p>Пусть ответы <span class="math inline">\mathbf{y} = (2;\, 4;\,
+6{,}1)</span>, причём последний ответ измерен с погрешностью <span
+class="math inline">\pm 0{,}1</span>, то есть менее 2 %: с тем же
+успехом он мог оказаться равным 6 или 6,2. Решим нормальную систему для
+всех трёх вариантов (табл. <a
+href="ch03.html#tbl:collinear">3.1</a>).</p>
+<table id="tbl:collinear">
+<caption>Таблица 3.1. Решения МНК при малом изменении одного
+ответа</caption>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th><span class="math inline">y_3</span></th>
+<th><span class="math inline">\theta_1^*</span></th>
+<th><span class="math inline">\theta_2^*</span></th>
+<th>Прогнозы на обучающих объектах</th>
+<th>Прогноз для объекта <span class="math inline">(2;\, 3)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6,0</td>
+<td>2</td>
+<td>0</td>
+<td>2; 4; 6</td>
+<td>4</td>
+</tr>
+<tr>
+<td>6,1</td>
+<td>1</td>
+<td>1</td>
+<td>2; 4; 6,1</td>
+<td>5</td>
+</tr>
+<tr>
+<td>6,2</td>
+<td>0</td>
+<td>2</td>
+<td>2; 4; 6,2</td>
+<td>6</td>
+</tr>
+</tbody>
+</table>
+<p>Таблица показывает три следствия мультиколлинеарности.</p>
+<ol type="1">
+<li>Веса неустойчивы. Когда <span class="math inline">y_3</span>
+меняется всего на 0,1 (с 6,1 до 6,0 или до 6,2), решение меняется
+полностью: по первой модели важен только первый признак, по третьей —
+только второй, по второй — оба поровну. Делать по таким весам выводы о
+том, какой признак сильнее влияет на ответ, нельзя.</li>
+<li>На обучающей выборке неустойчивость не видна: все три модели почти
+одинаково точно воспроизводят ответы, и по ошибке на обучающих объектах
+их не различить.</li>
+<li>На новых объектах прогнозы расходятся. Если у нового объекта
+признаки различаются сильнее, чем в выборке, например <span
+class="math inline">(2;\, 3)</span>, три модели предсказывают 4, 5 и 6 —
+разброс в 50 %, хотя данные различались на 2 %.</li>
+</ol>
+<p>Геометрически это видно на рис. <a href="#fig:ravine">3.3</a>, где
+показаны линии уровня <span class="math inline">Q(\theta_1,
+\theta_2)</span>. Вместо «чаши» получился длинный узкий «овраг» вдоль
+прямой <span class="math inline">\theta_1 + \theta_2 \approx 2</span>.
+На его дне все точки дают почти одинаковую ошибку, поэтому малое
+изменение данных сдвигает минимум далеко вдоль оврага.</p>
+<figure id="fig:ravine">
+<img src="fig/ravine.svg" style="width: 54%"
+alt="Рис. 3.3. Линии уровня Q при почти совпадающих признаках; точки — решения МНК при трёх векторах ответов" />
+<figcaption aria-hidden="true">Рис. 3.3. Линии уровня <span
+class="math inline">Q</span> при почти совпадающих признаках; точки —
+решения МНК при трёх векторах ответов</figcaption>
+</figure>
+<p><strong>Сингулярное разложение.</strong> Чтобы понять, откуда
+неустойчивость, воспользуемся <em>сингулярным разложением</em> (singular
+value decomposition, SVD). Любую матрицу <span
+class="math inline">\mathbf{F}</span> размера <span
+class="math inline">\ell \times (n + 1)</span> при <span
+class="math inline">\ell \ge n + 1</span> можно представить в виде</p>
+<div class="equation">
+<p><span class="math display">\mathbf{F} = \mathbf{V} \mathbf{D}
+\mathbf{U}^{\mathrm{T}},</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">\mathbf{V}</span> — матрица <span
+class="math inline">\ell \times (n + 1)</span> с ортонормированными
+столбцами <span class="math inline">\mathbf{v}_j</span> (<span
+class="math inline">\mathbf{V}^{\mathrm{T}} \mathbf{V} =
+\mathbf{I}</span>), <span class="math inline">\mathbf{U}</span> —
+ортогональная матрица <span class="math inline">(n + 1) \times (n +
+1)</span> со столбцами <span class="math inline">\mathbf{u}_j</span>
+(<span class="math inline">\mathbf{U}^{\mathrm{T}} \mathbf{U} =
+\mathbf{I}</span>), <span class="math inline">\mathbf{D} =
+\operatorname{diag}(s_1, \ldots, s_{n+1})</span> — диагональная матрица
+<em>сингулярных чисел</em> <span class="math inline">s_1 \ge \ldots \ge
+s_{n+1} \ge 0</span>. Подставим разложение в <a
+href="ch03.html#eq:normal">(3.5)</a>; так как <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F} = \mathbf{U}
+\mathbf{D}^2 \mathbf{U}^{\mathrm{T}}</span>, после сокращений
+остаётся</p>
+</div>
+<div class="equation">
+<p><span class="math display">\boldsymbol{\theta}^* = \mathbf{U}
+\mathbf{D}^{-1} \mathbf{V}^{\mathrm{T}} \mathbf{y} = \sum_{j=1}^{n+1}
+\frac{1}{s_j} \, \mathbf{u}_j \, (\mathbf{v}_j^{\mathrm{T}} \mathbf{y}),
+\qquad \mathbf{F}\boldsymbol{\theta}^* = \sum_{j=1}^{n+1} \mathbf{v}_j
+\, (\mathbf{v}_j^{\mathrm{T}} \mathbf{y}).</span></p>
+</div>
+<p><strong>Читаем формулу.</strong> Число <span
+class="math inline">\mathbf{v}_j^{\mathrm{T}} \mathbf{y}</span> —
+проекция вектора ответов на направление <span
+class="math inline">\mathbf{v}_j</span>. В решение <span
+class="math inline">\boldsymbol{\theta}^*</span> каждая проекция входит,
+<em>делённая</em> на <span class="math inline">s_j</span>. Если какое-то
+сингулярное число мало, соответствующее слагаемое огромно, и любая
+погрешность в <span class="math inline">\mathbf{y}</span> вдоль <span
+class="math inline">\mathbf{v}_j</span> умножается на <span
+class="math inline">1/s_j</span>. В прогнозы <span
+class="math inline">\mathbf{F}\boldsymbol{\theta}^*</span> сингулярные
+числа не входят вовсе. Поэтому в примере выше прогнозы на обучающих
+объектах устойчивы, а веса — нет. Малое <span
+class="math inline">s_j</span> означает, что столбцы <span
+class="math inline">\mathbf{F}</span> почти линейно зависимы: комбинация
+признаков с коэффициентами из <span
+class="math inline">\mathbf{u}_j</span> почти равна нулю на всех
+объектах. В примере <span class="math inline">s_1 \approx 5{,}35</span>,
+<span class="math inline">s_2 \approx 0{,}042</span>, а <span
+class="math inline">\mathbf{u}_2 \approx (0{,}71;\, -0{,}70)</span> —
+разность двух признаков.</p>
+<p>Насколько система чувствительна к погрешностям, показывает <em>число
+обусловленности</em> матрицы <span class="math inline">\mathbf{S} =
+\mathbf{F}^{\mathrm{T}} \mathbf{F}</span> — отношение наибольшего и
+наименьшего собственных значений, которые равны квадратам сингулярных
+чисел:</p>
+<div class="equation">
+<p><span class="math display">\kappa(\mathbf{S}) =
+\frac{s_1^2}{s_{n+1}^2}.</span></p>
+</div>
+<div class="continuation">
+<p>Относительная погрешность решения системы <span
+class="math inline">\mathbf{S}\boldsymbol{\theta} =
+\mathbf{F}^{\mathrm{T}} \mathbf{y}</span> может быть до <span
+class="math inline">\kappa(\mathbf{S})</span> раз больше относительной
+погрешности правой части. В примере <span class="math inline">\kappa
+\approx 16\,400</span>; при <span class="math inline">\kappa \approx
+1</span> погрешности не усиливаются, при <span
+class="math inline">\kappa</span> порядка <span
+class="math inline">10^{12}</span> и выше вычисления в типе
+<code>float64</code> (около 16 верных десятичных знаков) теряют большую
+часть точности.</p>
+</div>
+<p><em>Псевдообратная матрица</em> <span
+class="math inline">\mathbf{F}^{+} = \mathbf{U} \mathbf{D}^{-1}
+\mathbf{V}^{\mathrm{T}}</span> даёт решение <span
+class="math inline">\boldsymbol{\theta}^* = \mathbf{F}^{+}
+\mathbf{y}</span> и тогда, когда признаки строго линейно зависимы и
+<span class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span>
+необратима: в <span class="math inline">\mathbf{D}^{-1}</span> величину
+<span class="math inline">1/s_j</span> для нулевых (и очень малых) <span
+class="math inline">s_j</span> заменяют нулём. Из бесконечного множества
+решений получается решение с наименьшей длиной <span
+class="math inline">\|\boldsymbol{\theta}\|_2</span>. Так работают
+<code>np.linalg.pinv</code> и <code>np.linalg.lstsq</code>. В NumPy
+буквы другие: <code>np.linalg.svd(F)</code> возвращает матрицу <span
+class="math inline">\mathbf{V}</span> под именем <code>U</code>, вектор
+сингулярных чисел и матрицу <span
+class="math inline">\mathbf{U}^{\mathrm{T}}</span>.</p>
+<p>Что делать с мультиколлинеарностью:</p>
+<ul>
+<li><em>отбор признаков</em> — удалить один из почти дублирующих
+признаков, исходя из смысла задачи или корреляций между признаками;</li>
+<li><em>преобразование признаков</em> — перейти к меньшему числу новых
+признаков, например к сумме и разности почти совпадающих (на этом
+основан метод главных компонент; здесь он не рассматривается);</li>
+<li><em>регуляризация</em> — добавить к <span
+class="math inline">Q</span> штраф за большие веса, который превращает
+овраг в чашу с единственным минимумом (гл. 6).</li>
+</ul>
+<h2 data-number="3.6" id="polinomialnaya-regressiya"><span
+class="header-section-number">3.6</span> Полиномиальная регрессия</h2>
+<p>Слово «линейная» в названии модели относится к параметрам, а не к
+исходным данным. Если зависимость нелинейна, в качестве признаков берут
+степени: <span class="math inline">f_j(x) = x^j</span>, <span
+class="math inline">j = 0, \ldots, d</span>. Модель</p>
+<div class="equation">
+<p><span class="math display">g(x, \boldsymbol{\theta}) = \sum_{j=0}^{d}
+\theta_j x^j = \theta_0 + \theta_1 x + \ldots + \theta_d x^d</span></p>
+</div>
+<div class="continuation">
+<p>— многочлен степени <span class="math inline">d</span> по <span
+class="math inline">x</span>, но линейная функция параметров. Поэтому
+всё сказанное выше применимо без изменений: строится матрица <span
+class="math inline">\mathbf{F}</span> со столбцами <span
+class="math inline">1, x, x^2, \ldots, x^d</span> и решается нормальная
+система.</p>
+</div>
+<p>На рис. <a href="#fig:polyfit">3.4</a> время отклика сервиса растёт с
+нагрузкой нелинейно. Прямая (<span class="math inline">d = 1</span>)
+систематически ошибается: занижает время на краях и завышает в середине.
+Многочлен второй степени описывает зависимость хорошо. Многочлен девятой
+степени проходит ближе ко всем точкам, но между ними колеблется,
+повторяя шум. Степень <span class="math inline">d</span> —
+гиперпараметр: с её ростом ошибка на обучающей выборке только
+уменьшается (при <span class="math inline">d = \ell - 1</span> многочлен
+проходит через все точки, регрессия превращается в интерполяцию), а
+ошибка на новых данных, начиная с некоторой степени, растёт. Как выбрать
+<span class="math inline">d</span> по данным, не участвовавшим в
+обучении, рассказано в гл. 5.</p>
+<figure id="fig:polyfit">
+<img src="fig/polyfit.svg" style="width: 79%"
+alt="Рис. 3.4. Многочлены степеней 1, 2 и 9, построенные МНК по 12 точкам (синтетические данные)" />
+<figcaption aria-hidden="true">Рис. 3.4. Многочлены степеней 1, 2 и 9,
+построенные МНК по 12 точкам (синтетические данные)</figcaption>
+</figure>
+<p>У полиномиальных признаков есть и вычислительная особенность. Если
+<span class="math inline">x</span> принимает значения от 1 до 10,
+столбцы <span class="math inline">x^4</span> и <span
+class="math inline">x^5</span> почти пропорциональны, и матрица <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span> плохо
+обусловлена. Для многочлена пятой степени по 12 точкам на этом отрезке
+<span class="math inline">\kappa(\mathbf{F}^{\mathrm{T}} \mathbf{F})
+\approx 2 \cdot 10^{12}</span>. Если сначала стандартизовать <span
+class="math inline">x</span> (гл. 2), число обусловленности падает до
+<span class="math inline">1{,}6 \cdot 10^{3}</span>. Поэтому в
+scikit-learn полиномиальные признаки строят после стандартизации
+(листинг 3.2).</p>
+<div data-custom-style="Listing Caption">
+<p><em>Листинг 3.2. Полиномиальная регрессия со стандартизацией
+признака</em></p>
+</div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.linear_model <span class="im">import</span> LinearRegression</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.pipeline <span class="im">import</span> make_pipeline</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> PolynomialFeatures</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.preprocessing <span class="im">import</span> StandardScaler</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> make_pipeline(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    StandardScaler(),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    PolynomialFeatures(degree<span class="op">=</span><span class="dv">2</span>, include_bias<span class="op">=</span><span class="va">False</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    LinearRegression())</span></code></pre></div>
+<p>При нескольких исходных признаках <code>PolynomialFeatures</code>
+добавляет и их попарные произведения — взаимодействия из гл. 2. Число
+таких признаков быстро растёт со степенью, а с ним и риск
+мультиколлинеарности и того, что модель, как многочлен девятой степени
+на рис. <a href="#fig:polyfit">3.4</a>, начнёт повторять шум
+выборки.</p>
+<h2 class="unnumbered" id="voprosy-dlya-samokontrolya-3">Вопросы для
+самоконтроля</h2>
+<ol type="1">
+<li>Чем аппроксимация отличается от интерполяции? Почему регрессия — это
+аппроксимация?</li>
+<li>Почему прямая МНК всегда проходит через точку <span
+class="math inline">(\bar x, \bar y)</span>?</li>
+<li>Каков размер матрицы <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span> и от чего
+он зависит?</li>
+<li>В каком случае нормальная система имеет бесконечно много решений?
+Приведите пример из гл. 2.</li>
+<li>Объясните геометрически, почему вектор остатков ортогонален столбцам
+матрицы <span class="math inline">\mathbf{F}</span>.</li>
+<li>Почему при мультиколлинеарности веса модели неустойчивы, а прогнозы
+на обучающих объектах — нет?</li>
+<li>Почему модель полиномиальной регрессии называют линейной?</li>
+</ol>
+<h2 class="unnumbered" id="zadachi-3">Задачи</h2>
+<ol type="1">
+<li><p>По точкам <span class="math inline">(0; 1)</span>, <span
+class="math inline">(1; 1)</span>, <span class="math inline">(2;
+4)</span> найдите параметры прямой МНК по формулам <a
+href="ch03.html#eq:theta0">(3.1)</a> и <a
+href="ch03.html#eq:theta1">(3.2)</a> и проверьте, что сумма остатков
+равна нулю.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">\theta_1 = 1{,}5</span>, <span
+class="math inline">\theta_0 = 0{,}5</span>; остатки <span
+class="math inline">-0{,}5</span>; <span class="math inline">1</span>;
+<span class="math inline">-0{,}5</span>, их сумма равна нулю.</p>
+</details></li>
+<li><p>Для той же выборки запишите <span
+class="math inline">\mathbf{F}</span>, <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span>, <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{y}</span> и решите
+нормальную систему.</p>
+<details class="answer"><summary>Ответ</summary>
+<p><span class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F} =
+\begin{pmatrix} 3 &amp; 3 \\ 3 &amp; 5 \end{pmatrix}</span>, <span
+class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{y} = (6;\,
+9)^{\mathrm{T}}</span>, <span class="math inline">\boldsymbol{\theta}^*
+= (0{,}5;\, 1{,}5)</span>.</p>
+</details></li>
+<li><p>Признак <span class="math inline">f_2</span> равен <span
+class="math inline">f_1</span>, измеренному в других единицах: <span
+class="math inline">f_2(x) = 100 f_1(x)</span>. Покажите, что матрица
+<span class="math inline">\mathbf{F}^{\mathrm{T}} \mathbf{F}</span> для
+этих двух признаков необратима. Какое решение даст псевдообратная
+матрица — с весом при одном признаке или при обоих?</p>
+<details class="answer"><summary>Ответ</summary>
+<p>определитель <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F}</span> равен нулю. Псевдообратная матрица даёт решение
+наименьшей длины, в котором вес получают оба признака: <span
+class="math inline">\theta_2 = 100\,\theta_1</span>.</p>
+</details></li>
+<li><p>Через сколько точек с различными <span
+class="math inline">x</span> всегда можно точно провести многочлен
+степени <span class="math inline">d</span>? Чему тогда равен
+эмпирический риск на обучающей выборке?</p>
+<details class="answer"><summary>Ответ</summary>
+<p>через <span class="math inline">d + 1</span> точку; <span
+class="math inline">Q = 0</span>.</p>
+</details></li>
+</ol>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="ch02.html" rel="prev"><span class="dir">Назад</span><span class="t">Данные и признаки</span></a>
+  <a class="next" href="ch04.html" rel="next"><span class="dir">Далее</span><span class="t">Градиентный спуск</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

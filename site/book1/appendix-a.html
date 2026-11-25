@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="generator" content="pandoc">
+  <meta name="author" content="Поляк Марк Дмитриевич">
+  <meta name="description" content="Приложение А. Математический
+минимум">
+  <title>Приложение А. Математический минимум — Машинное обучение:
+линейные и вероятностные модели</title>
+  <script>
+    // тема до отрисовки страницы, чтобы не было вспышки светлого фона
+    try {
+      const t = localStorage.getItem("theme");
+      if (t) document.documentElement.dataset.theme = t;
+    } catch (e) {}
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=PT+Serif:ital,wght@0,400;0,700;1,400;1,700&family=PT+Sans:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap">
+  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="pagefind/pagefind-ui.css">
+  <script defer=""
+  src="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.js"></script>
+  <script>document.addEventListener("DOMContentLoaded", function () {
+   var mathElements = document.getElementsByClassName("math");
+   var macros = [];
+   for (var i = 0; i < mathElements.length; i++) {
+    var texText = mathElements[i].firstChild;
+    if (mathElements[i].tagName == "SPAN") {
+     katex.render(texText.data, mathElements[i], {
+      displayMode: mathElements[i].classList.contains('display'),
+      throwOnError: false,
+      macros: macros,
+      fleqn: false
+     });
+  }}});
+  </script>
+  <link rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/katex@latest/dist/katex.min.css" />
+</head>
+<body class="chapter">
+<header class="topbar">
+  <button class="icon-btn menu-btn" type="button" aria-label="Оглавление" aria-controls="sidebar" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+  </button>
+  <a class="book-title" href="index.html">Машинное обучение: линейные и
+вероятностные модели</a>
+  <div class="topbar-actions">
+    <button class="icon-btn search-btn" type="button" aria-label="Поиск по книге">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+    </button>
+    <a class="pdf-link" href="book1.pdf" download>PDF</a>
+    <button class="icon-btn theme-btn" type="button" aria-label="Сменить тему">
+      <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+<div class="search-panel" hidden><div id="search"></div></div>
+<div class="layout">
+<aside id="sidebar" class="sidebar">
+<a class="side-home" href="index.html">Содержание</a>
+<ol>
+<li><a href="preface.html"><span>Предисловие</span></a>
+</li>
+<li><a href="notation.html"><span>Основные обозначения</span></a>
+</li>
+<li><a href="ch01.html"><span class="num">1</span><span>Задача обучения по прецедентам</span></a>
+</li>
+<li><a href="ch02.html"><span class="num">2</span><span>Данные и признаки</span></a>
+</li>
+<li><a href="ch03.html"><span class="num">3</span><span>Линейная регрессия и метод наименьших квадратов</span></a>
+</li>
+<li><a href="ch04.html"><span class="num">4</span><span>Градиентный спуск</span></a>
+</li>
+<li><a href="ch05.html"><span class="num">5</span><span>Переобучение и валидация</span></a>
+</li>
+<li><a href="ch06.html"><span class="num">6</span><span>Регуляризация</span></a>
+</li>
+<li><a href="ch07.html"><span class="num">7</span><span>Логистическая регрессия</span></a>
+</li>
+<li><a href="ch08.html"><span class="num">8</span><span>Метрики качества классификации</span></a>
+</li>
+<li><a href="ch09.html"><span class="num">9</span><span>Наивный байесовский классификатор</span></a>
+</li>
+<li><a href="conclusion.html"><span>Заключение</span></a>
+</li>
+<li><a href="references.html"><span>Список литературы</span></a>
+</li>
+<li class="current"><a href="appendix-a.html"><span>Приложение А. Математический минимум</span></a>
+<ol>
+<li><a href="appendix-a.html#vektory-i-matritsy"><span>А.1 Векторы и матрицы</span></a></li>
+<li><a href="appendix-a.html#proizvodnaya-i-gradient"><span>А.2 Производная и градиент</span></a></li>
+<li><a href="appendix-a.html#veroyatnost"><span>А.3 Вероятность</span></a></li>
+<li><a href="appendix-a.html#eksponenta-i-logarifm"><span>А.4 Экспонента и логарифм</span></a></li>
+</ol>
+</li>
+<li><a href="appendix-b.html"><span>Приложение Б. Русско-английский словарь терминов</span></a>
+</li>
+</ol>
+<ol class="side-extra">
+<li><a href="cite.html"><span>Как цитировать</span></a></li>
+<li><a href="errata.html"><span>Опечатки</span></a></li>
+</ol>
+</aside>
+<main class="content">
+<article data-pagefind-body>
+<h1 class="unnumbered" id="appendix-a">Приложение А. Математический
+минимум</h1>
+<p>Здесь собраны сведения из линейной алгебры, математического анализа и
+теории вероятностей, на которые опираются главы. Доказательства не
+приводятся, но каждое понятие сопровождается коротким примером.</p>
+<h2 class="unnumbered" id="vektory-i-matritsy">А.1 Векторы и
+матрицы</h2>
+<p><strong>Векторы.</strong> Вектор <span class="math inline">\mathbf{a}
+= (a_1, \ldots, a_n)^{\mathrm{T}}</span> — упорядоченный набор из <span
+class="math inline">n</span> чисел; по умолчанию его записывают
+столбцом. Векторы одной длины складывают и умножают на число
+покомпонентно. <em>Скалярное произведение</em></p>
+<div class="equation">
+<p><span class="math display">\langle \mathbf{a}, \mathbf{b} \rangle =
+\mathbf{a}^{\mathrm{T}} \mathbf{b} = \sum_{j=1}^{n} a_j b_j</span></p>
+</div>
+<div class="continuation">
+<p>равно нулю, если векторы <em>ортогональны</em> (перпендикулярны).
+Длину вектора измеряют <em>нормой</em>. Евклидова норма <span
+class="math inline">\|\mathbf{a}\|_2 = \sqrt{\langle \mathbf{a},
+\mathbf{a} \rangle}</span> — обычная длина, норма L1 <span
+class="math inline">\|\mathbf{a}\|_1 = \sum_j |a_j|</span> — сумма
+модулей компонент. Для <span class="math inline">\mathbf{a} = (3;\,
+-4)</span>: <span class="math inline">\|\mathbf{a}\|_2 = 5</span>, <span
+class="math inline">\|\mathbf{a}\|_1 = 7</span>.</p>
+</div>
+<p><strong>Матрицы.</strong> Матрица <span
+class="math inline">\mathbf{A}</span> размера <span
+class="math inline">m \times n</span> — таблица чисел <span
+class="math inline">a_{ij}</span> из <span class="math inline">m</span>
+строк и <span class="math inline">n</span> столбцов. Произведение матриц
+<span class="math inline">\mathbf{A}</span> (<span class="math inline">m
+\times n</span>) и <span class="math inline">\mathbf{B}</span> (<span
+class="math inline">n \times k</span>) — матрица <span
+class="math inline">m \times k</span> с элементами</p>
+<div class="equation">
+<p><span class="math display">(\mathbf{A}\mathbf{B})_{ik} =
+\sum_{j=1}^{n} a_{ij} b_{jk}:</span></p>
+</div>
+<div class="continuation">
+<p>элемент на пересечении строки <span class="math inline">i</span> и
+столбца <span class="math inline">k</span> — скалярное произведение
+<span class="math inline">i</span>-й строки <span
+class="math inline">\mathbf{A}</span> на <span
+class="math inline">k</span>-й столбец <span
+class="math inline">\mathbf{B}</span>. Число столбцов первой матрицы
+должно совпадать с числом строк второй, и в общем случае <span
+class="math inline">\mathbf{A}\mathbf{B} \ne
+\mathbf{B}\mathbf{A}</span>. Вектор — матрица из одного столбца, поэтому
+<span class="math inline">\mathbf{F}\boldsymbol{\theta}</span> — вектор,
+<span class="math inline">i</span>-я компонента которого равна
+скалярному произведению <span class="math inline">i</span>-й строки
+<span class="math inline">\mathbf{F}</span> на <span
+class="math inline">\boldsymbol{\theta}</span>, то есть прогнозу
+линейной модели на <span class="math inline">i</span>-м объекте.</p>
+</div>
+<p><em>Транспонирование</em> <span
+class="math inline">\mathbf{A}^{\mathrm{T}}</span> меняет строки и
+столбцы местами; <span
+class="math inline">(\mathbf{A}\mathbf{B})^{\mathrm{T}} =
+\mathbf{B}^{\mathrm{T}} \mathbf{A}^{\mathrm{T}}</span>. Матрица <span
+class="math inline">\mathbf{A}</span> <em>симметрична</em>, если <span
+class="math inline">\mathbf{A}^{\mathrm{T}} = \mathbf{A}</span>;
+например, <span class="math inline">\mathbf{F}^{\mathrm{T}}
+\mathbf{F}</span> симметрична при любой <span
+class="math inline">\mathbf{F}</span>.</p>
+<p><strong>Обратная матрица.</strong> <em>Единичная</em> матрица <span
+class="math inline">\mathbf{I}</span> — квадратная, с единицами на
+диагонали и нулями вне её; <span
+class="math inline">\mathbf{I}\mathbf{a} = \mathbf{a}</span>.
+<em>Обратная</em> к квадратной матрице <span
+class="math inline">\mathbf{A}</span> — матрица <span
+class="math inline">\mathbf{A}^{-1}</span>, для которой <span
+class="math inline">\mathbf{A}\mathbf{A}^{-1} =
+\mathbf{A}^{-1}\mathbf{A} = \mathbf{I}</span>. Тогда система <span
+class="math inline">\mathbf{A}\boldsymbol{\theta} = \mathbf{b}</span>
+имеет единственное решение <span class="math inline">\boldsymbol{\theta}
+= \mathbf{A}^{-1}\mathbf{b}</span>. Обратная матрица существует, только
+если <em>определитель</em> <span class="math inline">\det \mathbf{A} \ne
+0</span>, или, что то же самое, если столбцы <span
+class="math inline">\mathbf{A}</span> <em>линейно независимы</em> — ни
+один не выражается как сумма остальных, умноженных на числа. Для матрицы
+<span class="math inline">2 \times 2</span></p>
+<div class="equation">
+<p><span class="math display">\begin{pmatrix} a &amp; b \\ c &amp; d
+\end{pmatrix}^{-1} = \frac{1}{ad - bc} \begin{pmatrix} d &amp; -b \\ -c
+&amp; a \end{pmatrix}, \qquad \det = ad - bc.</span></p>
+</div>
+<div class="continuation">
+<p>Например, у матрицы со строками <span class="math inline">(3;\,
+6)</span> и <span class="math inline">(6;\, 14)</span> определитель
+<span class="math inline">3 \cdot 14 - 6 \cdot 6 = 6</span>, и обратная
+матрица имеет строки <span class="math inline">(7/3;\, -1)</span> и
+<span class="math inline">(-1;\, 1/2)</span>; умножением легко
+проверить, что произведение равно <span
+class="math inline">\mathbf{I}</span>.</p>
+</div>
+<p><strong>Ортогональные матрицы и собственные значения.</strong>
+Квадратная матрица <span class="math inline">\mathbf{U}</span>
+<em>ортогональна</em>, если <span
+class="math inline">\mathbf{U}^{\mathrm{T}}\mathbf{U} =
+\mathbf{I}</span>: её столбцы имеют единичную длину и попарно
+ортогональны (<em>ортонормированы</em>). Умножение на такую матрицу
+поворачивает или отражает вектор, не меняя его длины. Число <span
+class="math inline">s</span> и ненулевой вектор <span
+class="math inline">\mathbf{u}</span> — <em>собственное значение</em> и
+<em>собственный вектор</em> матрицы <span
+class="math inline">\mathbf{S}</span>, если <span
+class="math inline">\mathbf{S}\mathbf{u} = s\,\mathbf{u}</span>: матрица
+только растягивает этот вектор в <span class="math inline">s</span> раз.
+У симметричной матрицы собственные значения вещественные, а собственные
+векторы можно выбрать ортонормированными; у матрицы <span
+class="math inline">\mathbf{F}^{\mathrm{T}}\mathbf{F}</span> все
+собственные значения неотрицательны.</p>
+<h2 class="unnumbered" id="proizvodnaya-i-gradient">А.2 Производная и
+градиент</h2>
+<p><strong>Производная</strong> <span
+class="math inline">f&#39;(x)</span> — скорость изменения функции: при
+малом приращении <span class="math inline">\Delta x</span> значение
+меняется примерно на <span class="math inline">f&#39;(x)\,\Delta
+x</span>. Основные формулы:</p>
+<div class="equation">
+<p><span class="math display">(x^a)&#39; = a x^{a - 1}, \qquad
+(e^x)&#39; = e^x, \qquad (\ln x)&#39; = \frac{1}{x},</span></p>
+</div>
+<div class="equation">
+<p><span class="math display">(u + v)&#39; = u&#39; + v&#39;, \qquad
+(uv)&#39; = u&#39;v + uv&#39;, \qquad \bigl(f(u(x))\bigr)&#39; =
+f&#39;(u)\, u&#39;(x).</span></p>
+</div>
+<div class="continuation">
+<p>Последнее — <em>правило дифференцирования сложной функции</em>:
+производная внешней функции, умноженная на производную внутренней.
+Например, для логистической потери из гл. 7</p>
+</div>
+<div class="equation">
+<p><span class="math display">\bigl(\ln(1 + e^{-z})\bigr)&#39; =
+\frac{1}{1 + e^{-z}} \cdot (-e^{-z}) = -\frac{1}{e^{z} + 1} = \sigma(z)
+- 1.</span></p>
+</div>
+<div class="continuation">
+<p>В точке минимума или максимума гладкой функции производная равна
+нулю.</p>
+</div>
+<p><strong>Частные производные и градиент.</strong> Если функция зависит
+от нескольких переменных, <span class="math inline">Q(\theta_1, \ldots,
+\theta_n)</span>, её <em>частная производная</em> <span
+class="math inline">\partial Q / \partial \theta_j</span> — обычная
+производная по <span class="math inline">\theta_j</span> при
+фиксированных остальных переменных. Вектор частных производных называют
+<em>градиентом</em>:</p>
+<div class="equation">
+<p><span class="math display">\nabla Q = \biggl(\frac{\partial
+Q}{\partial \theta_1}, \ldots, \frac{\partial Q}{\partial
+\theta_n}\biggr)^{\mathrm{T}}.</span></p>
+</div>
+<div class="continuation">
+<p>Градиент указывает направление наискорейшего роста функции,
+антиградиент <span class="math inline">-\nabla Q</span> — наискорейшего
+убывания; в точке минимума <span class="math inline">\nabla Q =
+\mathbf{0}</span>. Например, для <span class="math inline">Q =
+\theta_1^2 + 3\theta_2^2</span> градиент <span
+class="math inline">\nabla Q = (2\theta_1;\, 6\theta_2)</span>, в точке
+<span class="math inline">(1;\, 1)</span> он равен <span
+class="math inline">(2;\, 6)</span>: функция быстрее всего растёт вдоль
+<span class="math inline">\theta_2</span>.</p>
+</div>
+<p>Для линейных и квадратичных функций векторного аргумента удобны
+готовые формулы (матрица <span class="math inline">\mathbf{A}</span>
+симметрична):</p>
+<div class="equation">
+<p><span class="math display">\nabla \langle \mathbf{a},
+\boldsymbol{\theta} \rangle = \mathbf{a}, \qquad \nabla
+\bigl(\boldsymbol{\theta}^{\mathrm{T}} \mathbf{A}
+\boldsymbol{\theta}\bigr) = 2\mathbf{A}\boldsymbol{\theta}, \qquad
+\nabla \|\mathbf{F}\boldsymbol{\theta} - \mathbf{y}\|_2^2 =
+2\mathbf{F}^{\mathrm{T}}(\mathbf{F}\boldsymbol{\theta} -
+\mathbf{y}).</span></p>
+</div>
+<div class="continuation">
+<p>Они аналогичны одномерным <span class="math inline">(ax)&#39; =
+a</span> и <span class="math inline">(ax^2)&#39; = 2ax</span>.</p>
+</div>
+<p><strong>Выпуклые функции.</strong> Функция <em>выпукла</em>, если
+отрезок, соединяющий любые две точки её графика, лежит не ниже графика.
+У выпуклой функции любой локальный минимум глобальный, и градиентный
+спуск не застревает в «ложных» минимумах. Выпуклы <span
+class="math inline">\theta^2</span>, <span
+class="math inline">|\theta|</span>, <span
+class="math inline">e^{\theta}</span>, <span class="math inline">\ln(1 +
+e^{-\theta})</span>; сумма выпуклых функций и выпуклая функция от
+линейной функции параметров тоже выпуклы. Поэтому выпуклы эмпирический
+риск линейной регрессии с квадратичной потерей и логистической
+регрессии, в том числе со штрафами L1 и L2.</p>
+<h2 class="unnumbered" id="veroyatnost">А.3 Вероятность</h2>
+<p><strong>События.</strong> Вероятность <span
+class="math inline">P(A)</span> события <span
+class="math inline">A</span> — число от 0 до 1. Её можно понимать как
+долю случаев, в которых <span class="math inline">A</span> происходит,
+при многократном повторении опыта; поэтому вероятности оценивают
+частотами в выборке. <em>Условная вероятность</em> <span
+class="math inline">A</span> при условии <span
+class="math inline">B</span> —</p>
+<div class="equation">
+<p><span class="math display">P(A \mid B) = \frac{P(A \cap
+B)}{P(B)},</span></p>
+</div>
+<div class="continuation">
+<p>где <span class="math inline">A \cap B</span> — событие «произошли и
+<span class="math inline">A</span>, и <span
+class="math inline">B</span>». Отсюда <em>правило умножения</em> <span
+class="math inline">P(A \cap B) = P(B)\, P(A \mid B)</span>. События
+<em>независимы</em>, если <span class="math inline">P(A \cap B) = P(A)\,
+P(B)</span>, то есть знание о <span class="math inline">B</span> не
+меняет вероятность <span class="math inline">A</span>: <span
+class="math inline">P(A \mid B) = P(A)</span>. События <em>условно
+независимы</em> при условии <span class="math inline">C</span>, если
+<span class="math inline">P(A \cap B \mid C) = P(A \mid C)\, P(B \mid
+C)</span>; на этом допущении построен наивный байесовский классификатор
+(гл. 9).</p>
+</div>
+<p>Если события <span class="math inline">B_1, \ldots, B_K</span>
+попарно несовместны и одно из них обязательно происходит, верна
+<em>формула полной вероятности</em> <span class="math inline">P(A) =
+\sum_{k} P(B_k)\, P(A \mid B_k)</span>, а из правила умножения следует
+<em>формула Байеса</em></p>
+<div class="equation">
+<p><span class="math display">P(B_k \mid A) = \frac{P(B_k)\, P(A \mid
+B_k)}{P(A)}.</span></p>
+</div>
+<p><strong>Пример.</strong> Пусть 20 % модулей программы большие, и
+ошибки находят в 30 % больших модулей и в 5 % остальных. По формуле
+полной вероятности ошибку найдут в доле модулей <span
+class="math inline">0{,}2 \cdot 0{,}3 + 0{,}8 \cdot 0{,}05 =
+0{,}1</span>. Если в модуле нашли ошибку, он большой с вероятностью
+<span class="math inline">0{,}06 / 0{,}1 = 0{,}6</span> — втрое выше,
+чем доля больших модулей среди всех.</p>
+<p><strong>Случайные величины.</strong> Случайная величина <span
+class="math inline">\xi</span> принимает числовые значения с некоторыми
+вероятностями. Если значения <span class="math inline">x_1, x_2,
+\ldots</span> принимаются с вероятностями <span class="math inline">p_1,
+p_2, \ldots</span>, <em>математическое ожидание</em> (среднее значение)
+и <em>дисперсия</em> равны</p>
+<div class="equation">
+<p><span class="math display">\mathbb{E}(\xi) = \sum_{k} x_k p_k, \qquad
+\mathrm{D}(\xi) = \mathbb{E}\bigl((\xi - \mathbb{E}(\xi))^2\bigr) =
+\mathbb{E}(\xi^2) - \bigl(\mathbb{E}(\xi)\bigr)^2.</span></p>
+</div>
+<div class="continuation">
+<p>Дисперсия измеряет разброс значений вокруг среднего; корень из неё,
+<span class="math inline">\sqrt{\mathrm{D}(\xi)}</span>, —
+<em>стандартное отклонение</em>, оно измеряется в тех же единицах, что и
+<span class="math inline">\xi</span>. Свойства: <span
+class="math inline">\mathbb{E}(a\xi + b) = a\,\mathbb{E}(\xi) +
+b</span>, <span class="math inline">\mathrm{D}(a\xi + b) = a^2\,
+\mathrm{D}(\xi)</span>; ожидание суммы равно сумме ожиданий, а дисперсия
+суммы независимых величин — сумме дисперсий. Например, величина, равная
+1 с вероятностью <span class="math inline">p</span> и 0 с вероятностью
+<span class="math inline">1 - p</span> (<em>распределение Бернулли</em>,
+модель бинарного ответа), имеет <span
+class="math inline">\mathbb{E}(\xi) = p</span> и <span
+class="math inline">\mathrm{D}(\xi) = p(1 - p)</span>.</p>
+</div>
+<p>По выборке значений <span class="math inline">u_1, \ldots,
+u_\ell</span> ожидание оценивают средним <span class="math inline">\bar
+u = \frac{1}{\ell} \sum_i u_i</span>, дисперсию — средним квадратом
+отклонения <span class="math inline">\frac{1}{\ell} \sum_i (u_i - \bar
+u)^2</span> (иногда делят на <span class="math inline">\ell - 1</span>;
+при больших <span class="math inline">\ell</span> разница мала).</p>
+<p><strong>Непрерывные величины.</strong> Значения непрерывной величины
+описывает <em>плотность</em> <span class="math inline">p(x) \ge
+0</span>: вероятность попасть в интервал <span class="math inline">(a,
+b)</span> равна площади под графиком плотности над этим интервалом,
+<span class="math inline">\int_a^b p(x)\,dx</span>, а вся площадь равна
+единице. Само значение плотности — не вероятность и может быть больше
+единицы. Ожидание вычисляют как <span
+class="math inline">\mathbb{E}(\xi) = \int x\, p(x)\, dx</span>.</p>
+<p><em>Нормальное</em> (гауссовское) распределение <span
+class="math inline">N(\mu, \sigma^2)</span> со средним <span
+class="math inline">\mu</span> и дисперсией <span
+class="math inline">\sigma^2</span> имеет плотность</p>
+<div class="equation">
+<p><span class="math display">p(x) = \frac{1}{\sqrt{2\pi}\,\sigma}
+\exp\biggl(-\frac{(x - \mu)^2}{2\sigma^2}\biggr).</span></p>
+</div>
+<div class="continuation">
+<p>Её график — симметричный «колокол» с вершиной в <span
+class="math inline">\mu</span> (рис. <a href="#fig:normal">А.1</a>). В
+интервал <span class="math inline">\mu \pm \sigma</span> попадает около
+68 % значений, в <span class="math inline">\mu \pm 2\sigma</span> —
+около 95 %, в <span class="math inline">\mu \pm 3\sigma</span> — около
+99,7 % (правило трёх сигм): значение, отстоящее от среднего больше чем
+на <span class="math inline">3\sigma</span>, — редкость, и его стоит
+проверить как возможный выброс.</p>
+</div>
+<figure id="fig:normal">
+<img src="fig/normal.svg" style="width: 79%"
+alt="Рис. А.1. Плотность нормального распределения и доли значений в интервалах \mu \pm k\sigma" />
+<figcaption aria-hidden="true">Рис. А.1. Плотность нормального
+распределения и доли значений в интервалах <span class="math inline">\mu
+\pm k\sigma</span></figcaption>
+</figure>
+<p>Нормально распределены, по крайней мере приближённо, суммы многих
+независимых малых случайных слагаемых, поэтому этим распределением часто
+описывают шум измерений. <em>Распределение Лапласа</em> с плотностью
+<span class="math inline">p(x) = \frac{1}{2b} \exp(-|x - \mu| /
+b)</span> имеет более острую вершину и более «тяжёлые» хвосты, чем
+нормальное.</p>
+<h2 class="unnumbered" id="eksponenta-i-logarifm">А.4 Экспонента и
+логарифм</h2>
+<p>Число <span class="math inline">e \approx 2{,}718</span>; функция
+<span class="math inline">e^x</span> (также <span
+class="math inline">\exp x</span>) положительна и возрастает.
+Натуральный логарифм <span class="math inline">\ln x</span> — обратная к
+ней функция, определённая при <span class="math inline">x &gt; 0</span>:
+<span class="math inline">\ln e^x = x</span>. Основные свойства:</p>
+<div class="equation">
+<p><span class="math display">e^{a + b} = e^a e^b, \qquad \ln(ab) = \ln
+a + \ln b, \qquad \ln \frac{a}{b} = \ln a - \ln b, \qquad \ln a^k = k
+\ln a.</span></p>
+</div>
+<div class="continuation">
+<p>Логарифм превращает произведение в сумму — поэтому правдоподобие
+(произведение вероятностей) заменяют его логарифмом. Логарифм
+возрастает, поэтому положительная функция и её логарифм достигают
+максимума в одной и той же точке. Логарифмы по разным основаниям
+отличаются множителем: <span class="math inline">\log_2 x = \ln x / \ln
+2</span>.</p>
+</div>
+</article>
+<p class="report"><a class="report-link" href="https://github.com/markpolyak/ml-textbook-site/issues/new" data-issues="https://github.com/markpolyak/ml-textbook-site/issues" data-book="Машинное
+обучение: линейные и вероятностные
+модели" target="_blank" rel="noopener">Сообщить об ошибке или опечатке</a> <span class="report-hint">— на GitHub; выделенный фрагмент текста попадёт в сообщение</span></p>
+<nav class="pager" aria-label="Соседние главы">
+  <a class="prev" href="references.html" rel="prev"><span class="dir">Назад</span><span class="t">Список литературы</span></a>
+  <a class="next" href="appendix-b.html" rel="next"><span class="dir">Далее</span><span class="t">Приложение Б. Русско-английский словарь терминов</span></a>
+</nav>
+</main>
+</div>
+<footer class="footer">
+  <p>© Поляк Марк Дмитриевич, 2026. Версия от 25.11.2026 · 91dcfeb</p>
+  <p>Текст распространяется по лицензии <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.ru" rel="license">CC
+BY-NC-ND
+4.0</a>: его можно читать и распространять с указанием автора, но не продавать и не изменять.</p>
+  <p><a href="../index.html">Учебные пособия по машинному
+обучению</a> · <a href="cite.html">Как цитировать</a> · <a href="errata.html">Опечатки</a></p>
+</footer>
+<script src="pagefind/pagefind-ui.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>
